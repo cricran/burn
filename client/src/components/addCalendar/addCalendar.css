@@ -1,0 +1,134 @@
+.addCalendar {
+    position: fixed;
+    z-index: 9;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.addCalendar-content {
+    background: #1c1c1c;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 550px;
+    padding: 25px;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    color: #d5d5d5;
+    text-align: left;
+}
+
+.addCalendar-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: #d5d5d5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    transition: background-color 0.2s;
+}
+
+.addCalendar-close:hover {
+    background-color: #ffffff15;
+    color: white;
+}
+
+.addCalendar h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 25px;
+    margin-right: 30px;
+}
+
+.addCalendar-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.addCalendar-form-input {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    background-color: #4343434d;
+    border: 1px solid #ffffff1a;
+    border-radius: 6px;
+    padding: 0 15px;
+}
+
+.addCalendar-form-input svg {
+    color: #f90;
+    flex-shrink: 0;
+}
+
+.addCalendar-form-input input {
+    background-color: transparent;
+    border: none;
+    padding: 12px 15px;
+    color: #d5d5d5;
+    width: 100%;
+    font-size: 14px;
+    height: auto;
+}
+
+.addCalendar-form-input input::placeholder {
+    color: #999;
+}
+
+.addCalendar-form-button {
+    background: #f90;
+    color: #1c1c1c;
+    border: none;
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.addCalendar-form-button svg {
+    color: #1c1c1c;
+}
+
+.addCalendar-form-button:hover {
+    background: #ffb340;
+}
+
+.addCalendar span {
+    color: #d5d5d5;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.addCalendar span svg {
+    color: #f90;
+}
+
+.addCalendar span:hover {
+    color: white;
+}

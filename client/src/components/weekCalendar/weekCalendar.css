@@ -1,0 +1,254 @@
+.weekCalendar {
+    width: 100%;
+    height: 100%;
+    color: #d5d5d5;
+    backdrop-filter: blur(50px);
+    border: solid 1px #ffffff0d;
+    border-radius: 30px;
+    padding: 20px;
+}
+
+.weekCalendar header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.weekCalendar h1 {
+    font-size: 25px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.weekCalendar header .options {
+    display: flex;
+    gap: 10px;
+    overflow: auto;
+}
+
+.weekCalendar header .options .option {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    cursor: pointer;
+    border: solid 1px #ffffff0d;
+    border-radius: 30px;
+    padding: 6px 15px;
+    font-size: 13px;
+}
+
+.weekCalendar header .options .option:hover {
+    color: white;
+}
+
+.weekCalendar .wcContent {
+    width: 100%;
+    /* height: 791px; */
+    height: fit-content;
+    background: #4343431c;
+    border: solid 1px #ffffff0f;
+    border-radius: 20px;
+    padding: 15px 0;
+    /* background: #0156619a; */
+}
+
+
+
+@media (max-width: 1150px) { 
+    .weekCalendar header {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    .weekCalendar {
+        padding: 20px 0 0 0;
+    }
+    .weekCalendar .wcContent {
+        border-radius: 0 0 30px 30px;
+    }
+}
+
+/* Big callendare css */
+
+/* Cache les demi-heures (les slots impairs) */
+.rbc-time-slot:nth-child(2n) {
+  display: none;
+}
+
+/* Agrandir chaque ligne horaire */
+.rbc-time-slot {
+  min-height: 70px; /* ou plus si tu veux */
+}
+
+/* Couleur du texte général */
+.rbc-calendar,
+.rbc-time-view,
+.rbc-time-content,
+.rbc-timeslot-group,
+.rbc-event-content,
+.rbc-time-slot,
+.rbc-label,
+.rbc-time-header,
+.rbc-time-gutter,
+.rbc-header,
+.rbc-allday-cell {
+  color: #d5d5d5;
+  border-color: #ffffff0f !important;
+}
+
+.rbc-time-content {
+    padding-top: 10px;
+}
+
+.rbc-timeslot-group {
+    border-bottom: none !important;
+}
+
+.rbc-time-content > * + * > * {
+    border-left: none !important;
+}
+
+span.rbc-label {
+    position: relative;
+    top: -8px;
+    color: #d5d5d5;
+    font-size: 12px;
+}
+
+/* Couleur des traits verticaux et horizontaux */
+.rbc-day-slot .rbc-time-slot {
+  border-color: #ffffff0f;
+}
+
+.rbc-time-content > * + * {
+  border-color: #ffffff0f;
+}
+
+.rbc-time-gutter,
+.rbc-header {
+  border-color: #ffffff0f;
+}
+
+.rbc-allday-cell,
+.rbc-allday-cell > div {
+  display: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* Couleur du jour actuel */
+
+.rbc-header.rbc-today {
+    background-color: rgba(255, 153, 0, 0.301) !important;
+;
+}
+
+.rbc-today {
+  background-color: transparent !important; 
+}
+
+
+/* Bords arrondis externes du calendrier */
+.rbc-time-view {
+  border-radius: 0 0 20px 20px ;
+  overflow: hidden; 
+}
+
+.rbc-current-time-indicator {
+    background-color: #f90 !important;
+}
+
+/* top buttons*/
+
+.rbc-btn-group:first-child {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    cursor: pointer;
+    border: solid 1px #ffffff0d;
+    border-radius: 30px;
+    padding: 6px 15px;
+    font-size: 13px;
+    height: 34px;
+    margin: 0 15px;
+    background: #43434330 !important;
+
+}
+
+@media (max-width: 1150px) { 
+    .rbc-btn-group:first-child {
+        margin-bottom: 15px !important; 
+    }
+}
+
+.rbc-btn-group:last-child {
+    display: none;
+}    
+
+.rbc-btn-group button {
+    color: #d5d5d5 !important;
+    border: none !important;
+    background-color: transparent !important;
+    cursor: pointer;
+}
+
+.rbc-btn-group button:nth-child(1) {
+    border-right: #ffffff0d 1px solid !important;
+    
+}
+.rbc-btn-group button:nth-child(2) {
+    border-right: #ffffff0d 1px solid !important;
+}
+
+.rbc-btn-group button:hover {
+    color: white !important;
+}
+
+.rbc-toolbar {
+    margin-bottom: 15px !important;
+}
+
+.rbc-event {
+  width: 110% !important;
+  left: 0 !important;
+  right: 0 !important;
+  padding-left: 6px;  /* un peu de padding intérieur si tu veux */
+  padding-right: 6px;
+  box-sizing: border-box;
+  min-height: 40px !important;
+}
+
+/* Ajouter ces styles à la fin du fichier */
+.event-title {
+  font-weight: 500;
+  /* white-space: nowrap; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  margin-top: 3px;
+  /* white-space: nowrap; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.9;
+}
+
+.event-location svg {
+  flex-shrink: 0;
+}
+
+/* Supprimer l'affichage de l'heure par défaut */
+.rbc-event-label {
+  display: none !important;
+}
+
+

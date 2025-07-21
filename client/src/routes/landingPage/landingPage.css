@@ -1,0 +1,183 @@
+.landingPage {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    padding: min(75px, 5%);
+    /* padding-left: 150px; */
+    box-sizing: border-box;
+    overflow: auto;
+    overflow-x: hidden;
+    transition: opacity 0.3s, transform 0.75s cubic-bezier(0, 0, 0, 1), filter 0.5s;
+}
+
+.landingPage>h1 {
+    color: #f90;
+    font-size: 80px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 50px;
+    margin-top: 10px;
+    text-shadow: 0 0 40px #f90, 0 0 10px #f90, 0 0 990px #f90;
+}
+
+.shadow {
+    box-shadow: inset 0 0 100px #1616166b;
+    background: linear-gradient(45deg, #161616, #1616164a);
+    background-position: center;
+    background-size: cover;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    transition: opacity 0.3s;
+}
+
+.shadow .img {
+    background: url(general/background.png);
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    mask: radial-gradient(black, #00000030, transparent);
+    mask-position: 0 -160px;
+    filter: blur(30px) saturate(2);
+}
+
+.lpHeader {
+    color: #d5d5d5;
+    backdrop-filter: blur(50px);
+    border: solid 1px #ffffff0d;
+    border-radius: 30px;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    height: 100%;
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.lpHeader span {
+    color: #f90;
+}
+
+.lpHeader h1 {
+    margin: 0;
+    font-size: 50px;
+}
+
+.lpHeader .left {
+    flex: 1 1 auto;
+    padding: 20px;
+    width: 0;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.lpHeader .left p {
+    padding: 10px 0;
+    flex: 1;
+    font-weight: 400;
+}
+
+.lpHeader .left .small {
+    opacity: 0.3;
+    font-size: small;
+}
+
+
+.lpHeader .right {
+    background-image: url(general/demo.png);
+    background-size: cover;
+    background-position: center;
+    flex: 1 1 auto;
+    position: relative;
+    box-sizing: border-box;
+    padding: 20px;
+    min-width: 400px;
+    border-radius: 23px;
+    height: 500px;
+}
+
+.lpLogin {
+    margin-top: 25px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    width: 100%;
+    height: 100%;
+    flex-wrap: wrap;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.lpLogin a {
+    border: solid 2px #ffffff30;
+    z-index: 1;
+    backdrop-filter: blur(50px);
+    padding: 5px;
+    border-radius: 36px;
+    overflow: hidden;
+    height: 255px;
+    width: 255px;
+    cursor: pointer;
+    align-self: flex-start;
+
+}
+
+.lpLogin .button {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 110px;
+    font-weight: 100;
+    flex-direction: column;
+    color: #999999;
+    transition: color 0.5s;
+}
+
+.lpLogin .button:hover {
+    color: #cecece;
+}
+
+.lpLogin a:active {
+    transform: scale(0.9);
+    transition: transform 0.5s ease-in-out;
+}
+
+.lpLogin .button .text {
+    font-weight: 600;
+    font-size: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.lpLogin>.text {
+    color: #d5d5d5;
+    backdrop-filter: blur(50px);
+    border: solid 1px #ffffff0d;
+    border-radius: 30px;
+    padding: 30px;
+    display: flex;
+    gap: 10px;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    flex-wrap: wrap;
+    flex: 1;
+    min-height: 255px;
+    align-items: center;
+    min-width: 350px;
+}

@@ -1,0 +1,74 @@
+# Fichiers d'environnement et configuration sensible
+.env
+.env.*
+!.env.example
+config.js
+*.pem
+*.key
+*.cert
+*.crt
+
+# Dépendances
+node_modules/
+/client/node_modules/
+/server/node_modules/
+
+# Fichiers de build et distribution
+/client/dist/
+/client/build/
+/server/dist/
+/server/build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Fichiers d'IDE et éditeurs
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Fichiers temporaires
+.tmp/
+.temp/
+*.tmp
+*.bak
+*.swp
+
+# Fichiers de test et coverage
+coverage/
+.nyc_output/
+
+# Fichiers Docker générés localement
+docker-compose.override.yml
+data/
+mongodb_data/
+
+# Divers
+.cache/
+.parcel-cache
+dist-ssr
+*.local
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*

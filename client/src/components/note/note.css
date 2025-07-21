@@ -1,0 +1,209 @@
+.note {
+    display: flex;
+    flex-direction: column;
+    background: #4343431c;
+    border: solid 1px #ffffff0f;
+    border-radius: 12px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.note:hover {
+    background: #43434330;
+    border-color: #ffffff20;
+}
+
+.note .footer {
+    margin-top: 15px;
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.note .from {
+    backdrop-filter: blur(5px);
+    background-color: #ffffff30;
+    border: solid 1px #ffffff0d;
+    border-radius: 30px;
+    padding: 3px 12px;
+    font-size: 13px;
+    width: fit-content;
+    transition: background-color 0.2s;
+}
+
+.note:hover .from {
+    background-color: #ffffff38;
+}
+
+.note .from.clickable {
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.note .from.clickable:hover {
+    background-color: #f90;
+    color: #1c1c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 153, 0, 0.4);
+}
+
+.note .from.clickable:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(255, 153, 0, 0.4);
+}
+
+.note input[type=checkbox] {
+    appearance: none;
+    min-width: 20px;
+    height: 20px;
+    border: 2px solid #f90;
+    border-radius: 6px;
+    transition: background 0.2s, border-color 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.note input[type=checkbox]:checked {
+    background: #f90;
+    border-color: #f90;
+}
+
+.note input[type=checkbox]:checked::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 4px;
+    top: -1px;
+    width: 5px;
+    height: 12px;
+    border: solid #fff;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+.note .item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.note .item:hover {
+    background-color: #ffffff0a;
+}
+
+.note .item p {
+    flex: 1;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.note .list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.note .footer .add {
+    color: #d5d5d5;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #ffffff10;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.note .footer .add:hover {
+    color: white;
+    background-color: #f90;
+    transform: scale(1.1);
+}
+
+.note-delete {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: #d5d5d5;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border-radius: 50%;
+}
+
+.note-delete:hover {
+    opacity: 1;
+    color: #ff5555;
+    background-color: #ffffff15;
+}
+
+.note-delete:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.note-add-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: center;
+    padding: 4px;
+    background-color: #ffffff08;
+    border-radius: 8px;
+    border: 1px solid #ffffff12;
+}
+
+.note-input {
+    flex: 1;
+    background-color: transparent;
+    border: none;
+    color: #d5d5d5;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.note-input::placeholder {
+    color: #aaa;
+}
+
+.note-add-btn {
+    background: #f90;
+    color: #1c1c1c;
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.note-add-btn:hover {
+    background: #ffb340;
+    transform: scale(1.05);
+}
+
+.note-add-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Amélioration de l'animation du spinner */
+.animate-spin {
+    animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+

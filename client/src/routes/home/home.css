@@ -1,0 +1,62 @@
+.content {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    padding: min(75px, 5%);
+    padding-left: 100px;
+    padding-right: 25px;
+    /* padding-left: 150px; */
+    box-sizing: border-box;
+    overflow: auto;
+    overflow-x: hidden;
+    transition: opacity 0.3s, transform 0.75s cubic-bezier(0, 0, 0, 1), filter 0.5s;
+}
+
+@media screen and (max-width: 620px) {
+    .content {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        padding: min(75px, 5%);
+        padding-bottom: 100px;
+        box-sizing: border-box;
+        overflow: auto;
+        overflow-x: hidden;
+        transition: opacity 0.3s, transform 0.75s cubic-bezier(0, 0, 0, 1), filter 0.5s;
+    }
+
+}
+
+.home .link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.linkListWrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding: 5px 0;
+}
+
+.home .linkList {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: max-content;
+    margin: 0 auto;
+}
+
+.home h2 {
+    color: #b3b3b3;
+    margin-bottom: 16px;
+    margin-top: 25px;
+    font-size: 18px;
+}
+
+.home h1 {
+    color: #b3b3b3;
+    font-size: 16px;
+
+}

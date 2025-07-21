@@ -1,0 +1,21 @@
+.calendar {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.calendar > div {
+    min-width: 300px;
+    width: 49%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1150px) {
+    .calendar {
+        flex-direction: column;
+    }
+    .calendar > div {
+        width: 100%;
+        min-width: 0;
+    }
+}

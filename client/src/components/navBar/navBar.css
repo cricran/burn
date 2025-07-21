@@ -1,0 +1,99 @@
+.navBar {
+    z-index: 999;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    width: 75px;
+    left: 0;
+    display: flex;
+    padding: 75px 0;
+    font-size: 24px;
+    box-sizing: border-box;
+    line-height: 1;
+    gap: 40px;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(50px);
+    border-right: solid 1px #ffffff08;
+    font-weight: 500;
+}
+
+
+
+.navBar .butonList {
+    flex: 1;
+    display: flex;
+    gap: 40px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.navBar .buton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.navBar .buton .icon {
+    display: flex;
+    width: 40px;
+    aspect-ratio: 1 / 1;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: #ffffff0d;
+    backdrop-filter: blur(10px);
+    line-height: 0;
+    color: #b3b3b3;
+    transition: all 0.3s;
+}
+
+.navBar .buton .icon:hover {
+    color: white;
+}
+
+.navBar .buton .text {
+    font-size: 9px;
+    opacity: .5;
+    color: white;
+}
+
+.navBar .buton.selected .text {
+    color: #f90;
+}
+
+.navBar .buton.selected .icon {
+    color: #f90;
+    background: #ff99001c;
+}
+
+@media screen and (max-width: 620px) {
+    .navBar {
+        z-index: 1;
+        width: 100vw;
+        top: calc(100vh - 75px);
+        height: 75px;
+        left: 0;
+        display: flex;
+        padding: 0px 45px;
+        font-size: 24px;
+        box-sizing: border-box;
+        line-height: 1;
+        gap: 40px;
+        flex-direction: row;
+        align-items: center;
+        backdrop-filter: blur(50px);
+        border-right: solid 1px #ffffff08;
+        font-weight: 500;
+    }
+
+    .navBar .butonList {
+        flex: 1;
+        display: flex;
+        gap: 40px;
+        flex-direction: row;
+        justify-content: center;
+    }
+}
