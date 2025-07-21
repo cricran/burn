@@ -17,15 +17,6 @@ const Auth = () => {
     const navigate = useNavigate();
     const { setCurrentUser, currentUser } = useAuthStore();
 
-    // Vérification de la présence du token JWT
-    useEffect(() => {
-        const cookies = document.cookie.split(';').map(c => c.trim());
-        const jwtCookie = cookies.find(c => c.startsWith('jwt='));
-        if (!jwtCookie) {
-            setCurrentUser(null); // Supprime le currentUser si pas de token
-        }
-    }, []);
-
     if (currentUser) {
         return <Navigate to="/my" replace />;
     }
