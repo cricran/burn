@@ -35,7 +35,7 @@
 }
 
 .shadow .img {
-    background: url(general/background.png);
+    background: url(/general/background.png);
     background-size: cover;
     background-position: center;
     width: 100%;
@@ -93,7 +93,7 @@
 
 
 .lpHeader .right {
-    background-image: url(general/demo.png);
+    background-image: url(/general/demo.png);
     background-size: cover;
     background-position: center;
     flex: 1 1 auto;
