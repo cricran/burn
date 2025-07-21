@@ -1,0 +1,13 @@
+{
+    "name": "BURN App",
+    "short_name": "BURN",
+    "start_url": "/my",
+    "display": "standalone",
+    "theme_color": "#252b31",
+    "background_color": "#252b31",
+    "scope": "/my",
+    "permissions": [
+        "cookies",
+        "webRequest"
+    ]
+}
