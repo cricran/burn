@@ -39,6 +39,7 @@ services:
       dockerfile: Dockerfile.frontend
       args:
         - VITE_API_ENDPOINT=${API_URL}
+        - API_URL=${API_URL}
     restart: always
     ports:
       - "8080:80"
