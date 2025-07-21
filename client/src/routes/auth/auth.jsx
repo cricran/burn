@@ -53,10 +53,10 @@ const Auth = () => {
         } catch (err) {
             setError(err.response?.data?.message || "Erreur de connexion");
             setLoading(false);
+            navigate('/my');
             return;
         } finally {
             setLoading(false);
-            navigate('/my');
         }
     }
 

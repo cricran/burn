@@ -17,6 +17,10 @@ COPY client/ ./
 ARG VITE_API_URL=http://localhost:3000
 ENV VITE_API_URL=${VITE_API_URL}
 
+# Variable d'environnement pour le point de terminaison de l'API (peut être remplacée lors du build)
+ARG VITE_API_ENDPOINT
+ENV VITE_API_ENDPOINT=${VITE_API_ENDPOINT}
+
 # Construire l'application
 RUN npm run build
 

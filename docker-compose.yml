@@ -38,11 +38,10 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
       args:
-        - VITE_API_URL=${API_URL}
+        - VITE_API_ENDPOINT=${API_URL}
     restart: always
     ports:
       - "8080:80"
-      - "443:443"
     depends_on:
       - backend
     networks:
