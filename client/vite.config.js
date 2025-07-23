@@ -9,12 +9,12 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'BURN',
-        short_name: 'BURN',
+        name: 'Burn',
+        short_name: 'Burn',
         start_url: '/my',
         display: 'standalone',
         background_color: '#262c31',
-        theme_color: '#008cff00',
+        theme_color: '#262c31',
         description: "Ton client web de l'URN moderne",
         icons: [
           {

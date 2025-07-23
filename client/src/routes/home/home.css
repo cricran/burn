@@ -2,14 +2,13 @@
     position: absolute;
     width: 100vw;
     height: 100vh;
-    padding: min(75px, 5%);
+    padding: min(75px,1%);
     padding-left: 100px;
     padding-right: 25px;
-    /* padding-left: 150px; */
     box-sizing: border-box;
     overflow: auto;
     overflow-x: hidden;
-    transition: opacity 0.3s, transform 0.75s cubic-bezier(0, 0, 0, 1), filter 0.5s;
+    transition: opacity .3s,transform .75s cubic-bezier(0,0,0,1),filter .5s;
 }
 
 @media screen and (max-width: 620px) {
