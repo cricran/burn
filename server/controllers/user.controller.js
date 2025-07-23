@@ -136,7 +136,7 @@ export const addCalendar = async (req, res) => {
         await user.save();
 
         // Delete the sync log for this user to be able to resync the calendar
-        SyncLog.deleteOne({ userId: userId });
+        await SyncLog.deleteOne({ userId: userId });
 
         return res.status(200).json({ message: "Emploi du Temps ajouté avec succès." });
     } catch (error) {
@@ -185,7 +185,7 @@ export const deleteCalendar = async (req, res) => {
         await user.save();
 
         // Delete the sync log for this user to be able to resync the calendar
-        SyncLog.deleteOne({ userId: userId });
+        await SyncLog.deleteOne({ userId: userId });
 
         return res.status(200).json({ message: "Calendar deleted successfully." });
     } catch (error) {

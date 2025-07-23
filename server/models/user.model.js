@@ -23,6 +23,21 @@ const userSchema = new Schema({
         required: true,
         trim: true,
     }],
+    colorSettings: {
+        mode: {
+            type: String,
+            enum: ['type', 'individual'],
+            default: 'type'
+        },
+        customColors: {
+            type: Object,
+            default: {}
+        },
+        showCancelledEvents: {
+            type: Boolean,
+            default: true
+        }
+    }
 },
     {
         timestamps: true,
