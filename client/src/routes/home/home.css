@@ -16,15 +16,13 @@
     .content {
         position: absolute;
         width: 100vw;
-        height: 100vh;
+        height: calc(100vh - 75px);
         padding: min(75px, 5%);
-        padding-bottom: 100px;
+        margin-bottom: 100px !important;
         box-sizing: border-box;
         overflow: auto;
         overflow-x: hidden;
-        transition: opacity 0.3s, transform 0.75s cubic-bezier(0, 0, 0, 1), filter 0.5s;
     }
-
 }
 
 .home .link {
