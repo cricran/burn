@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, NotebookPen, X, Trash2, Plus } from 'lucide-react';
+import { Calendar, Clock, MapPin, NotebookPen, X, Trash2, Plus, Loader } from 'lucide-react';
 import './eventDetails.css';
-import apiRequest from '../../utils/apiRequest';
+import useCalendarStore from '../../utils/calendarStore';
 import useNotificationStore from '../../utils/notificationStore';
 import useColorSettingsStore from '../../utils/colorSettingsStore';
 import { getEventColor, cleanCourseTitle } from '../../utils/colorUtils';
@@ -12,8 +12,16 @@ function EventDetails({ event: initialEvent, onClose }) {
   const [newNote, setNewNote] = useState('');
   const [showColorPicker, setShowColorPicker] = useState(false);
   
+  // États locaux pour suivre les opérations en cours (comme dans note.jsx)
+  const [isAddingNote, setIsAddingNote] = useState(false);
+  const [togglingNoteIndex, setTogglingNoteIndex] = useState(null);
+  const [deletingNoteIndex, setDeletingNoteIndex] = useState(null);
+  
   const notify = useNotificationStore(state => state.notify);
   const { colorSettings, setCustomColor } = useColorSettingsStore();
+  
+  // Utiliser les fonctions du store comme dans note.jsx
+  const { addNote, toggleNote, deleteNote } = useCalendarStore();
   
   // Obtenir la couleur de l'événement
   const eventColor = getEventColor(event, colorSettings);
@@ -47,46 +55,50 @@ function EventDetails({ event: initialEvent, onClose }) {
     });
   };
 
+  // Ajouter une note sans notification de succès
   const handleAddNote = async () => {
-    if (!newNote.trim()) return;
-
+    if (!newNote.trim() || isAddingNote) return;
+    
+    setIsAddingNote(true);
     try {
-      const response = await apiRequest.post(`/calendar/${event._id}/tasks`, {
-        text: newNote.trim()
-      });
-
-      setEvent(prev => ({
-        ...prev,
-        tasks: response.data.tasks
-      }));
-
-      setNewNote('');
-      notify({
-        type: "success",
-        title: "Note ajoutée",
-        message: "La note a été ajoutée avec succès",
-        duration: 3000
-      });
+      const result = await addNote(event._id, newNote.trim());
+      if (result.success) {
+        setNewNote('');
+      } else {
+        notify({
+          type: "error",
+          title: "Erreur",
+          message: "Impossible d'ajouter la note",
+          duration: 5000
+        });
+      }
     } catch (error) {
       notify({
         type: "error",
         title: "Erreur",
-        message: "Impossible d'ajouter la note",
+        message: "Une erreur est survenue",
         duration: 5000
       });
+    } finally {
+      setIsAddingNote(false);
     }
   };
 
-  const handleToggleNote = async (noteIndex, currentStatus) => {
-    try {
-      const response = await apiRequest.put(`/calendar/${event._id}/tasks/${noteIndex}`, {
-        done: !currentStatus
-      });
+  // Gérer la touche Entrée pour ajouter une note
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Empêcher le saut de ligne
+      handleAddNote();
+    }
+  };
 
-      setEvent(prev => ({
-        ...prev,
-        tasks: response.data.tasks
-      }));
+  // Toggle note sans notification
+  const handleToggleNote = async (noteIndex, currentStatus) => {
+    if (togglingNoteIndex !== null) return;
+    
+    setTogglingNoteIndex(noteIndex);
+    try {
+      await toggleNote(event._id, noteIndex, !currentStatus);
     } catch (error) {
       notify({
         type: "error",
@@ -94,24 +106,19 @@ function EventDetails({ event: initialEvent, onClose }) {
         message: "Impossible de modifier la note",
         duration: 5000
       });
+    } finally {
+      setTogglingNoteIndex(null);
     }
   };
 
+  // Supprimer note sans notification de succès
   const handleDeleteNote = async (noteIndex) => {
+    if (deletingNoteIndex !== null) return;
+    
+    setDeletingNoteIndex(noteIndex);
     try {
-      const response = await apiRequest.delete(`/calendar/${event._id}/tasks/${noteIndex}`);
-
-      setEvent(prev => ({
-        ...prev,
-        tasks: response.data.tasks
-      }));
-
-      notify({
-        type: "success",
-        title: "Note supprimée",
-        message: "La note a été supprimée",
-        duration: 3000
-      });
+      await deleteNote(event._id, noteIndex);
+      // Pas de notification de succès
     } catch (error) {
       notify({
         type: "error",
@@ -119,6 +126,8 @@ function EventDetails({ event: initialEvent, onClose }) {
         message: "Impossible de supprimer la note",
         duration: 5000
       });
+    } finally {
+      setDeletingNoteIndex(null);
     }
   };
 
@@ -142,6 +151,9 @@ function EventDetails({ event: initialEvent, onClose }) {
       });
     }
   };
+
+  // Récupérer les tâches de l'événement (comme dans note.jsx)
+  const eventTasks = event.tasks || [];
 
   return (
     <div className="event-details-overlay" onClick={onClose}>
@@ -203,20 +215,25 @@ function EventDetails({ event: initialEvent, onClose }) {
           </h3>
           
           <div className="event-notes-list">
-            {(event.tasks && event.tasks.length > 0) ? (
-              event.tasks.map((task, index) => (
-                <div className="event-note-item" key={index}>
+            {(eventTasks.length > 0) ? (
+              eventTasks.map((task, index) => (
+                <div className="event-note-item" key={task.id || `${event._id}-${index}`}>
                   <input 
                     type="checkbox" 
                     checked={task.done} 
                     onChange={() => handleToggleNote(index, task.done)}
+                    disabled={togglingNoteIndex === index}
                   />
                   <p>{task.text}</p>
                   <button 
                     className="event-note-delete" 
                     onClick={() => handleDeleteNote(index)}
+                    disabled={deletingNoteIndex === index}
                   >
-                    <Trash2 size={16} />
+                    {deletingNoteIndex === index ? 
+                      <Loader size={16} className="animate-spin" /> : 
+                      <Trash2 size={16} />
+                    }
                   </button>
                 </div>
               ))
@@ -232,10 +249,18 @@ function EventDetails({ event: initialEvent, onClose }) {
               onChange={(e) => setNewNote(e.target.value)}
               placeholder="Ajouter une note..."
               className="event-note-input"
-              onKeyPress={(e) => e.key === 'Enter' && handleAddNote()}
+              onKeyDown={handleKeyDown}
+              disabled={isAddingNote}
             />
-            <button className="event-note-add-btn" onClick={handleAddNote}>
-              <Plus size={18} />
+            <button 
+              className="event-note-add-btn" 
+              onClick={handleAddNote}
+              disabled={isAddingNote}
+            >
+              {isAddingNote ? 
+                <Loader size={18} className="animate-spin" /> : 
+                <Plus size={18} />
+              }
             </button>
           </div>
         </div>

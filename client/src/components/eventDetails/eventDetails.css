@@ -243,3 +243,28 @@
     justify-content: center;
     border: 1px solid #2c2c2c;
 }
+
+/* Animation pour les loaders */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.event-note-delete:disabled,
+.event-note-add-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.event-note-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
