@@ -3,7 +3,7 @@
     "short_name": "BURN",
     "start_url": "/my",
     "display": "standalone",
-    "background_color": "#1c1c1c",
+    "background_color": "#262c31",
     "theme_color": "#f90",
     "description": "Ton client web de l'URN moderne",
     "icons": [
