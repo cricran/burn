@@ -25,7 +25,7 @@ const calendarSchema = new Schema({
     lastSynced: Date,
     show : {
         type: Boolean,
-        default: false
+        default: true
     }
 })
 
