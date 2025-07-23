@@ -33,7 +33,8 @@
     font-size: 0.85rem;
 }
 
-.mode-button:hover:not(:disabled) {
+/* Hover uniquement pour les boutons NON actifs */
+.mode-button:hover:not(:disabled):not(.active) {
     background: #43434330;
     color: white;
 }
@@ -47,6 +48,7 @@
     background: #f90;
     color: #1c1c1c;
     font-weight: 600;
+    /* Pas de hover sur le bouton actif */
 }
 
 .mode-button.left {
