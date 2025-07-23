@@ -1,9 +1,7 @@
 import './calendar.css'
 import WeekCalendar from '../../components/weekCalendar/weekCalendar'
 import Notes from '../../components/notes/notes'
-import AddCalendar from '../../components/addCalendar/addCalendar'
-import { useState } from 'react'
-import useNotificationStore from '../../utils/notificationStore';
+import ColorPicker from '../../components/colorPicker/colorPicker'
 
 const Calendar = () => {
     return (

@@ -1,0 +1,73 @@
+.color-mode-selector h3{
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #f90;
+}
+
+.color-mode-selector h3 svg {
+    color: #f90; /* Orange comme les autres icônes */
+}
+
+.mode-selector-container {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ffffff0f;
+    background: #4343431c;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+}
+
+.mode-button {
+    flex: 1;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    color: #d5d5d5;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+}
+
+.mode-button:hover:not(:disabled) {
+    background: #43434330;
+    color: white;
+}
+
+.mode-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.mode-button.active {
+    background: #f90;
+    color: #1c1c1c;
+    font-weight: 600;
+}
+
+.mode-button.left {
+    border-right: 1px solid #ffffff0f;
+}
+
+.mode-button.left.active {
+    border-right: 1px solid #f90;
+}
+
+.mode-description {
+    padding: 10px 12px;
+    background: #4343431c;
+    border-radius: 6px;
+    border: 1px solid #ffffff0f;
+}
+
+.mode-description p {
+    margin: 0;
+    color: #d5d5d5;
+    font-size: 0.8rem;
+    line-height: 1.3;
+    opacity: 0.8;
+}

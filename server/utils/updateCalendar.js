@@ -58,6 +58,11 @@ const updateCalendar = async (userId, icalSources, start) => {
 
   // Vérifier s’il faut synchroniser
   const log = await SyncLog.findOne({ userId })
+
+  if (log) {
+    console.log(`🕒 Dernière synchronisation pour ${userId} : ${log.lastFetch}`)
+  }
+
   if (log && now - log.lastFetch < 30 * 60 * 1000) {
     console.log(`🕒 Moins de 30 min depuis dernier fetch pour ${userId}, skip.`)
     return

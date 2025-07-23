@@ -1,4 +1,4 @@
-import { Info, AlertTriangle, XCircle, X } from 'lucide-react';
+import { Info, AlertTriangle, XCircle, X, CloudCheck } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import useNotificationStore from '../../utils/notificationStore';
 import './notification.css';
@@ -6,13 +6,15 @@ import './notification.css';
 const icons = {
     info: <Info color="#2b90ff" size={22} />,
     warning: <AlertTriangle color="#f90" size={22} />,
-    error: <XCircle color="#ff3b3b" size={22} />
+    error: <XCircle color="#ff3b3b" size={22} />,
+    success: <CloudCheck color="#28a745" size={22}/>
 };
 
 const colors = {
     info: "#2b90ff",
     warning: "#f90",
-    error: "#ff3b3b"
+    error: "#ff3b3b",
+    success: "#28a745"
 };
 
 function Notification({ id, type = "info", title, message = "", duration = 5000 }) {

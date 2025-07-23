@@ -1,65 +1,92 @@
-import { Calendar, Clock, MapPin, NotebookPen, X, Plus, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Calendar, Clock, MapPin, NotebookPen, X, Trash2, Plus } from 'lucide-react';
 import './eventDetails.css';
-import useCalendarStore from '../../utils/calendarStore';
+import apiRequest from '../../utils/apiRequest';
 import useNotificationStore from '../../utils/notificationStore';
+import useColorSettingsStore from '../../utils/colorSettingsStore';
+import { getEventColor, cleanCourseTitle } from '../../utils/colorUtils';
+import ColorPicker from '../colorPicker/colorPicker';
 
 function EventDetails({ event: initialEvent, onClose }) {
+  const [event, setEvent] = useState(initialEvent);
   const [newNote, setNewNote] = useState('');
-  const { addNote, toggleNote, deleteNote, currentEvents } = useCalendarStore();
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  
   const notify = useNotificationStore(state => state.notify);
+  const { colorSettings, setCustomColor } = useColorSettingsStore();
   
-  // Utiliser l'événement du store pour avoir les dernières mises à jour
-  const event = currentEvents.find(e => e._id === initialEvent._id) || initialEvent;
+  // Obtenir la couleur de l'événement
+  const eventColor = getEventColor(event, colorSettings);
   
-  // Formater la date
-  const formatDate = (date) => {
-    return date.toLocaleDateString('fr-FR', { 
-      weekday: 'long', 
-      day: 'numeric', 
+  // Vérifier si on peut personnaliser la couleur (mode individual uniquement)
+  const canCustomizeColor = colorSettings.mode === 'individual';
+
+  useEffect(() => {
+    setEvent(initialEvent);
+  }, [initialEvent]);
+
+  const stopPropagation = (e) => {
+    e.stopPropagation();
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
       month: 'long',
-      year: 'numeric'
+      day: 'numeric'
     });
   };
 
-  // Formater l'heure
-  const formatTime = (date) => {
-    return date.toLocaleTimeString('fr-FR', { 
-      hour: '2-digit', 
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
       minute: '2-digit'
     });
   };
-  
-  // Gérer l'ajout d'une note
+
   const handleAddNote = async () => {
     if (!newNote.trim()) return;
-    
+
     try {
-      const result = await addNote(event._id, newNote.trim());
-      if (result.success) {
-        setNewNote('');
-      } else {
-        notify({
-          type: "error",
-          title: "Erreur",
-          message: "Impossible d'ajouter la note",
-          duration: 5000
-        });
-      }
+      const response = await apiRequest.post(`/calendar/${event._id}/tasks`, {
+        text: newNote.trim()
+      });
+
+      setEvent(prev => ({
+        ...prev,
+        tasks: response.data.tasks
+      }));
+
+      setNewNote('');
+      notify({
+        type: "success",
+        title: "Note ajoutée",
+        message: "La note a été ajoutée avec succès",
+        duration: 3000
+      });
     } catch (error) {
       notify({
         type: "error",
         title: "Erreur",
-        message: "Une erreur est survenue",
+        message: "Impossible d'ajouter la note",
         duration: 5000
       });
     }
   };
 
-  // Gérer le toggle d'une note
-  const handleToggleNote = async (index, currentStatus) => {
+  const handleToggleNote = async (noteIndex, currentStatus) => {
     try {
-      await toggleNote(event._id, index, !currentStatus);
+      const response = await apiRequest.put(`/calendar/${event._id}/tasks/${noteIndex}`, {
+        done: !currentStatus
+      });
+
+      setEvent(prev => ({
+        ...prev,
+        tasks: response.data.tasks
+      }));
     } catch (error) {
       notify({
         type: "error",
@@ -70,10 +97,21 @@ function EventDetails({ event: initialEvent, onClose }) {
     }
   };
 
-  // Gérer la suppression d'une note
-  const handleDeleteNote = async (index) => {
+  const handleDeleteNote = async (noteIndex) => {
     try {
-      await deleteNote(event._id, index);
+      const response = await apiRequest.delete(`/calendar/${event._id}/tasks/${noteIndex}`);
+
+      setEvent(prev => ({
+        ...prev,
+        tasks: response.data.tasks
+      }));
+
+      notify({
+        type: "success",
+        title: "Note supprimée",
+        message: "La note a été supprimée",
+        duration: 3000
+      });
     } catch (error) {
       notify({
         type: "error",
@@ -84,31 +122,52 @@ function EventDetails({ event: initialEvent, onClose }) {
     }
   };
 
-  // Empêcher la propagation du clic
-  const stopPropagation = (e) => {
-    e.stopPropagation();
+  // Gérer le changement de couleur personnalisée
+  const handleColorChange = async (newColor) => {
+    const cleanTitle = cleanCourseTitle(event.title);
+    try {
+      await setCustomColor(cleanTitle, newColor);
+      notify({
+        type: "success",
+        title: "Couleur mise à jour",
+        message: "La couleur du cours a été modifiée",
+        duration: 3000
+      });
+    } catch (error) {
+      notify({
+        type: "error",
+        title: "Erreur",
+        message: "Impossible de modifier la couleur",
+        duration: 5000
+      });
+    }
   };
-  
-  // Fermer sur la touche Echap
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
 
   return (
     <div className="event-details-overlay" onClick={onClose}>
+      {showColorPicker && (
+        <ColorPicker
+          currentColor={eventColor}
+          onColorChange={handleColorChange}
+          onClose={() => setShowColorPicker(false)}
+          eventTitle={cleanCourseTitle(event.title)}
+        />
+      )}
+      
       <div className="event-details-content" onClick={stopPropagation}>
         <button className="event-details-close" onClick={onClose}>
           <X size={20} />
         </button>
         
-        <h2 className="event-details-title">{event.title}</h2>
+        <h2 className="event-details-title">
+          <span 
+            className={`event-details-color ${canCustomizeColor ? 'clickable' : ''}`}
+            style={{ backgroundColor: eventColor }}
+            onClick={canCustomizeColor ? () => setShowColorPicker(true) : undefined}
+            title={canCustomizeColor ? "Cliquer pour changer la couleur" : ""}
+          ></span>
+          {event.title}
+        </h2>
         
         <div className="event-details-info">
           <div className="event-info-item">
