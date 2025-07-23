@@ -1,13 +1,51 @@
 {
-    "name": "BURN App",
+    "name": "BURN",
     "short_name": "BURN",
     "start_url": "/my",
     "display": "standalone",
-    "theme_color": "#252b31",
-    "background_color": "#252b31",
-    "scope": "/",
-    "permissions": [
-        "cookies",
-        "webRequest"
+    "background_color": "#1c1c1c",
+    "theme_color": "#f90",
+    "description": "Ton client web de l'URN moderne",
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshot-wide.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshot-mobile.png",
+            "sizes": "375x667",
+            "type": "image/png",
+            "form_factor": "narrow"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Accueil",
+            "short_name": "Accueil",
+            "description": "Aller à l'accueil",
+            "url": "/my",
+            "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Calendrier",
+            "short_name": "Calendrier",
+            "description": "Voir le calendrier",
+            "url": "/calendar",
+            "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+        }
     ]
 }
