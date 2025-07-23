@@ -38,6 +38,7 @@ export const loginUser = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'Strict',
+            maxAge: 2147483647
         });
 
         const { password: _pw, ...userData } = newUser.toObject();
