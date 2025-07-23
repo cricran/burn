@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 const calendarSchema = new Schema({
     uid: String,
     title: String,
+    description: String,
+    location: String,
     start: Date,
     end: Date,
     userId: { 
