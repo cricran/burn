@@ -45,16 +45,11 @@ button {
   }
 }
 
-@media (max-width: 768px) {
-  * {
-    outline: 1px solid red !important;
-  }
-  
+@media screen and (max-width: 620px) {
   .content {
-    background: yellow !important;
+    height: calc(100vh - 75px); /* Hauteur totale moins la navbar mobile */
+    overflow-y: auto;
+    padding-bottom: 0; /* Enlever les paddings qui font déborder */
   }
-  
-  .calendar {
-    background: blue !important;
-  }
+
 }
