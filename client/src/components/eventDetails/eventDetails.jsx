@@ -155,8 +155,6 @@ function EventDetails({ event: initialEvent, onClose }) {
   const eventTasks = event.tasks || [];
   const isCancelled = isEventCancelled(event); 
 
-  console.log(event);
-
   return (
     <div className="event-details-overlay" onClick={onClose}>
       {showColorPicker && (
