@@ -46,10 +46,16 @@ button {
 }
 
 @media screen and (max-width: 620px) {
-  .content {
-    height: calc(100vh - 75px); /* Hauteur totale moins la navbar mobile */
-    overflow-y: auto;
-    padding-bottom: 0; /* Enlever les paddings qui font déborder */
+  body {
+    overflow: hidden; /* Empêcher le scroll du body */
   }
-
+  
+  .content {
+    height: calc(100vh - 75px); /* Hauteur exacte moins la navbar */
+    overflow-y: auto; /* Scroll seulement si nécessaire */
+    position: fixed; /* Fixer le contenu */
+    top: 0;
+    left: 0;
+    right: 0;
+  }
 }
