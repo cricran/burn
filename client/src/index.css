@@ -46,18 +46,15 @@ button {
 }
 
 @media (max-width: 768px) {
-  body {
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  #root {
-    height: 100vh;
-    overflow: hidden;
+  * {
+    outline: 1px solid red !important;
   }
   
   .content {
-    height: 100vh;
-    overflow: hidden;
+    background: yellow !important;
+  }
+  
+  .calendar {
+    background: blue !important;
   }
 }
