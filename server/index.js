@@ -4,8 +4,6 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-
-
 import connectDB from './utils/connectDB.js';
 import userRouter from './routes/user.route.js';
 import calendarRouter from './routes/calendar.route.js';
