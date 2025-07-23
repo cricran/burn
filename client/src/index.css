@@ -45,3 +45,19 @@ button {
   }
 }
 
+@media (max-width: 768px) {
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  #root {
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .content {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
