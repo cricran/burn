@@ -14,7 +14,7 @@ export default defineConfig({
         start_url: '/my',
         display: 'standalone',
         background_color: '#262c31',
-        theme_color: '#f90',
+        theme_color: '#008cff00',
         description: "Ton client web de l'URN moderne",
         icons: [
           {
@@ -61,29 +61,6 @@ export default defineConfig({
       },
     }),
   ],
-  server: {
-    proxy: {
-      '/moodle': {
-        target: 'https://universitice.univ-rouen.fr',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/moodle/, ''),
-        cookieDomainRewrite: 'localhost',
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,UPDATE,OPTIONS',
-          'Access-Control-Allow-Headers': 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept',
-          'Access-Control-Allow-Credentials': 'true',
-        },
-      },
-      '/login': {
-        target: 'https://cas.univ-rouen.fr',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/login/, '/login'),
-      },
-    },
-  },
   publicDir: 'public',
   build: {
     outDir: 'dist',
