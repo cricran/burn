@@ -268,3 +268,15 @@
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+.event-cancelled-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FF000020; 
+  color: #FF0000; 
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}

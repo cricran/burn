@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, NotebookPen, X, Trash2, Plus, Loader } from 'lucide-react';
+import { Calendar, Clock, MapPin, NotebookPen, X, Trash2, Plus, Loader, AlertTriangle } from 'lucide-react';
 import './eventDetails.css';
 import useCalendarStore from '../../utils/calendarStore';
 import useNotificationStore from '../../utils/notificationStore';
 import useColorSettingsStore from '../../utils/colorSettingsStore';
-import { getEventColor, cleanCourseTitle } from '../../utils/colorUtils';
+import { getEventColor, cleanCourseTitle, isEventCancelled } from '../../utils/colorUtils';
 import ColorPicker from '../colorPicker/colorPicker';
 
 function EventDetails({ event: initialEvent, onClose }) {
@@ -152,8 +152,10 @@ function EventDetails({ event: initialEvent, onClose }) {
     }
   };
 
-  // Récupérer les tâches de l'événement (comme dans note.jsx)
   const eventTasks = event.tasks || [];
+  const isCancelled = isEventCancelled(event); 
+
+  console.log(event);
 
   return (
     <div className="event-details-overlay" onClick={onClose}>
@@ -180,7 +182,12 @@ function EventDetails({ event: initialEvent, onClose }) {
           ></span>
           {event.title}
         </h2>
-        
+         {isCancelled && (
+          <div className="event-cancelled-warning">
+            <AlertTriangle size={18} color="#FF0000" />
+            <span>Cet événement est annulé.</span>
+          </div>
+        )}
         <div className="event-details-info">
           <div className="event-info-item">
             <Calendar size={18} />
