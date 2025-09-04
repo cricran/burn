@@ -7,6 +7,12 @@ import fetch from 'node-fetch';
 import moodleToken from '../utils/connectMoodle.js';
 import testMoodleToken from '../utils/testMoodleToken.js';
 
+// Helper to sanitize Moodle token (remove stray leading/trailing colons and trim)
+const sanitizeMoodleToken = (t) => {
+    if (typeof t !== 'string') return '';
+    return t.trim().replace(/^:+/, '').replace(/:+$/, '');
+}
+
 export const loginUser = async (req, res) => {
     let { username, password } = req.body;
 
@@ -37,7 +43,7 @@ export const loginUser = async (req, res) => {
         res.cookie('jwt', JStoken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
             maxAge: 365 * 24 * 60 * 60 * 1000
         });
 
@@ -45,8 +51,14 @@ export const loginUser = async (req, res) => {
 
         return res.status(201).json(userData);
     } else {
-        const token = user.moodleToken;
-        if (testMoodleToken(token)) {
+        let token = sanitizeMoodleToken(user.moodleToken);
+        console.log("Existing user found. Testing Moodle token:", token);
+        if (await testMoodleToken(token)) {
+            console.log("Moodle token is valid for user:", username);
+            // If sanitized token differs from stored, persist the clean value
+            if (token !== user.moodleToken) {
+                try { user.moodleToken = token; await user.save(); } catch (_) { /* ignore */ }
+            }
             // If user exists, check password
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (isPasswordValid) {
@@ -58,7 +70,7 @@ export const loginUser = async (req, res) => {
                 res.cookie('jwt', JStoken, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'Strict',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
                 });
 
                 return res.status(200).json(userData);
@@ -73,9 +85,17 @@ export const loginUser = async (req, res) => {
                 return res.status(401).json({ error: 'Moodle connection failed.', message: 'L\'identifiant ou le mot de passe est incorrect.' });
             }
             // Update user with new token and password
-            user.moodleToken = newToken;
+            user.moodleToken = sanitizeMoodleToken(newToken.token);
             user.password = await bcrypt.hash(password, 10); // Update password hash
             await user.save();
+
+            // Issue JWT cookie
+            const JStoken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+            res.cookie('jwt', JStoken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
+            });
 
             const { password: _pw, ...userData } = user.toObject();
             return res.status(200).json(userData);
@@ -102,6 +122,37 @@ export const getUser = async (req, res) => {
     const { password: _pw, ...userData } = user.toObject();
 
     return res.status(200).json(userData);
+}
+
+// Test Moodle connectivity for the authenticated user by validating the stored token
+export const testMoodleConnection = async (req, res) => {
+    console.log("Testing Moodle connection for user:", req.userId);
+
+    try {
+        const userId = req.userId;
+        if (!userId) return res.status(401).json({ ok: false, error: 'Unauthorized' });
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ ok: false, error: 'User not found.' });
+
+        let token = sanitizeMoodleToken(user.moodleToken);
+        console.log("Using Moodle token:", token);
+
+        const ok = await testMoodleToken(token);
+        if (ok) {
+            console.log("Moodle connection successful for user:", user.username);
+            // If sanitized token differs from stored, persist the clean value
+            if (token !== user.moodleToken) {
+                try { user.moodleToken = token; await user.save(); } catch (_) { /* ignore */ }
+            }
+            return res.status(200).json({ ok: true, message: 'Moodle token is valid and reachable.' });
+        } else {
+            console.log("Moodle connection failed for user:", user.username);
+            return res.status(200).json({ ok: false, message: 'Failed to reach Moodle or token invalid.' });
+        }
+    } catch (error) {
+        return res.status(500).json({ ok: false, error: 'Internal error while testing Moodle connectivity.', details: error?.message });
+    }
 }
 
 export const addCalendar = async (req, res) => {

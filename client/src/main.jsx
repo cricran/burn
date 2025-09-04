@@ -9,6 +9,7 @@ import LandingPage from './routes/landingPage/landingPage'
 import Home from './routes/home/home'
 import MainLayout from './routes/layout/mainLayout'
 import Calendar from './routes/calendar/calendar'
+import UniversiTice from './routes/universitice/universitice'
 
 const queryClient = new QueryClient();
 
@@ -47,7 +48,7 @@ root.render(
 
           <Route element={<MainLayout />}>
             <Route path='/my' element={<Home />} />
-            <Route path='/universiTice' element={<Auth />} />
+            <Route path='/universitice' element={<UniversiTice />} />
             <Route path='/edt' element={<Calendar />} />
             <Route path='/profile' element={<LandingPage />} />
           </Route>

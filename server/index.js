@@ -19,8 +19,22 @@ app.use(cookieParser());
 
 const PORT = process.env.PORT || 3000;
 
+const defaultOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:80',
+    'http://127.0.0.1:80'
+];
+const configuredOrigin = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [];
+const allowedOrigins = [...new Set([...configuredOrigin, ...defaultOrigins])];
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:80',
+    origin: (origin, cb) => {
+        // Allow non-browser clients (no origin)
+        if (!origin) return cb(null, true);
+        if (allowedOrigins.includes(origin)) return cb(null, true);
+        return cb(new Error(`Origin ${origin} not allowed by CORS`));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Accept', 'X-Requested-With']
