@@ -1,8 +1,8 @@
 .groupNotes {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     border: solid 1px var(--border-color);
     border-radius: 12px;
-    padding: 20px;
+    padding: 12px; /* plus compact */
     box-shadow: 0 2px 10px var(--shadow-color);
     display: flex;
     flex-direction: column;
@@ -13,19 +13,22 @@
 }
 
 .notes .groupNotes h1 {
-    font-size: 18px;
+    font-size: 16px; /* plus compact */
     font-weight: 600;
-    margin-bottom: 0px;
+    margin: 0;
     color: var(--text-primary);
 }
 
 .groupNotes .groupNotes-content {
-    max-height: 1000px;
-    overflow: hidden;
+    max-height: 320px; /* zone scrollable compacte */
+    overflow: auto; /* scroll interne */
     display: flex;
     flex-direction: column;
     gap: 8px;
+    transition: max-height 0.3s ease;
 }
+
+.groupNotes.closed .groupNotes-content { max-height: 0; overflow: hidden; }
 
 .groupNotes .groupNotes-header {
     display: flex;
@@ -33,6 +36,23 @@
     gap: 10px;
     justify-content: space-between;
     flex-wrap: nowrap;
+}
+
+.groupNotes .toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.groupNotes .toggle-btn:hover {
+    background: var(--bg-primary);
 }
 
 /* Animations d'entrée */

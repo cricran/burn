@@ -2,12 +2,15 @@ import { Info, Link, Plus, X } from 'lucide-react';
 import './addCalendar.css'
 import apiRequest from '../../utils/apiRequest';
 import PopUp from '../PopUp/PopUp';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import useNotificationStore from '../../utils/notificationStore';
 
 
 function AddCalendar({ onClose }) {
     const [showPopUp, setShowPopUp] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
     const notify = useNotificationStore.getState().notify;
     
     // Empêcher la propagation du clic
@@ -45,7 +48,19 @@ function AddCalendar({ onClose }) {
         }
     }
 
-    return (
+    // ouverture animée (useEffect pour éviter l'exécution à chaque rendu)
+    useEffect(() => {
+        const t = setTimeout(() => setIsOpen(true), 0);
+        return () => clearTimeout(t);
+    }, []);
+
+    const requestClose = () => {
+        if (isClosing) return;
+        setIsClosing(true);
+        setTimeout(() => onClose && onClose(), 220);
+    };
+
+    return createPortal(
         <div>
             {showPopUp && (
                 <PopUp
@@ -67,9 +82,9 @@ function AddCalendar({ onClose }) {
                     onClose={() => setShowPopUp(false)}
                 />
             )}
-            <div className='addCalendar' onClick={onClose}>
+            <div className={`addCalendar ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestClose}>
                 <div className='addCalendar-content' onClick={stopPropagation}>
-                    <button className="addCalendar-close" onClick={onClose}>
+                    <button className="addCalendar-close" onClick={requestClose}>
                         <X size={20} />
                     </button>
                     <h2>Ajouter un Emploi du Temps</h2>
@@ -93,7 +108,8 @@ function AddCalendar({ onClose }) {
                     </span>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }
 

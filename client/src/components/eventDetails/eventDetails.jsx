@@ -8,7 +8,7 @@ import useHiddenEventsStore from '../../utils/hiddenEventsStore';
 import { getEventColor, cleanCourseTitle, isEventCancelled } from '../../utils/colorUtils';
 import ColorPicker from '../colorPicker/colorPicker';
 
-function EventDetails({ event: initialEvent, onClose, displayMode = 'modal' }) {
+function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode = 'modal' }) {
   const [event, setEvent] = useState(initialEvent);
   const [newNote, setNewNote] = useState('');
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -40,6 +40,16 @@ function EventDetails({ event: initialEvent, onClose, displayMode = 'modal' }) {
     setEvent(initialEvent);
   }, [initialEvent]);
 
+  // Effet pour forcer la mise à jour quand les tâches changent
+  useEffect(() => {
+    if (initialEvent && initialEvent.tasks) {
+      setEvent(prevEvent => ({
+        ...prevEvent,
+        tasks: initialEvent.tasks
+      }));
+    }
+  }, [initialEvent?.tasks]);
+
   const stopPropagation = (e) => {
     e.stopPropagation();
   };
@@ -68,10 +78,23 @@ function EventDetails({ event: initialEvent, onClose, displayMode = 'modal' }) {
     
     setIsAddingNote(true);
     try {
+      // Mise à jour optimiste immédiate
+      const optimisticTask = { text: newNote.trim(), done: false, _optimistic: true };
+      const prevTasks = event.tasks || [];
+      setEvent(prev => ({ ...prev, tasks: [...prevTasks, optimisticTask] }));
+
       const result = await addNote(event._id, newNote.trim());
       if (result.success) {
+        // Remplacer par les tâches renvoyées par le serveur
+        if (result.data?.tasks) setEvent(prev => ({ ...prev, tasks: result.data.tasks }));
         setNewNote('');
+        // Notifier le parent que l'événement a été mis à jour
+        if (onEventUpdate) {
+          onEventUpdate();
+        }
       } else {
+        // Rollback
+        setEvent(prev => ({ ...prev, tasks: prevTasks }));
         notify({
           type: "error",
           title: "Erreur",
@@ -80,6 +103,8 @@ function EventDetails({ event: initialEvent, onClose, displayMode = 'modal' }) {
         });
       }
     } catch (error) {
+      // Rollback
+      setEvent(prev => ({ ...prev, tasks: (prev.tasks || []).filter(t => !t._optimistic) }));
       notify({
         type: "error",
         title: "Erreur",
@@ -105,8 +130,27 @@ function EventDetails({ event: initialEvent, onClose, displayMode = 'modal' }) {
     
     setTogglingNoteIndex(noteIndex);
     try {
-      await toggleNote(event._id, noteIndex, !currentStatus);
+      // Optimiste: inverser l'état localement
+      const prevTasks = event.tasks || [];
+      setEvent(prev => ({
+        ...prev,
+        tasks: prevTasks.map((t, i) => i === noteIndex ? { ...t, done: !currentStatus } : t)
+      }));
+
+      const result = await toggleNote(event._id, noteIndex, !currentStatus);
+      if (result?.success && result.data?.tasks) {
+        setEvent(prev => ({ ...prev, tasks: result.data.tasks }));
+      } else {
+        // Rollback
+        setEvent(prev => ({ ...prev, tasks: prevTasks }));
+      }
+      // Notifier le parent que l'événement a été mis à jour
+      if (onEventUpdate) {
+        onEventUpdate();
+      }
     } catch (error) {
+      // Rollback
+      setEvent(prev => ({ ...prev, tasks: (prev.tasks || []).map((t, i) => i === noteIndex ? { ...t, done: currentStatus } : t) }));
       notify({
         type: "error",
         title: "Erreur",
@@ -124,9 +168,28 @@ function EventDetails({ event: initialEvent, onClose, displayMode = 'modal' }) {
     
     setDeletingNoteIndex(noteIndex);
     try {
-      await deleteNote(event._id, noteIndex);
+      // Optimiste: retirer la note localement
+      const prevTasks = event.tasks || [];
+      setEvent(prev => ({
+        ...prev,
+        tasks: prevTasks.filter((_, i) => i !== noteIndex)
+      }));
+
+      const result = await deleteNote(event._id, noteIndex);
+      if (result?.success && result.data?.tasks) {
+        setEvent(prev => ({ ...prev, tasks: result.data.tasks }));
+      } else {
+        // Rollback
+        setEvent(prev => ({ ...prev, tasks: prevTasks }));
+      }
+      // Notifier le parent que l'événement a été mis à jour
+      if (onEventUpdate) {
+        onEventUpdate();
+      }
       // Pas de notification de succès
     } catch (error) {
+      // Rollback
+      setEvent(prev => ({ ...prev, tasks: (prev.tasks || []) }));
       notify({
         type: "error",
         title: "Erreur",
@@ -180,6 +243,10 @@ function EventDetails({ event: initialEvent, onClose, displayMode = 'modal' }) {
     const cleanTitle = cleanCourseTitle(event.title);
     try {
       await setCustomColor(cleanTitle, newColor);
+      // Notifier le parent que l'événement a été mis à jour
+      if (onEventUpdate) {
+        onEventUpdate();
+      }
       notify({
         type: "success",
         title: "Couleur mise à jour",

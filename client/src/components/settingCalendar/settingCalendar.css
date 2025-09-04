@@ -5,12 +5,24 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.0);
     backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    opacity: 0;
+    transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.settingCalendar.open {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.settingCalendar.closing {
+    opacity: 0;
+    background: rgba(0,0,0,0.0);
 }
 
 .settingCalendar-content {
@@ -25,6 +37,19 @@
     box-shadow: 0 8px 24px var(--shadow-color);
     color: var(--text-primary);
     text-align: left;
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.settingCalendar.open .settingCalendar-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.settingCalendar.closing .settingCalendar-content {
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
 }
 
 .settingCalendar-close {
@@ -159,7 +184,8 @@
     padding-bottom: 0;
 }
 
-.settings-button {
+.settingCalendar .setting-button {
+    position: unset !important;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -172,14 +198,15 @@
     cursor: pointer;
     transition: all 0.2s;
     justify-content: flex-start;
+    width: 100%;
 }
 
-.settings-button:hover {
+.settingCalendar .setting-button:hover {
     background: var(--bg-hover);
     border-color: var(--nav-accent);
 }
 
-.settings-button svg {
+.settingCalendar .setting-button svg {
     color: var(--nav-accent);
     flex-shrink: 0;
 }

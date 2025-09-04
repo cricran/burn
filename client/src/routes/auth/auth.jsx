@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, Navigate, useLocation } from "react-router-dom"
-import { CircleX, Info, Settings } from 'lucide-react';
+import { CircleX, Info } from 'lucide-react';
 import PopUp from '../../components/PopUp/PopUp';
 import apiRequest from '../../utils/apiRequest';
 import useAuthStore from '../../utils/authStore';
-import SettingsModal from '../../components/settingsModal';
 
 import './auth.css'
 
@@ -14,7 +13,7 @@ const Auth = () => {
     const [showPopUp, setShowPopUp] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [showSettings, setShowSettings] = useState(false);
+    
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -60,13 +59,7 @@ const Auth = () => {
         }
     }
 
-    const handleSettingsClick = () => {
-        setShowSettings(true);
-    };
-
-    const handleCloseSettings = () => {
-        setShowSettings(false);
-    };
+    
 
     return (
         <div>
@@ -94,14 +87,7 @@ const Auth = () => {
                 <img className='imgLogin' src={'/general/backloginblur.webp'} alt="" />
                 <div className='whiteBackground'></div>
                 
-                {/* Bouton paramètres */}
-                <button
-                    className='auth-settings-button'
-                    onClick={handleSettingsClick}
-                    title="Paramètres"
-                >
-                    <Settings size={20} />
-                </button>
+                {/* Bouton paramètres retiré (visible seulement sur la page d'accueil) */}
                 
                 <div className='loginPanel'>
                     <form onSubmit={handleSubmit}>
@@ -146,13 +132,7 @@ const Auth = () => {
                     </form>
                 </div>
             </div>
-
-            {showSettings && (
-                <SettingsModal
-                    isOpen={showSettings}
-                    onClose={handleCloseSettings}
-                />
-            )}
+            
         </div >
     )
 }

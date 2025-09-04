@@ -1,20 +1,10 @@
 import './landingPage.css'
-import { LogIn, SquareArrowOutUpRight, Settings } from 'lucide-react';
+import { LogIn, SquareArrowOutUpRight } from 'lucide-react';
 import { Link } from "react-router"
-import { useState } from 'react'
-import SettingsModal from '../../components/settingsModal'
 
 
 const LandingPage = () => {
-    const [showSettings, setShowSettings] = useState(false)
-
-    const handleSettingsClick = () => {
-        setShowSettings(true)
-    }
-
-    const handleCloseSettings = () => {
-        setShowSettings(false)
-    }
+    
 
     return (
         <>
@@ -23,14 +13,7 @@ const LandingPage = () => {
                 <div className='img'></div>
             </div>
             <div className='landingPage'>
-                {/* Bouton paramètres */}
-                <button
-                    className='landing-settings-button'
-                    onClick={handleSettingsClick}
-                    title="Paramètres"
-                >
-                    <Settings size={20} />
-                </button>
+                {/* Bouton paramètres retiré (visible seulement sur la page d'accueil) */}
                 
                 <h1>BURN</h1>
                 <div>
@@ -68,13 +51,7 @@ const LandingPage = () => {
                 </div>
             </div>
         </div>
-
-        {showSettings && (
-            <SettingsModal
-                isOpen={showSettings}
-                onClose={handleCloseSettings}
-            />
-        )}
+        
         </>
     )
 }

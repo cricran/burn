@@ -2,34 +2,43 @@ import './calendar.css'
 import WeekCalendar from '../../components/weekCalendar/weekCalendar'
 import Notes from '../../components/notes/notes'
 import ColorPicker from '../../components/colorPicker/colorPicker'
-import { Settings } from 'lucide-react'
 import { useState } from 'react'
-import SettingsModal from '../../components/settingsModal'
+import EventDetails from '../../components/eventDetails/eventDetails'
 import useAuthStore from '../../utils/authStore'
+import useCalendarStore from '../../utils/calendarStore'
 
 const Calendar = () => {
-    const [showSettings, setShowSettings] = useState(false)
+    const [selectedEvent, setSelectedEvent] = useState(null)
+    const [showEventDetails, setShowEventDetails] = useState(false)
+    const [updateKey, setUpdateKey] = useState(0)
     const { currentUser } = useAuthStore()
+    const { currentEvents, fetchEvents } = useCalendarStore()
 
-    const handleSettingsClick = () => {
-        setShowSettings(true)
+    const handleEventClick = (event) => {
+        setSelectedEvent(event)
+        setShowEventDetails(true)
     }
 
-    const handleCloseSettings = () => {
-        setShowSettings(false)
+    const handleCloseEventDetails = () => {
+        setShowEventDetails(false)
+        setSelectedEvent(null)
+    }
+
+    // Fonction pour mettre à jour l'événement sélectionné après modification
+    const handleEventUpdate = async () => {
+        if (selectedEvent) {
+            await fetchEvents();
+            // Mettre à jour l'événement sélectionné avec la version fraîche du store
+            const updatedEvents = useCalendarStore.getState().currentEvents || [];
+            const updated = updatedEvents.find(e => e._id === selectedEvent._id);
+            if (updated) setSelectedEvent(updated);
+            // Forcer un re-render pour les consommateurs non réactifs
+            setUpdateKey(prev => prev + 1);
+        }
     }
 
     return (
         <div className='content'>
-            {/* Bouton paramètres positionné en absolu */}
-            <button
-                className='settings-button'
-                onClick={handleSettingsClick}
-                title="Paramètres"
-            >
-                <Settings size={20} />
-            </button>
-
             <div className='calendar-dashboard'>
                 {/* Header avec titre */}
                 <div className='dashboard-header'>
@@ -40,15 +49,18 @@ const Calendar = () => {
                 </div>
 
                 <div className='calendar'>
-                    <WeekCalendar />
-                    <Notes />
+                    <WeekCalendar onEventClick={handleEventClick} />
+                    <Notes onEventClick={handleEventClick} />
                 </div>
             </div>
 
-            {showSettings && (
-                <SettingsModal
-                    isOpen={showSettings}
-                    onClose={handleCloseSettings}
+            {showEventDetails && selectedEvent && (
+                <EventDetails
+                    key={`event-${selectedEvent._id}-${updateKey}`}
+                    event={selectedEvent}
+                    onClose={handleCloseEventDetails}
+                    onEventUpdate={handleEventUpdate}
+                    displayMode="modal"
                 />
             )}
         </div>
