@@ -12,6 +12,19 @@ import Calendar from './routes/calendar/calendar'
 
 const queryClient = new QueryClient();
 
+// Load theme from localStorage or default to dark
+const savedTheme = localStorage.getItem('color-settings-storage');
+let initialTheme = 'dark';
+if (savedTheme) {
+    try {
+        const parsed = JSON.parse(savedTheme);
+        initialTheme = parsed.state?.colorSettings?.theme || 'dark';
+    } catch (e) {
+        console.warn('Failed to parse theme from localStorage');
+    }
+}
+document.documentElement.setAttribute('data-theme', initialTheme);
+
 const root = createRoot(document.getElementById('root'))
 root.render(
   <StrictMode>

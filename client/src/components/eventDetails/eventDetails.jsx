@@ -8,7 +8,7 @@ import useHiddenEventsStore from '../../utils/hiddenEventsStore';
 import { getEventColor, cleanCourseTitle, isEventCancelled } from '../../utils/colorUtils';
 import ColorPicker from '../colorPicker/colorPicker';
 
-function EventDetails({ event: initialEvent, onClose }) {
+function EventDetails({ event: initialEvent, onClose, displayMode = 'modal' }) {
   const [event, setEvent] = useState(initialEvent);
   const [newNote, setNewNote] = useState('');
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -198,6 +198,160 @@ function EventDetails({ event: initialEvent, onClose }) {
 
   const eventTasks = event.tasks || [];
   const isCancelled = isEventCancelled(event); 
+
+  if (displayMode === 'inline') {
+    return (
+      <div className="event-details-inline">
+        {showColorPicker && (
+          <ColorPicker
+            currentColor={eventColor}
+            onColorChange={handleColorChange}
+            onClose={() => setShowColorPicker(false)}
+            eventTitle={cleanCourseTitle(event.title)}
+          />
+        )}
+        
+        <div className="event-details-content-inline">
+          <div className="event-details-header-inline">
+            <h2 className="event-details-title">
+              <span 
+                className={`event-details-color ${canCustomizeColor ? 'clickable' : ''}`}
+                style={{ backgroundColor: eventColor }}
+                onClick={canCustomizeColor ? () => setShowColorPicker(true) : undefined}
+                title={canCustomizeColor ? "Cliquer pour changer la couleur" : ""}
+              ></span>
+              {event.title}
+            </h2>
+            <button className="event-details-close-inline" onClick={onClose}>
+              <X size={20} />
+            </button>
+          </div>
+          
+          {isCancelled && (
+            <div className="event-cancelled-warning">
+              <AlertTriangle size={18} color="#FF0000" />
+              <span>Cet événement est annulé.</span>
+            </div>
+          )}
+          
+          <div className="event-details-info">
+            <div className="event-info-item">
+              <Calendar size={18} />
+              <span>{formatDate(event.start)}</span>
+            </div>
+            
+            <div className="event-info-item">
+              <Clock size={18} />
+              <span>{formatTime(event.start)} - {formatTime(event.end)}</span>
+            </div>
+            
+            {event.location && (
+              <div className="event-info-item">
+                <MapPin size={18} />
+                <span>{event.location}</span>
+              </div>
+            )}
+          </div>
+          
+          {/* Boutons de masquage */}
+          <div className="event-details-actions">
+            <button 
+              className="event-action-btn hide-individual-btn"
+              onClick={handleHideIndividual}
+              disabled={isHidingIndividual}
+              title="Masquer uniquement cet événement"
+            >
+              {isHidingIndividual ? (
+                <Loader size={16} className="animate-spin" />
+              ) : (
+                <EyeOff size={16} />
+              )}
+              <span>Masquer uniquement ce cour</span>
+            </button>
+            
+            <button 
+              className="event-action-btn hide-by-name-btn"
+              onClick={handleHideByName}
+              disabled={isHidingByName}
+              title="Masquer tous les événements de ce cours"
+            >
+              {isHidingByName ? (
+                <Loader size={16} className="animate-spin" />
+              ) : (
+                <EyeOff size={16} />
+              )}
+              <span>Masquer tout les cours du même nom</span>
+            </button>
+          </div>
+          
+          <div className="event-details-description">
+            {event.description && (
+              <div className="event-description-text">
+                <p>{event.description}</p>
+              </div>
+            )}
+          </div>
+          
+          <div className="event-details-notes">
+            <h3>
+              <NotebookPen size={18} />
+              <span>Notes</span>
+            </h3>
+            
+            <div className="event-notes-list">
+              {(eventTasks.length > 0) ? (
+                eventTasks.map((task, index) => (
+                  <div className="event-note-item" key={task.id || `${event._id}-${index}`}>
+                    <input 
+                      type="checkbox" 
+                      checked={task.done} 
+                      onChange={() => handleToggleNote(index, task.done)}
+                      disabled={togglingNoteIndex === index}
+                    />
+                    <p>{task.text}</p>
+                    <button 
+                      className="event-note-delete" 
+                      onClick={() => handleDeleteNote(index)}
+                      disabled={deletingNoteIndex === index}
+                    >
+                      {deletingNoteIndex === index ? 
+                        <Loader size={16} className="animate-spin" /> : 
+                        <Trash2 size={16} />
+                      }
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="event-no-notes">Aucune note pour cet événement</p>
+              )}
+            </div>
+            
+            <div className="event-add-note">
+              <input
+                type="text"
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                placeholder="Ajouter une note..."
+                className="event-note-input"
+                onKeyDown={handleKeyDown}
+                disabled={isAddingNote}
+              />
+              <button 
+                className="event-note-add-btn" 
+                onClick={handleAddNote}
+                disabled={isAddingNote}
+              >
+                {isAddingNote ? 
+                  <Loader size={18} className="animate-spin" /> : 
+                  <Plus size={18} />
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="event-details-overlay" onClick={onClose}>

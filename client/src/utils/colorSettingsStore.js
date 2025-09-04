@@ -1,15 +1,19 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import apiRequest from './apiRequest';
 
-const useColorSettingsStore = create((set, get) => ({
-    // État initial
-    colorSettings: {
-        mode: 'type',
-        customColors: {},
-        showCancelledEvents: true
-    },
-    isLoading: false,
-    error: null,
+const useColorSettingsStore = create(
+    persist(
+        (set, get) => ({
+            // État initial
+            colorSettings: {
+                mode: 'type',
+                customColors: {},
+                showCancelledEvents: true,
+                theme: 'dark' // Add theme support
+            },
+            isLoading: false,
+            error: null,
 
     // Charger les paramètres depuis le backend
     loadColorSettings: async () => {
@@ -80,7 +84,24 @@ const useColorSettingsStore = create((set, get) => ({
     },
 
     // Clear error
-    clearError: () => set({ error: null })
-}));
+    clearError: () => set({ error: null }),
+
+    // Toggle theme
+    toggleTheme: (theme) => {
+        set((state) => ({
+            colorSettings: {
+                ...state.colorSettings,
+                theme
+            }
+        }));
+        // Apply theme to document
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+        }),
+        {
+            name: 'color-settings-storage' // unique name for localStorage
+        }
+    )
+);
 
 export default useColorSettingsStore;

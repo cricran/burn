@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, Navigate, useLocation } from "react-router-dom"
-import { CircleX, Info } from 'lucide-react';
+import { CircleX, Info, Settings } from 'lucide-react';
 import PopUp from '../../components/PopUp/PopUp';
 import apiRequest from '../../utils/apiRequest';
 import useAuthStore from '../../utils/authStore';
+import SettingsModal from '../../components/settingsModal';
 
 import './auth.css'
 
@@ -13,6 +14,7 @@ const Auth = () => {
     const [showPopUp, setShowPopUp] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [showSettings, setShowSettings] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -58,6 +60,14 @@ const Auth = () => {
         }
     }
 
+    const handleSettingsClick = () => {
+        setShowSettings(true);
+    };
+
+    const handleCloseSettings = () => {
+        setShowSettings(false);
+    };
+
     return (
         <div>
             {showPopUp && (
@@ -83,6 +93,16 @@ const Auth = () => {
             <div className='auth'>
                 <img className='imgLogin' src={'/general/backloginblur.webp'} alt="" />
                 <div className='whiteBackground'></div>
+                
+                {/* Bouton paramètres */}
+                <button
+                    className='auth-settings-button'
+                    onClick={handleSettingsClick}
+                    title="Paramètres"
+                >
+                    <Settings size={20} />
+                </button>
+                
                 <div className='loginPanel'>
                     <form onSubmit={handleSubmit}>
                         <Link to={'/'} className='close' viewTransition>
@@ -125,7 +145,14 @@ const Auth = () => {
                         <span onClick={() => setShowPopUp(true)} style={{ cursor: "pointer" }}><Info size={20}/> comment ça foncitonne ?</span>
                     </form>
                 </div>
-            </div >
+            </div>
+
+            {showSettings && (
+                <SettingsModal
+                    isOpen={showSettings}
+                    onClose={handleCloseSettings}
+                />
+            )}
         </div >
     )
 }
