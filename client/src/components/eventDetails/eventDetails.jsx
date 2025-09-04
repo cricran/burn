@@ -12,6 +12,9 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
   const [event, setEvent] = useState(initialEvent);
   const [newNote, setNewNote] = useState('');
   const [showColorPicker, setShowColorPicker] = useState(false);
+  // Animation modal open/close
+  const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   
   // États locaux pour suivre les opérations en cours (comme dans note.jsx)
   const [isAddingNote, setIsAddingNote] = useState(false);
@@ -40,6 +43,12 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
     setEvent(initialEvent);
   }, [initialEvent]);
 
+  // Lancer l'animation d'ouverture au montage
+  useEffect(() => {
+    const t = setTimeout(() => setIsOpen(true), 10);
+    return () => clearTimeout(t);
+  }, []);
+
   // Effet pour forcer la mise à jour quand les tâches changent
   useEffect(() => {
     if (initialEvent && initialEvent.tasks) {
@@ -52,6 +61,16 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
 
   const stopPropagation = (e) => {
     e.stopPropagation();
+  };
+
+  const requestClose = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    setIsOpen(false);
+    // Durée synchronisée avec le CSS (250ms)
+    setTimeout(() => {
+      onClose && onClose();
+    }, 250);
   };
 
   const formatDate = (dateString) => {
@@ -289,7 +308,7 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
               ></span>
               {event.title}
             </h2>
-            <button className="event-details-close-inline" onClick={onClose}>
+            <button className="event-details-close-inline" onClick={requestClose}>
               <X size={20} />
             </button>
           </div>
@@ -421,7 +440,7 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
   }
 
   return (
-    <div className="event-details-overlay" onClick={onClose}>
+    <div className={`event-details-overlay ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestClose}>
       {showColorPicker && (
         <ColorPicker
           currentColor={eventColor}
@@ -431,8 +450,8 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
         />
       )}
       
-      <div className="event-details-content" onClick={stopPropagation}>
-        <button className="event-details-close" onClick={onClose}>
+      <div className={`event-details-content ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={stopPropagation}>
+        <button className="event-details-close" onClick={requestClose}>
           <X size={20} />
         </button>
         

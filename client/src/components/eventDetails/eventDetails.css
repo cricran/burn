@@ -14,7 +14,12 @@
   box-sizing: border-box;
   transform: none !important;
   margin: 0 !important;
+  opacity: 0;
+  transition: opacity 250ms ease;
 }
+
+.event-details-overlay.open { opacity: 1; }
+.event-details-overlay.closing { opacity: 0; }
 
 .event-details-content {
   background: var(--bg-primary);
@@ -27,6 +32,19 @@
   position: relative;
   box-shadow: 0 8px 24px var(--shadow-color);
   color: var(--text-primary);
+  transform: translateY(10px) scale(0.98);
+  opacity: 0;
+  transition: transform 250ms ease, opacity 250ms ease;
+}
+
+.event-details-content.open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.event-details-content.closing {
+  transform: translateY(10px) scale(0.98);
+  opacity: 0;
 }
 
 .event-details-close {
