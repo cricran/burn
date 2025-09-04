@@ -11,6 +11,7 @@ import EventDetails from '../../components/eventDetails/eventDetails'
 import useCalendarStore from '../../utils/calendarStore'
 import useNotificationStore from '../../utils/notificationStore'
 import useColorSettingsStore from '../../utils/colorSettingsStore'
+import useHiddenEventsStore from '../../utils/hiddenEventsStore'
 import { getEventColor, isEventCancelled, getOptimalTextColor } from '../../utils/colorUtils'
 
 // Localisation en français
@@ -54,6 +55,9 @@ function WeekCalendar() {
   
   // Store pour les paramètres de couleur
   const { colorSettings, loadColorSettings } = useColorSettingsStore();
+  
+  // Store pour les événements masqués
+  const { loadHiddenEvents } = useHiddenEventsStore();
   
   // Filtrer les événements selon les paramètres
   const filteredEvents = useMemo(() => {
@@ -106,7 +110,8 @@ function WeekCalendar() {
     });
     
     loadColorSettings();
-  }, [currentDate, fetchEvents, notify, loadColorSettings]);
+    loadHiddenEvents();
+  }, [currentDate, fetchEvents, notify, loadColorSettings, loadHiddenEvents]);
 
   // Navigation entre les semaines
   const handleNavigate = useCallback((newDate) => {

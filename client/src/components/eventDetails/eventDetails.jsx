@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, NotebookPen, X, Trash2, Plus, Loader, AlertTriangle } from 'lucide-react';
+import { Calendar, Clock, MapPin, NotebookPen, X, Trash2, Plus, Loader, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import './eventDetails.css';
 import useCalendarStore from '../../utils/calendarStore';
 import useNotificationStore from '../../utils/notificationStore';
 import useColorSettingsStore from '../../utils/colorSettingsStore';
+import useHiddenEventsStore from '../../utils/hiddenEventsStore';
 import { getEventColor, cleanCourseTitle, isEventCancelled } from '../../utils/colorUtils';
 import ColorPicker from '../colorPicker/colorPicker';
 
@@ -17,8 +18,14 @@ function EventDetails({ event: initialEvent, onClose }) {
   const [togglingNoteIndex, setTogglingNoteIndex] = useState(null);
   const [deletingNoteIndex, setDeletingNoteIndex] = useState(null);
   
+  // États pour les opérations de masquage
+  const [isHidingIndividual, setIsHidingIndividual] = useState(false);
+  const [isHidingByName, setIsHidingByName] = useState(false);
+  
   const notify = useNotificationStore(state => state.notify);
   const { colorSettings, setCustomColor } = useColorSettingsStore();
+  const { hideIndividualEvent, hideEventsByName, hiddenEvents } = useHiddenEventsStore();
+  const { invalidateCache } = useCalendarStore();
   
   // Utiliser les fonctions du store comme dans note.jsx
   const { addNote, toggleNote, deleteNote } = useCalendarStore();
@@ -111,7 +118,7 @@ function EventDetails({ event: initialEvent, onClose }) {
     }
   };
 
-  // Supprimer note sans notification de succès
+    // Supprimer note sans notification de succès
   const handleDeleteNote = async (noteIndex) => {
     if (deletingNoteIndex !== null) return;
     
@@ -128,6 +135,43 @@ function EventDetails({ event: initialEvent, onClose }) {
       });
     } finally {
       setDeletingNoteIndex(null);
+    }
+  };
+
+  // Masquer cet événement individuellement
+  const handleHideIndividual = async () => {
+    if (isHidingIndividual) return;
+    
+    setIsHidingIndividual(true);
+    try {
+      const result = await hideIndividualEvent(event._id);
+      if (result.success) {
+        invalidateCache(); // Invalider le cache
+        onClose(); // Fermer le popup après masquage
+      }
+    } catch (error) {
+      console.error('Erreur lors du masquage de l\'événement:', error);
+    } finally {
+      setIsHidingIndividual(false);
+    }
+  };
+
+  // Masquer tous les événements de ce nom
+  const handleHideByName = async () => {
+    if (isHidingByName) return;
+    
+    setIsHidingByName(true);
+    try {
+      const cleanTitle = cleanCourseTitle(event.title);
+      const result = await hideEventsByName(cleanTitle);
+      if (result.success) {
+        invalidateCache(); // Invalider le cache
+        onClose(); // Fermer le popup après masquage
+      }
+    } catch (error) {
+      console.error('Erreur lors du masquage des événements:', error);
+    } finally {
+      setIsHidingByName(false);
     }
   };
 
@@ -203,6 +247,37 @@ function EventDetails({ event: initialEvent, onClose }) {
               <span>{event.location}</span>
             </div>
           )}
+        </div>
+        
+        {/* Boutons de masquage */}
+        <div className="event-details-actions">
+          <button 
+            className="event-action-btn hide-individual-btn"
+            onClick={handleHideIndividual}
+            disabled={isHidingIndividual}
+            title="Masquer uniquement cet événement"
+          >
+            {isHidingIndividual ? (
+              <Loader size={16} className="animate-spin" />
+            ) : (
+              <EyeOff size={16} />
+            )}
+            <span>Masquer uniquement ce cour</span>
+          </button>
+          
+          <button 
+            className="event-action-btn hide-by-name-btn"
+            onClick={handleHideByName}
+            disabled={isHidingByName}
+            title="Masquer tous les événements de ce cours"
+          >
+            {isHidingByName ? (
+              <Loader size={16} className="animate-spin" />
+            ) : (
+              <EyeOff size={16} />
+            )}
+            <span>Masquer tout les cours du même nom</span>
+          </button>
         </div>
         
         <div className="event-details-description">

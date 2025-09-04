@@ -158,3 +158,29 @@
     margin-bottom: 0;
     padding-bottom: 0;
 }
+
+.settings-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #4343434d;
+    border: 1px solid #ffffff1a;
+    color: #d5d5d5;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.settings-button:hover {
+    background: #4343437d;
+    border-color: #ffffff2a;
+}
+
+.settings-button svg {
+    color: #f90;
+    flex-shrink: 0;
+}

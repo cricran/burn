@@ -6,10 +6,12 @@ import useNotificationStore from '../../utils/notificationStore';
 import useColorSettingsStore from '../../utils/colorSettingsStore';
 import ColorModeSelector from '../colorModeSelector/colorModeSelector';
 import CancelledEventsToggle from '../cancelledEventsToggle/cancelledEventsToggle';
+import HiddenEventsManager from '../hiddenEventsManager/hiddenEventsManager';
 
 function SettingCalendar({ onClose }) {
     const [urls, setUrls] = useState([]);
     const notify = useNotificationStore.getState().notify;
+    const [showHiddenEventsManager, setShowHiddenEventsManager] = useState(false);
     
     const { 
         colorSettings, 
@@ -130,6 +132,17 @@ function SettingCalendar({ onClose }) {
                     />
                 </div>
 
+                {/* Section Événements masqués */}
+                <div className="settings-section">
+                    <button
+                        className="settings-button"
+                        onClick={() => setShowHiddenEventsManager(true)}
+                    >
+                        <Settings size={18} />
+                        <span>Gérer les événements masqués</span>
+                    </button>
+                </div>
+
                 {/* Section Calendriers existante */}
                 <h3>
                     <Settings size={18} />
@@ -155,6 +168,13 @@ function SettingCalendar({ onClose }) {
                     )}
                 </div>
             </div>
+
+            {/* Gestionnaire d'événements masqués */}
+            {showHiddenEventsManager && (
+                <HiddenEventsManager
+                    onClose={() => setShowHiddenEventsManager(false)}
+                />
+            )}
         </div>
     )
 }

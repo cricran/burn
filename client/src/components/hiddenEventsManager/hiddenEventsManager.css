@@ -1,0 +1,241 @@
+.hidden-events-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.hidden-events-content {
+  background: #1c1c1c;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 25px;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  color: #d5d5d5;
+}
+
+.hidden-events-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #d5d5d5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.hidden-events-close:hover {
+  background-color: #ffffff15;
+}
+
+.hidden-events-content h2 {
+  color: #f90;
+  font-size: 1.5rem;
+  margin-bottom: 25px;
+  padding-right: 30px;
+}
+
+.hidden-events-section {
+  margin-bottom: 30px;
+}
+
+.hidden-events-section h3 {
+  color: #f90;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hidden-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hidden-event-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #4343431c;
+  border: 1px solid #ffffff0f;
+  border-radius: 8px;
+  padding: 12px 15px;
+}
+
+.hidden-event-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.hidden-event-title {
+  font-weight: 500;
+  color: #d5d5d5;
+}
+
+.hidden-event-date {
+  font-size: 0.85rem;
+  color: #888;
+  font-style: italic;
+}
+
+.show-event-btn {
+  background: #4CAF50;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  min-width: 36px;
+  height: 36px;
+}
+
+.show-event-btn:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.show-event-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.empty-hidden {
+  color: #888;
+  text-align: center;
+  font-style: italic;
+  padding: 20px 0;
+  background: #4343431c;
+  border: 1px solid #ffffff0f;
+  border-radius: 8px;
+}
+
+.available-courses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.course-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #4343431c;
+  border: 1px solid #ffffff0f;
+  border-radius: 8px;
+  padding: 12px 15px;
+}
+
+.course-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.course-name {
+  font-weight: 500;
+  color: #d5d5d5;
+}
+
+.course-count {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.course-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.hide-course-btn {
+  background: #f44336;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  min-width: 32px;
+  height: 32px;
+}
+
+.hide-course-btn:hover:not(:disabled) {
+  background: #d32f2f;
+}
+
+.hide-course-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loading-courses {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px;
+  color: #888;
+}
+
+/* Animation pour les loaders */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Scrollbar styling */
+.available-courses-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.available-courses-list::-webkit-scrollbar-track {
+  background: #2c2c2c;
+  border-radius: 3px;
+}
+
+.available-courses-list::-webkit-scrollbar-thumb {
+  background: #f90;
+  border-radius: 3px;
+}
+
+.available-courses-list::-webkit-scrollbar-thumb:hover {
+  background: #ffb340;
+}

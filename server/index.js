@@ -9,6 +9,7 @@ import userRouter from './routes/user.route.js';
 import calendarRouter from './routes/calendar.route.js';
 import noteRouter from './routes/note.route.js';
 import colorSettingsRouter from './routes/colorSettings.route.js';
+import hiddenEventsRouter from './routes/hiddenEvents.route.js';
 
 
 const app = express();
@@ -28,7 +29,8 @@ app.use(cors({
 app.use('/user', userRouter);
 app.use('/calendar', calendarRouter);
 app.use('/note', noteRouter);
-app.use('/color-settings', colorSettingsRouter);  
+app.use('/color-settings', colorSettingsRouter);
+app.use('/hidden-events', hiddenEventsRouter);  
 
 
 // --- Start the Server ---
