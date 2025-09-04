@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings } from 'lucide-react';
 import './home.css';
 import useAuthStore from '../../utils/authStore';
+import useCalendarStore from '../../utils/calendarStore';
 
 // Import des composants du dashboard
 import DailyCoursesList from '../../components/dashboard/dailyCoursesList';
 import DailySchedule from '../../components/dashboard/dailySchedule';
-import SimpleCoursesList from '../../components/dashboard/simpleCoursesList';
+import DailyNotesList from '../../components/dashboard/dailyNotesList';
 import SettingsModal from '../../components/settingsModal';
 import EventDetails from '../../components/eventDetails/eventDetails';
 
@@ -16,6 +17,12 @@ const Home = () => {
     const [showEventDetails, setShowEventDetails] = useState(false);
 
     const { currentUser } = useAuthStore();
+    const { fetchEvents } = useCalendarStore();
+
+    useEffect(() => {
+        // Charger les événements au montage du composant
+        fetchEvents();
+    }, [fetchEvents]);
 
     const handleEventClick = (event) => {
         setSelectedEvent(event);
@@ -67,9 +74,9 @@ const Home = () => {
                         <DailySchedule onEventClick={handleEventClick} />
                     </div>
 
-                    {/* Module 3: Liste simple des cours */}
+                    {/* Module 3: Liste des notes du jour */}
                     <div className='dashboard-module module-3'>
-                        <SimpleCoursesList onEventClick={handleEventClick} />
+                        <DailyNotesList />
                     </div>
                 </div>
 
