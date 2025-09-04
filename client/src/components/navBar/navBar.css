@@ -14,7 +14,7 @@
     flex-direction: column;
     align-items: center;
     backdrop-filter: blur(50px);
-    border-right: solid 1px #ffffff08;
+    border-right: solid 1px var(--nav-border);
     font-weight: 500;
 }
 
@@ -43,30 +43,30 @@
     align-items: center;
     justify-content: center;
     border-radius: 13px;
-    background: #ffffff0d;
+    background: var(--nav-icon-bg);
     backdrop-filter: blur(10px);
     line-height: 0;
-    color: #b3b3b3;
+    color: var(--nav-icon-color);
     transition: all 0.3s;
 }
 
 .navBar .buton .icon:hover {
-    color: white;
+    color: var(--nav-icon-hover);
 }
 
 .navBar .buton .text {
     font-size: 9px;
-    opacity: .5;
-    color: white;
+    opacity: var(--nav-text-opacity);
+    color: var(--nav-text-color);
 }
 
 .navBar .buton.selected .text {
-    color: #f90;
+    color: var(--nav-accent);
 }
 
 .navBar .buton.selected .icon {
-    color: #f90;
-    background: #ff99001c;
+    color: var(--nav-accent);
+    background: var(--nav-accent-bg);
 }
 
 @media screen and (max-width: 620px) {
@@ -85,7 +85,7 @@
         flex-direction: row;
         align-items: center;
         backdrop-filter: blur(50px);
-        border-right: solid 1px #ffffff08;
+        border-right: solid 1px var(--nav-border);
         font-weight: 500;
     }
 
@@ -96,4 +96,42 @@
         flex-direction: row;
         justify-content: center;
     }
+}
+
+[data-theme="light"] .navBar {
+    backdrop-filter: blur(100000px) !important;
+    background-color: rgba(255, 255, 255, 0.575);
+
+}
+
+
+[data-theme="light"] .navBar .buton .text {
+    opacity: 1;
+    color: #000000;
+}
+
+[data-theme="light"] .navBar .buton .icon {
+    background: rgba(0, 0, 0, 0.05);
+    color: #000000;
+}
+
+[data-theme="light"] .navBar .buton .icon:hover {
+    color: #000000;
+}
+
+[data-theme="light"] .navBar .buton.selected .icon {
+    background: rgba(255, 153, 0, 0.1);
+    color: rgb(190, 114, 0);
+}
+
+[data-theme="light"] .navBar .buton.selected .text {
+    color: rgb(190, 114, 0);
+}
+
+@media screen and (max-width: 620px) {
+}
+    /* [data-theme="light"] .navBar {
+        background-color: #ffffff;
+        backdrop-filter: none;
+    } 
 }

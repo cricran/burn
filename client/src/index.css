@@ -1,6 +1,60 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* CSS Variables for themes */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-hover: #e9ecef;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --accent-color: #007bff;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --event-color: #007bff; /* Default event color */
+  
+  /* Navbar specific */
+  --nav-bg-overlay: rgba(0, 0, 0, 0.05);
+  --nav-border: rgba(0, 0, 0, 0.08);
+  --nav-icon-bg: rgba(0, 0, 0, 0.05);
+  --nav-icon-color: #6c757d;
+  --nav-icon-hover: #000000;
+  --nav-text-color: #000000;
+  --nav-text-opacity: 0.7;
+  --nav-accent: #f90;
+  --nav-accent-bg: rgba(255, 153, 0, 0.1);
+  
+  /* Calendar specific */
+  --calendar-today-bg: rgba(255, 153, 0, 0.3);
+  
+  /* Calendar specific */
+  --calendar-today-bg: rgba(255, 153, 0, 0.3);
+}
 
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-hover: #3d3d3d;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --border-color: #404040;
+  --accent-color: #0d6efd;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --event-color: #0d6efd; /* Default event color for dark theme */
+  
+  /* Navbar specific */
+  --nav-bg-overlay: rgba(255, 255, 255, 0.05);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --nav-icon-bg: rgba(255, 255, 255, 0.05);
+  --nav-icon-color: #cccccc;
+  --nav-icon-hover: #ffffff;
+  --nav-text-color: #ffffff;
+  --nav-text-opacity: 0.5;
+  --nav-accent: #f90;
+  --nav-accent-bg: rgba(255, 153, 0, 0.1);
+  
+  /* Calendar specific */
+  --calendar-today-bg: rgba(255, 153, 0, 0.3);
+}
 
 * {
   box-sizing: border-box;
@@ -13,7 +67,9 @@
 
 body {
   font-family: "Montserrat", sans-serif;
-  background-color: #181e28;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {

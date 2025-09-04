@@ -1,28 +1,53 @@
 .addCalendar {
     position: fixed;
-    z-index: 9;
+    z-index: 1000;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.0);
     backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    opacity: 0;
+    transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.addCalendar.open {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.addCalendar.closing {
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.0);
 }
 
 .addCalendar-content {
-    background: #1c1c1c;
+    background: var(--bg-primary);
     border-radius: 12px;
     width: 90%;
     max-width: 550px;
     padding: 25px;
     position: relative;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    color: #d5d5d5;
+    box-shadow: 0 8px 24px var(--shadow-color);
+    color: var(--text-primary);
     text-align: left;
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.addCalendar.open .addCalendar-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.addCalendar.closing .addCalendar-content {
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
 }
 
 .addCalendar-close {
@@ -31,7 +56,7 @@
     right: 15px;
     background: transparent;
     border: none;
-    color: #d5d5d5;
+    color: var(--text-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -45,14 +70,14 @@
 }
 
 .addCalendar-close:hover {
-    background-color: #ffffff15;
-    color: white;
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
 }
 
 .addCalendar h2 {
     font-size: 24px;
     font-weight: 600;
-    color: white;
+    color: var(--text-primary);
     margin-bottom: 25px;
     margin-right: 30px;
 }
@@ -69,14 +94,14 @@
     display: flex;
     align-items: center;
     flex: 1;
-    background-color: #4343434d;
-    border: 1px solid #ffffff1a;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 0 15px;
 }
 
 .addCalendar-form-input svg {
-    color: #f90;
+    color: var(--nav-accent);
     flex-shrink: 0;
 }
 
@@ -84,19 +109,19 @@
     background-color: transparent;
     border: none;
     padding: 12px 15px;
-    color: #d5d5d5;
+    color: var(--text-primary);
     width: 100%;
     font-size: 14px;
     height: auto;
 }
 
 .addCalendar-form-input input::placeholder {
-    color: #999;
+    color: var(--text-secondary);
 }
 
 .addCalendar-form-button {
-    background: #f90;
-    color: #1c1c1c;
+    background: var(--nav-accent);
+    color: var(--bg-primary);
     border: none;
     border-radius: 6px;
     width: 40px;
@@ -109,15 +134,15 @@
 }
 
 .addCalendar-form-button svg {
-    color: #1c1c1c;
+    color: var(--bg-primary);
 }
 
 .addCalendar-form-button:hover {
-    background: #ffb340;
+    background: var(--nav-accent-bg);
 }
 
 .addCalendar span {
-    color: #d5d5d5;
+    color: var(--text-primary);
     font-size: 14px;
     cursor: pointer;
     display: flex;
@@ -126,9 +151,9 @@
 }
 
 .addCalendar span svg {
-    color: #f90;
+    color: var(--nav-accent);
 }
 
 .addCalendar span:hover {
-    color: white;
+    color: var(--nav-icon-hover);
 }

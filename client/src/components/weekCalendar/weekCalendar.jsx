@@ -5,9 +5,8 @@ import { format, parse, startOfWeek, getDay, addWeeks } from 'date-fns'
 import fr from 'date-fns/locale/fr'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useState, useCallback, useEffect, useMemo } from 'react'
-import AddCalendar from '../../components/addCalendar/addCalendar'
-import SettingCalendar from '../../components/settingCalendar/settingCalendar'
-import EventDetails from '../../components/eventDetails/eventDetails'
+import AddCalendar from '../addCalendar/addCalendar'
+import SettingCalendar from '../settingCalendar/settingCalendar'
 import useCalendarStore from '../../utils/calendarStore'
 import useNotificationStore from '../../utils/notificationStore'
 import useColorSettingsStore from '../../utils/colorSettingsStore'
@@ -39,10 +38,9 @@ const MonToolbar = ({ label, onNavigate }) => (
   </div>
 );
 
-function WeekCalendar() {
+function WeekCalendar({ onEventClick }) {
   const [showAdd, setShowAdd] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState(null);
   
   // Utiliser le store pour les événements et la date
   const { 
@@ -66,11 +64,6 @@ function WeekCalendar() {
     }
     return currentEvents.filter(event => !isEventCancelled(event));
   }, [currentEvents, colorSettings.showCancelledEvents]);
-
-  // Récupérer l'événement sélectionné à partir de son ID
-  const selectedEvent = selectedEventId 
-    ? currentEvents.find(e => e._id === selectedEventId) 
-    : null;
     
   const notify = useNotificationStore(state => state.notify);
 
@@ -141,13 +134,10 @@ function WeekCalendar() {
 
   // Gérer le clic sur un événement
   const handleSelectEvent = useCallback((event) => {
-    setSelectedEventId(event._id);
-  }, []);
-
-  // Fermer le popup des détails d'événement
-  const handleCloseEventDetails = useCallback(() => {
-    setSelectedEventId(null);
-  }, []);
+    if (onEventClick) {
+      onEventClick(event);
+    }
+  }, [onEventClick]);
 
   // Gérer la fermeture des paramètres avec rechargement des couleurs
   const handleCloseSettings = useCallback(() => {
@@ -172,14 +162,6 @@ function WeekCalendar() {
           onClose={handleCloseSettings}
         />
       )}
-      
-      {selectedEvent && (
-        <EventDetails 
-          event={selectedEvent} 
-          onClose={handleCloseEventDetails} 
-        />
-      )}
-      
       <div className='weekCalendar'>
         <header>
           <h1>Emploi du temps</h1>

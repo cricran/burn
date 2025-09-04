@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Trash2, Link, Settings, X } from 'lucide-react';
 import './settingCalendar.css'
 import apiRequest from '../../utils/apiRequest';
@@ -10,6 +11,8 @@ import HiddenEventsManager from '../hiddenEventsManager/hiddenEventsManager';
 
 function SettingCalendar({ onClose }) {
     const [urls, setUrls] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
     const notify = useNotificationStore.getState().notify;
     const [showHiddenEventsManager, setShowHiddenEventsManager] = useState(false);
     
@@ -47,8 +50,10 @@ function SettingCalendar({ onClose }) {
             }
         };
         
-        fetchUrls();
-        loadColorSettings();
+    fetchUrls();
+    loadColorSettings();
+    // déclenche l'animation d'ouverture
+    setTimeout(() => setIsOpen(true), 0);
     }, [notify, loadColorSettings]);
 
     useEffect(() => {
@@ -106,10 +111,19 @@ function SettingCalendar({ onClose }) {
         }
     };
 
-    return (
-        <div className='settingCalendar' onClick={onClose}>
+    const requestClose = () => {
+        if (isClosing) return;
+        setIsClosing(true);
+        // attendre la fin de l'animation
+        setTimeout(() => {
+            onClose && onClose();
+        }, 220);
+    };
+
+    return createPortal(
+        <div className={`settingCalendar ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestClose}>
             <div className='settingCalendar-content' onClick={stopPropagation}>
-                <button className="settingCalendar-close" onClick={onClose}>
+                <button className="settingCalendar-close" onClick={requestClose}>
                     <X size={20} />
                 </button>
                 <h2>Paramètres</h2>
@@ -135,7 +149,7 @@ function SettingCalendar({ onClose }) {
                 {/* Section Événements masqués */}
                 <div className="settings-section">
                     <button
-                        className="settings-button"
+                        className="setting-button"
                         onClick={() => setShowHiddenEventsManager(true)}
                     >
                         <Settings size={18} />
@@ -175,7 +189,8 @@ function SettingCalendar({ onClose }) {
                     onClose={() => setShowHiddenEventsManager(false)}
                 />
             )}
-        </div>
+        </div>,
+        document.body
     )
 }
 

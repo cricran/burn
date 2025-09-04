@@ -4,12 +4,17 @@ import { Link } from "react-router"
 
 
 const LandingPage = () => {
+    
+
     return (
+        <>
         <div>
             <div className='shadow'>
                 <div className='img'></div>
             </div>
             <div className='landingPage'>
+                {/* Bouton paramètres retiré (visible seulement sur la page d'accueil) */}
+                
                 <h1>BURN</h1>
                 <div>
                     <div className='lpHeader'>
@@ -46,6 +51,8 @@ const LandingPage = () => {
                 </div>
             </div>
         </div>
+        
+        </>
     )
 }
 

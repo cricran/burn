@@ -13,6 +13,7 @@ const Auth = () => {
     const [showPopUp, setShowPopUp] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -58,6 +59,8 @@ const Auth = () => {
         }
     }
 
+    
+
     return (
         <div>
             {showPopUp && (
@@ -83,6 +86,9 @@ const Auth = () => {
             <div className='auth'>
                 <img className='imgLogin' src={'/general/backloginblur.webp'} alt="" />
                 <div className='whiteBackground'></div>
+                
+                {/* Bouton paramètres retiré (visible seulement sur la page d'accueil) */}
+                
                 <div className='loginPanel'>
                     <form onSubmit={handleSubmit}>
                         <Link to={'/'} className='close' viewTransition>
@@ -125,7 +131,8 @@ const Auth = () => {
                         <span onClick={() => setShowPopUp(true)} style={{ cursor: "pointer" }}><Info size={20}/> comment ça foncitonne ?</span>
                     </form>
                 </div>
-            </div >
+            </div>
+            
         </div >
     )
 }
