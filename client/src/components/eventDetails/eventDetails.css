@@ -14,7 +14,7 @@
 }
 
 .event-details-content {
-  background: #1c1c1c;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 90%;
   max-width: 550px;
@@ -22,8 +22,8 @@
   overflow-y: auto;
   padding: 25px;
   position: relative;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  color: #d5d5d5;
+  box-shadow: 0 8px 24px var(--shadow-color);
+  color: var(--text-primary);
 }
 
 .event-details-close {
@@ -32,7 +32,7 @@
   right: 15px;
   background: transparent;
   border: none;
-  color: #d5d5d5;
+  color: var(--text-primary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -43,14 +43,14 @@
 }
 
 .event-details-close:hover {
-  background-color: #ffffff15;
+  background-color: var(--bg-hover);
 }
 
 .event-details-title {
     display: flex;
     align-items: center;
     margin-bottom: 1.5rem;
-    color: #f90;
+    color: var(--nav-accent);
     font-size: 1.5rem;
 }
 
@@ -68,12 +68,12 @@
 }
 
 .event-info-item svg {
-  color: #f90;
+  color: var(--nav-accent);
   flex-shrink: 0;
 }
 
 .event-details-description {
-  border-top: 1px solid #ffffff15;
+  border-top: 1px solid var(--border-color);
   padding-top: 20px;
   margin-bottom: 25px;
 }
@@ -83,7 +83,7 @@
 }
 
 .event-details-notes {
-  border-top: 1px solid #ffffff15;
+  border-top: 1px solid var(--border-color);
   padding-top: 20px;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .event-details-notes h3 svg {
-  color: #f90;
+  color: var(--nav-accent);
 }
 
 .event-notes-list {
@@ -110,8 +110,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #4343431c;
-  border: solid 1px #ffffff0f;
+  background: var(--bg-secondary);
+  border: solid 1px var(--border-color);
   border-radius: 8px;
   padding: 10px;
 }
@@ -120,7 +120,7 @@
   appearance: none;
   min-width: 20px;
   height: 20px;
-  border: 2px solid #f90;
+  border: 2px solid var(--nav-accent);
   border-radius: 6px;
   transition: background 0.2s, border-color 0.2s;
   cursor: pointer;
@@ -128,8 +128,8 @@
 }
 
 .event-note-item input[type=checkbox]:checked {
-  background: #f90;
-  border-color: #f90;
+  background: var(--nav-accent);
+  border-color: var(--nav-accent);
 }
 
 .event-note-item input[type=checkbox]:checked::after {
@@ -140,7 +140,7 @@
   top: -1px;
   width: 5px;
   height: 12px;
-  border: solid #fff;
+  border: solid var(--bg-primary);
   border-width: 0 3px 3px 0;
   transform: rotate(45deg);
 }
@@ -152,7 +152,7 @@
 .event-note-delete {
   background: transparent;
   border: none;
-  color: #d5d5d5;
+  color: var(--text-primary);
   opacity: 0.5;
   cursor: pointer;
   padding: 0;
@@ -174,17 +174,17 @@
 
 .event-note-input {
   flex: 1;
-  background-color: #4343434d;
-  border: 1px solid #ffffff1a;
-  color: #d5d5d5;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   padding: 10px 15px;
   border-radius: 6px;
   font-size: 14px;
 }
 
 .event-note-add-btn {
-  background: #f90;
-  color: #1c1c1c;
+  background: var(--nav-accent);
+  color: var(--bg-primary);
   border: none;
   border-radius: 6px;
   width: 40px;
@@ -197,11 +197,11 @@
 }
 
 .event-note-add-btn:hover {
-  background: #ffb340;
+  background: var(--nav-accent-bg);
 }
 
 .event-no-notes {
-  color: #888;
+  color: var(--text-secondary);
   text-align: center;
   font-style: italic;
   padding: 15px 0;
@@ -212,7 +212,7 @@
     height: 24px;
     border-radius: 4px;
     flex-shrink: 0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     margin-right: 12px;
 }
 
@@ -224,8 +224,8 @@
 
 .event-details-color.clickable:hover {
     transform: scale(1.15);
-    box-shadow: 0 0 0 2px #f90;
-    border-color: #f90;
+    box-shadow: 0 0 0 2px var(--nav-accent);
+    border-color: var(--nav-accent);
 }
 
 .event-details-color.clickable:hover::after {
@@ -234,14 +234,14 @@
     top: -10px;
     right: -10px;
     font-size: 12px;
-    background: #f90;
+    background: var(--nav-accent);
     border-radius: 50%;
     width: 18px;
     height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--bg-primary);
 }
 
 /* Animation pour les loaders */
@@ -292,9 +292,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #4343434d;
-  border: 1px solid #ffffff1a;
-  color: #d5d5d5;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   padding: 10px 15px;
   border-radius: 6px;
   font-size: 14px;

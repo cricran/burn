@@ -36,6 +36,11 @@ const userSchema = new Schema({
         showCancelledEvents: {
             type: Boolean,
             default: true
+        },
+        theme: {
+            type: String,
+            enum: ['light', 'dark', 'auto'],
+            default: 'auto'
         }
     },
     hiddenEvents: {

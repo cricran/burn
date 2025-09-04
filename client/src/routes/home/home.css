@@ -60,13 +60,13 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--nav-icon-bg);
+    border: 1px solid var(--nav-border);
     border-radius: 8px;
     padding: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: white;
+    color: var(--nav-icon-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,8 +76,8 @@
 }
 
 .settings-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: var(--nav-accent-bg);
+    border-color: var(--nav-accent);
     transform: scale(1.05);
 }
 

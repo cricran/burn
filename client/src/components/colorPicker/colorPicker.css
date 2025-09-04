@@ -13,13 +13,13 @@
 }
 
 .color-picker-content {
-    background: #2c2c2c;
+    background: var(--bg-primary);
     border-radius: 12px;
     padding: 24px;
     max-width: 380px;
     width: 90%;
-    border: 1px solid #ffffff0f;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px var(--shadow-color);
     max-height: 90vh;
     overflow-y: auto;
 }
@@ -30,13 +30,13 @@
 }
 
 .color-picker-header h3 {
-    color: #f90;
+    color: var(--nav-accent);
     font-size: 18px;
     margin: 0 0 8px 0;
 }
 
 .color-picker-header p {
-    color: #d5d5d5;
+    color: var(--text-primary);
     font-size: 14px;
     margin: 0;
     opacity: 0.8;
@@ -52,7 +52,7 @@
     margin-bottom: 16px;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #ffffff0f;
+    border: 1px solid var(--border-color);
 }
 
 .color-canvas {
@@ -87,7 +87,7 @@
         hsl(180, 70%, 60%), hsl(240, 70%, 60%), hsl(300, 70%, 60%), hsl(360, 70%, 60%));
     cursor: pointer;
     position: relative;
-    border: 1px solid #ffffff0f;
+    border: 1px solid var(--border-color);
     touch-action: none;
 }
 
@@ -130,20 +130,20 @@
     align-items: center;
     gap: 12px;
     padding: 12px;
-    background: #4343431c;
+    background: var(--bg-secondary);
     border-radius: 8px;
-    border: 1px solid #ffffff0f;
+    border: 1px solid var(--border-color);
 }
 
 .color-preview-box {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    border: 1px solid #ffffff0f;
+    border: 1px solid var(--border-color);
 }
 
 .color-preview-text {
-    color: #d5d5d5;
+    color: var(--text-primary);
     font-family: monospace;
     font-size: 14px;
 }
@@ -176,13 +176,13 @@
 
 .quick-color:hover {
     transform: scale(1.05);
-    border-color: #ffffff30;
+    border-color: var(--nav-accent);
 }
 
 .quick-color.selected {
-    border-color: #f90;
+    border-color: var(--nav-accent);
     transform: scale(1.1);
-    box-shadow: 0 0 0 2px #f90;
+    box-shadow: 0 0 0 2px var(--nav-accent);
 }
 
 .color-picker-actions {
@@ -206,13 +206,13 @@
 }
 
 .color-picker-cancel {
-    background: #4343431c;
-    color: #d5d5d5;
-    border: 1px solid #ffffff0f;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }
 
 .color-picker-cancel:hover {
-    background: #43434330;
+    background: var(--bg-hover);
 }
 
 .color-picker-save {

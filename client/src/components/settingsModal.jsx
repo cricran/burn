@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, LogOut, User, Moon, Sun } from 'lucide-react';
+import { Settings, LogOut, User, Moon, Sun, Monitor } from 'lucide-react';
 import './settingsModal.css';
 import useAuthStore from '../utils/authStore';
 import useColorSettingsStore from '../utils/colorSettingsStore';
@@ -8,12 +8,14 @@ function SettingsModal({ isOpen, onClose }) {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const { currentUser, clearCurrentUser } = useAuthStore();
-    const { colorSettings, toggleTheme } = useColorSettingsStore();
+    const { colorSettings, toggleTheme, loadColorSettings } = useColorSettingsStore();
 
-    // Apply theme on mount
+    // Load color settings when modal opens and user is logged in
     useEffect(() => {
-        document.documentElement.setAttribute('data-theme', colorSettings.theme || 'dark');
-    }, [colorSettings.theme]);
+        if (isOpen && currentUser) {
+            loadColorSettings();
+        }
+    }, [isOpen, currentUser, loadColorSettings]);
 
     const handleLogout = async () => {
         setIsLoggingOut(true);
@@ -64,7 +66,7 @@ function SettingsModal({ isOpen, onClose }) {
                     {/* Thème */}
                     <div className="settings-section">
                         <div className="section-header">
-                            {colorSettings.theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+                            {colorSettings.theme === 'dark' ? <Moon size={16} /> : colorSettings.theme === 'light' ? <Sun size={16} /> : <Monitor size={16} />}
                             <h4>Thème</h4>
                         </div>
                         <div className="theme-toggle">
@@ -81,6 +83,13 @@ function SettingsModal({ isOpen, onClose }) {
                             >
                                 <Moon size={16} />
                                 Sombre
+                            </button>
+                            <button
+                                className={`theme-button ${colorSettings.theme === 'auto' ? 'active' : ''}`}
+                                onClick={() => toggleTheme('auto')}
+                            >
+                                <Monitor size={16} />
+                                Automatique
                             </button>
                         </div>
                     </div>

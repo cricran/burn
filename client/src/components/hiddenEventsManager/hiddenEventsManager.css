@@ -239,3 +239,73 @@
 .available-courses-list::-webkit-scrollbar-thumb:hover {
   background: #ffb340;
 }
+
+[data-theme="light"] .hidden-events-content {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .hidden-events-close {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .hidden-events-close:hover {
+  background-color: var(--bg-hover);
+}
+
+[data-theme="light"] .hidden-events-content h2 {
+  color: var(--nav-accent);
+}
+
+[data-theme="light"] .hidden-events-section h3 {
+  color: var(--nav-accent);
+}
+
+[data-theme="light"] .hidden-event-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .hidden-event-title {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .hidden-event-date {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .empty-hidden {
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .course-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .course-name {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .course-count {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .loading-courses {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .available-courses-list::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+[data-theme="light"] .available-courses-list::-webkit-scrollbar-thumb {
+  background: var(--nav-accent);
+}
+
+[data-theme="light"] .available-courses-list::-webkit-scrollbar-thumb:hover {
+  background: var(--nav-accent);
+}

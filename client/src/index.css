@@ -11,6 +11,23 @@
   --accent-color: #007bff;
   --shadow-color: rgba(0, 0, 0, 0.1);
   --event-color: #007bff; /* Default event color */
+  
+  /* Navbar specific */
+  --nav-bg-overlay: rgba(0, 0, 0, 0.05);
+  --nav-border: rgba(0, 0, 0, 0.08);
+  --nav-icon-bg: rgba(0, 0, 0, 0.05);
+  --nav-icon-color: #6c757d;
+  --nav-icon-hover: #000000;
+  --nav-text-color: #000000;
+  --nav-text-opacity: 0.7;
+  --nav-accent: #f90;
+  --nav-accent-bg: rgba(255, 153, 0, 0.1);
+  
+  /* Calendar specific */
+  --calendar-today-bg: rgba(255, 153, 0, 0.3);
+  
+  /* Calendar specific */
+  --calendar-today-bg: rgba(255, 153, 0, 0.3);
 }
 
 [data-theme="dark"] {
@@ -23,6 +40,20 @@
   --accent-color: #0d6efd;
   --shadow-color: rgba(0, 0, 0, 0.3);
   --event-color: #0d6efd; /* Default event color for dark theme */
+  
+  /* Navbar specific */
+  --nav-bg-overlay: rgba(255, 255, 255, 0.05);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --nav-icon-bg: rgba(255, 255, 255, 0.05);
+  --nav-icon-color: #cccccc;
+  --nav-icon-hover: #ffffff;
+  --nav-text-color: #ffffff;
+  --nav-text-opacity: 0.5;
+  --nav-accent: #f90;
+  --nav-accent-bg: rgba(255, 153, 0, 0.1);
+  
+  /* Calendar specific */
+  --calendar-today-bg: rgba(255, 153, 0, 0.3);
 }
 
 * {

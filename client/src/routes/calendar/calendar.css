@@ -28,7 +28,7 @@
 
 .dashboard-title p {
     margin: 0;
-    color: var(--text-secondary);
+    color: #d9edff;
     font-size: 1rem;
     transition: color 0.3s ease;
 }

@@ -1,9 +1,9 @@
 .weekCalendar {
     width: 100%;
     height: 100%;
-    color: #d5d5d5;
+    color: var(--text-primary);
     backdrop-filter: blur(50px);
-    border: solid 1px #ffffff0d;
+    border: solid 1px var(--nav-border);
     border-radius: 30px;
     padding: 20px;
 }
@@ -33,22 +33,22 @@
     flex-direction: row;
     gap: 10px;
     cursor: pointer;
-    border: solid 1px #ffffff0d;
+    border: solid 1px var(--nav-border);
     border-radius: 30px;
     padding: 6px 15px;
     font-size: 13px;
 }
 
 .weekCalendar header .options .option:hover {
-    color: white;
+    color: var(--nav-icon-hover);
 }
 
 .weekCalendar .wcContent {
     width: 100%;
     /* height: 791px; */
     height: fit-content;
-    background: #4343431c;
-    border: solid 1px #ffffff0f;
+    background: var(--bg-secondary);
+    border: solid 1px var(--border-color);
     border-radius: 20px;
     padding: 15px 0;
     /* background: #0156619a; */
@@ -93,8 +93,8 @@
 .rbc-time-gutter,
 .rbc-header,
 .rbc-allday-cell {
-  color: #d5d5d5;
-  border-color: #ffffff0f !important;
+  color: var(--text-primary);
+  border-color: var(--border-color) !important;
 }
 
 .rbc-time-content {
@@ -112,22 +112,22 @@
 span.rbc-label {
     position: relative;
     top: -8px;
-    color: #d5d5d5;
+    color: var(--text-primary);
     font-size: 12px;
 }
 
 /* Couleur des traits verticaux et horizontaux */
 .rbc-day-slot .rbc-time-slot {
-  border-color: #ffffff0f;
+  border-color: var(--border-color);
 }
 
 .rbc-time-content > * + * {
-  border-color: #ffffff0f;
+  border-color: var(--border-color);
 }
 
 .rbc-time-gutter,
 .rbc-header {
-  border-color: #ffffff0f;
+  border-color: var(--border-color);
 }
 
 .rbc-allday-cell,
@@ -142,8 +142,7 @@ span.rbc-label {
 /* Couleur du jour actuel */
 
 .rbc-header.rbc-today {
-    background-color: rgba(255, 153, 0, 0.301) !important;
-;
+    background-color: var(--calendar-today-bg) !important;
 }
 
 .rbc-today {
@@ -190,7 +189,7 @@ span.rbc-label {
 }    
 
 .rbc-btn-group button {
-    color: #d5d5d5 !important;
+    color: var(--text-primary) !important;
     border: none !important;
     background-color: transparent !important;
     cursor: pointer;
