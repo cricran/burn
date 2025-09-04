@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, Navigate } from "react-router-dom"
+import { Link, useNavigate, Navigate, useLocation } from "react-router-dom"
 import { CircleX, Info } from 'lucide-react';
 import PopUp from '../../components/PopUp/PopUp';
 import apiRequest from '../../utils/apiRequest';
@@ -15,10 +15,14 @@ const Auth = () => {
     const [error, setError] = useState(null);
 
     const navigate = useNavigate();
+    const location = useLocation();
     const { setCurrentUser, currentUser } = useAuthStore();
 
+    const params = new URLSearchParams(location.search);
+    const redirectParam = params.get('redirect') ? decodeURIComponent(params.get('redirect')) : '/my';
+
     if (currentUser) {
-        return <Navigate to="/my" replace />;
+        return <Navigate to={redirectParam} replace />;
     }
 
     const handleSubmit = async (event) => {
@@ -41,10 +45,13 @@ const Auth = () => {
         try {
             const res = await apiRequest.post("/user/auth/login", data)
             setCurrentUser(res.data);
+            // clear guard flag
+            try { sessionStorage.removeItem('authRedirect'); } catch (e) {}
+            // rediriger vers la page demandée si présente
+            navigate(redirectParam, { replace: true });
+            return;
         } catch (err) {
             setError(err.response?.data?.message || "Erreur de connexion");
-            setLoading(false);
-            navigate('/my');
             return;
         } finally {
             setLoading(false);
