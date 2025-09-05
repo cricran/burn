@@ -2,10 +2,11 @@
     width: 100%;
     height: 100%;
     color: var(--text-primary);
-    backdrop-filter: blur(50px);
-    border: solid 1px var(--nav-border);
-    border-radius: 30px;
+    border: solid 1px var(--border-color);
+    border-radius: 12px;
     padding: 20px;
+    background: var(--module-bg);
+    box-shadow: 0 2px 8px var(--shadow-color);
 }
 
 .weekCalendar header {
@@ -33,23 +34,27 @@
     flex-direction: row;
     gap: 10px;
     cursor: pointer;
-    border: solid 1px var(--nav-border);
-    border-radius: 30px;
+    border: solid 1px var(--border-color);
+    border-radius: 8px;
     padding: 6px 15px;
     font-size: 13px;
+    background: transparent;
+    color: var(--text-primary);
+    transition: background 120ms ease, border-color 120ms ease;
 }
 
 .weekCalendar header .options .option:hover {
-    color: var(--nav-icon-hover);
+    background: var(--hover-bg);
+    border-color: var(--accent-color);
 }
 
 .weekCalendar .wcContent {
     width: 100%;
     /* height: 791px; */
     height: fit-content;
-    background: var(--bg-secondary);
+    background: var(--panel-bg);
     border: solid 1px var(--border-color);
-    border-radius: 20px;
+    border-radius: 8px;
     padding: 15px 0;
     /* background: #0156619a; */
 }
@@ -65,7 +70,7 @@
         padding: 20px 0 0 0;
     }
     .weekCalendar .wcContent {
-        border-radius: 0 0 30px 30px;
+        border-radius: 0 0 12px 12px;
     }
 }
 
@@ -157,7 +162,7 @@ span.rbc-label {
 }
 
 .rbc-current-time-indicator {
-    background-color: #f90 !important;
+  background-color: var(--accent-color) !important;
 }
 
 /* top buttons*/
@@ -168,13 +173,13 @@ span.rbc-label {
     flex-direction: row;
     gap: 10px;
     cursor: pointer;
-    border: solid 1px #ffffff0d;
+  border: solid 1px var(--nav-border);
     border-radius: 30px;
     padding: 6px 15px;
     font-size: 13px;
     height: 34px;
     margin: 0 15px;
-    background: #43434330 !important;
+  background: var(--nav-bg-overlay) !important;
 
 }
 
@@ -196,15 +201,15 @@ span.rbc-label {
 }
 
 .rbc-btn-group button:nth-child(1) {
-    border-right: #ffffff0d 1px solid !important;
+  border-right: var(--nav-border) 1px solid !important;
     
 }
 .rbc-btn-group button:nth-child(2) {
-    border-right: #ffffff0d 1px solid !important;
+  border-right: var(--nav-border) 1px solid !important;
 }
 
 .rbc-btn-group button:hover {
-    color: white !important;
+  color: var(--text-primary) !important;
 }
 
 .rbc-toolbar {

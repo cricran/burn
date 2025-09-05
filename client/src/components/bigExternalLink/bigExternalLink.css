@@ -1,8 +1,6 @@
 .bigExternalLink {
-    backdrop-filter: blur(50px);
-    backdrop-filter: brightness(1.3);
-    border: solid 1px var(--nav-border);
-    border-radius: 30px;
+    border: solid 1px var(--border-color);
+    border-radius: 12px;
     overflow: hidden;
     padding: 15px 25px;
     display: flex;
@@ -10,13 +8,14 @@
     font-weight: 200;
     width: fit-content;
     min-width: fit-content;
-    transition: backdrop-filter 0.5s, color 0.5s;
+    transition: color 0.5s, background 120ms ease;
     font-size: 13px;
-    color: var(--nav-icon-color);
+    color: var(--text-secondary);
     align-items: center;
+    background: var(--module-bg);
 }
 
 .bigExternalLink:hover {
-    backdrop-filter: brightness(1.6);
-    color: var(--nav-icon-hover);
+    background: var(--hover-bg);
+    color: var(--text-primary);
 }

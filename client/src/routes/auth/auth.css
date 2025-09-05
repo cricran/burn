@@ -18,14 +18,14 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    background-color: black;
+    background-color: var(--bg-primary);
 }
 
 .whiteBackground {
     width: 100vw;
     height: 100vh;
     z-index: 0;
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: var(--nav-bg-overlay);
     position: absolute;
 }
 
@@ -37,11 +37,13 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    box-shadow: 0px 0px 20px #16161690;
+    box-shadow: 0px 0px 20px var(--shadow-color);
     padding: 100px 40px;
-    border-radius: 24px;
+    border-radius: 12px;
     animation: fadeInScale 0.8s ease-out;
     animation-fill-mode: both;
+    background: var(--module-bg);
+    border: 1px solid var(--border-color);
 }
 
 .loginPanel::before {
@@ -51,18 +53,16 @@
     height: 100%;
     top: 0;
     left: 0;
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
+    border-radius: 12px;
     overflow: hidden;
     z-index: 1;
-    mask-image: linear-gradient(to top, black, black, transparent);
 }
 
 .loginPanel .close {
     position: absolute;
     right: 20px;
     top: 25px;
-    color: white;
+    color: var(--text-primary);
     opacity: 0.5;
 }
 
@@ -80,12 +80,12 @@
 }
 
 .loginPanel .button {
-    background: #adacac00;
+    background: transparent;
     width: 100%;
     transition: all 0.2s;
     display: flex;
-    color: #d7d7d7;
-    border-radius: 10px;
+    color: var(--text-primary);
+    border-radius: 8px;
     font-size: 15px;
     font-weight: 600;
     border: 0;
@@ -96,7 +96,6 @@
     cursor: pointer;
     margin-top: 32px;
     backdrop-filter: brightness(1.4);
-
 }
 
 .loginPanel .button:hover {
@@ -106,13 +105,13 @@
 .loginPanel input[type=text],
 .loginPanel input[type=password] {
     text-align: center;
-    background: #00000000 !important;
+    background: transparent !important;
     backdrop-filter: brightness(1.4);
-    border: solid 1px #ffffff1f;
+    border: solid 1px var(--border-color);
 }
 
 .loginPanel input::placeholder {
-    color: white;
+    color: var(--text-secondary);
     opacity: 0.5;
 }
 
@@ -125,25 +124,24 @@
 }
 
 .logo {
-    color: white;
+    color: var(--text-primary);
     margin-bottom: 70px;
     font-size: 40px;
     font-weight: 700;
-    /* background-color: white; */
-    /* text-shadow: 0 0 40px rgba(255, 255, 255, 0.733), 0 0 10px rgba(255, 255, 255, 0.519), 0 0 990px #f90; */
+    /* keep clear */
 }
 
 .logo span {
     margin-left: 10px;
-    color: black;
-    background-color: white;
+    color: var(--on-accent);
+    background-color: var(--accent-color);
     padding: 0 10px;
     border-radius: 25px;
 
 }
 
 .loginPanel form>span {
-    color: #f90;
+    color: var(--accent-color);
     font-weight: bold;
     margin-top: 12px;
     font-size: 14px;
@@ -157,9 +155,9 @@
 
 
 .auth-error {
-    color: #eb7a7a;
-    border: solid 1px #eb7a7a;
-    background: #00000063 !important;
+    color: var(--on-accent);
+    border: solid 1px color-mix(in oklab, var(--danger-color) 35%, var(--border-color));
+    background: color-mix(in oklab, var(--danger-color) 20%, transparent) !important;
     backdrop-filter: brightness(1.4);
     border-radius: 10px;
     padding: 15px;
@@ -181,9 +179,9 @@
 .button-loader {
     width: 24px;
     height: 24px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    border: 3px solid color-mix(in oklab, var(--text-primary) 30%, transparent);
     border-radius: 50%;
-    border-top-color: #fff;
+    border-top-color: var(--text-primary);
     animation: spin 1s ease-in-out infinite;
 }
 
@@ -206,9 +204,9 @@
     line-height: 1.5;
     border-radius: 8px;
     transition: all 0.2s;
-    background: #1a1a1a;
-    color: #d7d7d7;
-    border: solid 1px #232323;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: solid 1px var(--border-color);
 }
 
 .fade-enter {
@@ -234,13 +232,13 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: white;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -250,8 +248,8 @@
 }
 
 .auth-settings-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: var(--bg-hover);
+    border-color: var(--border-color);
     transform: scale(1.05);
 }
 

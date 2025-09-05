@@ -16,7 +16,7 @@ const MainLayout = () => {
     return (
         <div>
             <div className='shadow'>
-                <div className='img'></div>
+                {/* <div className='img'></div> */}
             </div>
             <NavBar />
             <NotificationContainer />

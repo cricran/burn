@@ -11,9 +11,9 @@
 .notification {
     min-width: 300px;
     max-width: 380px;
-    background: var(--bg-primary);
+    background: var(--module-bg);
     color: var(--text-primary);
-    border-radius: 14px;
+    border-radius: 12px;
     margin-bottom: 0;
     overflow: hidden;
     font-family: inherit;

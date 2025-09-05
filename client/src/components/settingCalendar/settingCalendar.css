@@ -6,7 +6,6 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.0);
-    backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,7 +16,7 @@
 
 .settingCalendar.open {
     opacity: 1;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--overlay-strong-bg);
 }
 
 .settingCalendar.closing {
@@ -26,7 +25,7 @@
 }
 
 .settingCalendar-content {
-    background: var(--bg-primary);
+    background: var(--module-bg);
     border-radius: 12px;
     width: 90%;
     max-width: 550px;
@@ -129,7 +128,7 @@
 }
 
 .settingCalendar-form-input-content svg {
-    color: #f90;
+    color: var(--accent-color);
     flex-shrink: 0;
 }
 
@@ -156,7 +155,7 @@
 
 .settingCalendar-form-input button:hover {
     opacity: 1;
-    color: #ff5555;
+    color: var(--danger-color);
     background-color: var(--bg-hover);
 }
 

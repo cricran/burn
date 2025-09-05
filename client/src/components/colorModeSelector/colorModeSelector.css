@@ -4,19 +4,19 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 15px;
-    color: #f90;
+    color: var(--accent-color);
 }
 
 .color-mode-selector h3 svg {
-    color: #f90; /* Orange comme les autres icônes */
+    color: var(--accent-color); /* match accent */
 }
 
 .mode-selector-container {
     display: flex;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #ffffff0f;
-    background: #4343431c;
+    border: 1px solid var(--nav-border);
+    background: var(--nav-bg-overlay);
     margin-bottom: 12px;
     transition: all 0.2s;
 }
@@ -45,25 +45,25 @@
 }
 
 .mode-button.active {
-    background: #f90;
-    color: #1c1c1c;
+    background: var(--accent-color);
+    color: var(--on-accent);
     font-weight: 600;
     /* Pas de hover sur le bouton actif */
 }
 
 .mode-button.left {
-    border-right: 1px solid #ffffff0f;
+    border-right: 1px solid var(--nav-border);
 }
 
 .mode-button.left.active {
-    border-right: 1px solid #f90;
+    border-right: 1px solid var(--accent-color);
 }
 
 .mode-description {
     padding: 10px 12px;
-    background: #4343431c;
+    background: var(--nav-bg-overlay);
     border-radius: 6px;
-    border: 1px solid #ffffff0f;
+    border: 1px solid var(--nav-border);
 }
 
 .mode-description p {

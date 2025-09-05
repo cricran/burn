@@ -4,17 +4,16 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    backdrop-filter: blur(4px);
 }
 
 .settings-modal {
-    background: var(--bg-primary);
-    border-radius: 16px;
+    background: var(--module-bg);
+    border-radius: 12px;
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
@@ -22,6 +21,7 @@
     box-shadow: 0 20px 40px var(--shadow-color);
     animation: modalSlideIn 0.3s ease-out;
     transition: background-color 0.3s ease, color 0.3s ease;
+    border: 1px solid var(--border-color);
 }
 
 @keyframes modalSlideIn {
@@ -59,20 +59,27 @@
 }
 
 .close-button {
-    background: none;
-    border: none;
+    background: transparent;
+    border: 1px solid transparent;
     font-size: 24px;
     color: var(--text-secondary);
     cursor: pointer;
     padding: 4px;
-    border-radius: 4px;
-    transition: all 0.2s ease, color 0.3s ease;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease, color 120ms ease;
+    opacity: 0.6;
 }
 
 .close-button:hover {
-    background: var(--bg-secondary);
+    background: var(--hover-bg);
+    border-color: var(--border-color);
+    opacity: 1;
     color: var(--text-primary);
-    transition: all 0.2s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .settings-content {
@@ -151,7 +158,7 @@
 
 .theme-button.active {
     background: var(--accent-color);
-    color: white;
+    color: var(--on-accent);
     border-color: var(--accent-color);
 }
 
@@ -162,10 +169,10 @@
     gap: 8px;
     width: 100%;
     padding: 12px 16px;
-    background: #dc3545;
+    background: var(--danger-color);
     border: none;
     border-radius: 8px;
-    color: white;
+    color: var(--on-accent);
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
@@ -173,7 +180,7 @@
 }
 
 .logout-button:hover:not(:disabled) {
-    background: #c82333;
+    background: color-mix(in oklab, var(--danger-color) 85%, black);
     transform: translateY(-1px);
     transition: all 0.2s ease, background-color 0.3s ease;
 }
@@ -204,7 +211,7 @@
 }
 
 .settings-modal::-webkit-scrollbar-track {
-    background: var(--bg-primary);
+    background: var(--module-bg);
 }
 
 .settings-modal::-webkit-scrollbar-thumb {

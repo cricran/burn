@@ -1,5 +1,5 @@
 .groupNotes {
-    background: var(--bg-secondary);
+    background: var(--module-bg);
     border: solid 1px var(--border-color);
     border-radius: 12px;
     padding: 12px; /* plus compact */
@@ -52,7 +52,7 @@
 }
 
 .groupNotes .toggle-btn:hover {
-    background: var(--bg-primary);
+    background: var(--hover-bg);
 }
 
 /* Animations d'entrée */

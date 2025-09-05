@@ -1,14 +1,15 @@
 .note {
-    background: var(--bg-primary);
-    border-radius: 10px;
+    background: var(--module-bg);
+    border-radius: 12px;
     padding: 12px; /* plus compact */
-    box-shadow: 0 2px 10px var(--shadow-color);
+    box-shadow: 0 2px 8px var(--shadow-color);
     height: 100%;
     display: flex;
     flex-direction: column;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     animation: fadeInUp 0.6s ease-out;
     animation-fill-mode: both;
+    border: 1px solid var(--border-color);
 }
 
 .note:hover {
@@ -24,10 +25,9 @@
 }
 
 .note .from {
-    backdrop-filter: blur(5px);
-    background-color: var(--bg-secondary);
+    background-color: var(--panel-bg);
     border: solid 1px var(--border-color);
-    border-radius: 30px;
+    border-radius: 8px;
     padding: 2px 10px;
     font-size: 12px; /* plus compact */
     width: fit-content;
@@ -46,22 +46,22 @@
 }
 
 .note .from.clickable:hover {
-    background-color: #f90;
-    color: #1c1c1c;
+    background-color: var(--accent-color);
+    color: var(--on-accent);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(255, 153, 0, 0.4);
+    box-shadow: 0 2px 8px color-mix(in oklab, var(--accent-color) 40%, transparent);
 }
 
 .note .from.clickable:active {
     transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(255, 153, 0, 0.4);
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--accent-color) 40%, transparent);
 }
 
 .note input[type=checkbox] {
     appearance: none;
     min-width: 18px;
     height: 18px;
-    border: 2px solid #f90;
+    border: 2px solid var(--accent-color);
     border-radius: 6px;
     transition: background 0.2s, border-color 0.2s;
     cursor: pointer;
@@ -69,8 +69,8 @@
 }
 
 .note input[type=checkbox]:checked {
-    background: #f90;
-    border-color: #f90;
+    background: var(--accent-color);
+    border-color: var(--accent-color);
 }
 
 .note input[type=checkbox]:checked::after {
@@ -125,8 +125,8 @@
 }
 
 .note .footer .add:hover {
-    color: white;
-    background-color: #f90;
+    color: var(--on-accent);
+    background-color: var(--accent-color);
     transform: scale(1.1);
 }
 
@@ -147,7 +147,7 @@
 
 .note-delete:hover {
     opacity: 1;
-    color: #ff5555;
+    color: var(--danger-color);
     background-color: var(--bg-secondary);
 }
 
@@ -183,8 +183,8 @@
 }
 
 .note-add-btn {
-    background: #f90;
-    color: #1c1c1c;
+    background: var(--accent-color);
+    color: var(--on-accent);
     border: none;
     border-radius: 6px;
     width: 28px;
@@ -197,7 +197,7 @@
 }
 
 .note-add-btn:hover {
-    background: #ffb340;
+    background: color-mix(in oklab, var(--accent-color) 85%, white);
     transform: scale(1.05);
 }
 

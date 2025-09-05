@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { PanelBottomClose, PanelLeftOpen, FileText, BookOpen, Link, File, Video, Image, Archive, HelpCircle, Upload, Download, EyeOff, Eye, Lock } from 'lucide-react'
 import apiRequest from '../../utils/apiRequest'
 import './universitice.css'
@@ -13,6 +14,7 @@ const Skeleton = ({ lines = 3 }) => (
 )
 
 const UniversiTice = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
   const { hiddenCourses, loadHiddenCourses, hideCourse, unhideCourse, showHidden, setShowHidden } = useHiddenCoursesStore()
   const [courses, setCourses] = useState([])
   const [coursesLoading, setCoursesLoading] = useState(true)
@@ -25,6 +27,14 @@ const UniversiTice = () => {
 
   // Simple in-memory cache per session to avoid re-fetching
   const contentsCache = useMemo(() => new Map(), [])
+
+  // Build 1-2 letters initials for placeholders
+  const getInitials = (name) => {
+    if (!name || typeof name !== 'string') return 'UT'
+    const words = name.trim().split(/\s+/).filter(Boolean)
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+    return (words[0][0] + words[1][0]).toUpperCase()
+  }
 
   // Ouvrir toutes les sections par défaut quand le contenu est chargé
   useEffect(() => {
@@ -60,6 +70,30 @@ const UniversiTice = () => {
     load()
     return () => { cancelled = true }
   }, [showHidden])
+
+  // Read ?course=<id> from URL and preselect
+  useEffect(() => {
+    const cid = Number(searchParams.get('course'))
+    if (cid && !Number.isNaN(cid)) {
+      setSelectedId(cid)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Reflect selection in URL for shareability
+  useEffect(() => {
+    const current = Number(searchParams.get('course')) || null
+    if (selectedId && current !== Number(selectedId)) {
+      const next = new URLSearchParams(searchParams)
+      next.set('course', String(selectedId))
+      setSearchParams(next, { replace: true })
+    }
+    if (!selectedId && current) {
+      const next = new URLSearchParams(searchParams)
+      next.delete('course')
+      setSearchParams(next, { replace: true })
+    }
+  }, [selectedId, searchParams, setSearchParams])
 
   // Track mobile breakpoint to control overlay behavior
   useEffect(() => {
@@ -300,7 +334,13 @@ const UniversiTice = () => {
               {courses.map(c => (
                 <li key={c.id} className={c.id === selectedId ? 'active' : ''} onClick={() => setSelectedId(c.id)}>
                   <div className="ut-card-banner" aria-hidden="true">
-                    {c.image && <img src={c.image} alt="" loading="lazy" />}
+                    {c.image ? (
+                      <img src={c.image} alt="" loading="lazy" />
+                    ) : (
+                      <div className="ut-card-placeholder" aria-hidden>
+                        {getInitials(c.shortname || c.fullname)}
+                      </div>
+                    )}
                   </div>
                   <div className="ut-course-row">
                     <div className="ut-course-title" title={c.fullname || c.shortname}>{c.fullname || c.shortname}</div>

@@ -4,8 +4,7 @@
   left: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  background: var(--overlay-strong-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,7 +21,7 @@
 .event-details-overlay.closing { opacity: 0; }
 
 .event-details-content {
-  background: var(--bg-primary);
+  background: var(--module-bg);
   border-radius: 12px;
   width: 90%;
   max-width: 550px;
@@ -185,7 +184,7 @@
 
 .event-note-delete:hover {
   opacity: 1;
-  color: #ff5555;
+  color: var(--danger-color);
 }
 
 .event-add-note {
@@ -294,8 +293,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #FF000020; 
-  color: #FF0000; 
+  background: color-mix(in oklab, var(--danger-color) 16%, transparent); 
+  color: var(--danger-color); 
   padding: 10px;
   border-radius: 6px;
   margin-bottom: 15px;
@@ -327,8 +326,8 @@
 }
 
 .event-action-btn:hover {
-  background: #4343437d;
-  border-color: #ffffff2a;
+  background: var(--bg-hover);
+  border-color: var(--border-color);
 }
 
 .event-action-btn:disabled {
@@ -349,7 +348,7 @@
 }
 
 .event-details-content-inline {
-  background: var(--bg-primary);
+  background: var(--module-bg);
   border-radius: 12px;
   padding: 20px;
   height: 100%;

@@ -4,8 +4,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+    background: var(--overlay-bg);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,7 +12,7 @@
 }
 
 .color-picker-content {
-    background: var(--bg-primary);
+    background: var(--module-bg);
     border-radius: 12px;
     padding: 24px;
     max-width: 380px;
@@ -66,11 +65,11 @@
     position: absolute;
     width: 12px;
     height: 12px;
-    border: 2px solid white;
+    border: 2px solid var(--module-bg);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 1px var(--shadow-color);
 }
 
 .hue-slider-container {
@@ -96,12 +95,12 @@
     top: 50%;
     width: 20px;
     height: 20px;
-    background: white;
-    border: 3px solid #333;
+    background: var(--module-bg);
+    border: 3px solid color-mix(in oklab, var(--text-primary) 60%, transparent);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 4px var(--shadow-color);
     pointer-events: none;
     transition: transform 0.1s ease;
 }
@@ -149,7 +148,7 @@
 }
 
 .quick-colors h4 {
-    color: #f90;
+    color: var(--nav-accent);
     font-size: 16px;
     margin: 0 0 12px 0;
 }
@@ -171,7 +170,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--on-accent);
 }
 
 .quick-color:hover {
@@ -216,10 +215,10 @@
 }
 
 .color-picker-save {
-    background: #f90;
-    color: #1c1c1c;
+    background: var(--accent-color);
+    color: var(--on-accent);
 }
 
 .color-picker-save:hover {
-    background: #e6890f;
+    background: color-mix(in oklab, var(--accent-color) 85%, black);
 }

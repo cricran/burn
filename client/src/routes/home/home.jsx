@@ -10,6 +10,7 @@ import DailySchedule from '../../components/dashboard/dailySchedule';
 import DailyNotesList from '../../components/dashboard/dailyNotesList';
 import SettingsModal from '../../components/settingsModal';
 import EventDetails from '../../components/eventDetails/eventDetails';
+import UtCoursesWidget from '../../components/dashboard/utCoursesWidget';
 
 const Home = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);
@@ -91,6 +92,11 @@ const Home = () => {
                     {/* Module 3: Liste des notes du jour */}
                     <div className='dashboard-module module-3'>
                         <DailyNotesList />
+                    </div>
+
+                    {/* Module 4: Cours UniversiTice visibles */}
+                    <div className='dashboard-module module-4'>
+                        <UtCoursesWidget />
                     </div>
                 </div>
 

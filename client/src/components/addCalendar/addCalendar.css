@@ -6,7 +6,6 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.0);
-    backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,7 +16,7 @@
 
 .addCalendar.open {
     opacity: 1;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--overlay-strong-bg);
 }
 
 .addCalendar.closing {
@@ -26,7 +25,7 @@
 }
 
 .addCalendar-content {
-    background: var(--bg-primary);
+    background: var(--module-bg);
     border-radius: 12px;
     width: 90%;
     max-width: 550px;
@@ -38,6 +37,7 @@
     transform: translateY(10px) scale(0.98);
     opacity: 0;
     transition: transform 0.22s ease, opacity 0.22s ease;
+    border: 1px solid var(--border-color);
 }
 
 .addCalendar.open .addCalendar-content {
@@ -55,22 +55,24 @@
     top: 15px;
     right: 15px;
     background: transparent;
-    border: none;
-    color: var(--text-primary);
+    border: 1px solid transparent;
+    color: var(--text-secondary);
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 5px;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     font-size: 20px;
-    transition: background-color 0.2s;
+    border-radius: 6px;
+    opacity: 0.6;
+    transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease, color 120ms ease;
 }
 
 .addCalendar-close:hover {
-    background-color: var(--bg-hover);
+    background: var(--hover-bg);
+    border-color: var(--border-color);
+    opacity: 1;
     color: var(--text-primary);
 }
 

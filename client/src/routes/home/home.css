@@ -30,30 +30,30 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
 }
 
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 20px 0;
+    padding: 12px 0;
     border-bottom: 1px solid var(--border-color);
     animation: fadeInDown 0.5s ease-out;
     animation-fill-mode: both;
 }
 
 .dashboard-title h1 {
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     color: var(--text-primary);
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: 700;
 }
 
 .dashboard-title p {
     margin: 0;
     color: var(--text-secondary);
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 .settings-button {
@@ -89,14 +89,14 @@
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 24px;
+    grid-template-rows: auto 1fr auto;
+    gap: 16px;
     min-height: 0; /* Important pour que les modules puissent scroller */
 }
 
 .dashboard-module {
-    min-height: 300px;
-    max-height: 500px;
+    min-height: 260px;
+    max-height: 420px;
 }
 
 /* Layout des modules */
@@ -107,7 +107,7 @@
 
 .module-2 {
     grid-column: 2;
-    grid-row: 1 / span 2; /* S'étend sur 2 lignes */
+    grid-row: 1 / span 3; /* S'étend sur 3 lignes car 4 modules */
 }
 
 .module-3 {
@@ -115,12 +115,17 @@
     grid-row: 2;
 }
 
+.module-4 {
+    grid-column: 1;
+    grid-row: 3;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
     .dashboard-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-        gap: 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+        gap: 16px;
     }
 
     .module-1 {
@@ -137,6 +142,11 @@
     .module-3 {
         grid-column: 1;
         grid-row: 3;
+    }
+
+    .module-4 {
+        grid-column: 1;
+        grid-row: 4;
     }
 }
 
@@ -166,18 +176,18 @@
     }
 
     .dashboard-module {
-        min-height: 250px;
-        max-height: 350px;
+    min-height: 220px;
+    max-height: 340px;
     }
 }
 
 @media screen and (max-width: 620px) {
     .dashboard-title h1 {
-        font-size: 1.3rem;
+    font-size: 1.2rem;
     }
 
     .dashboard-title p {
-        font-size: 0.9rem;
+    font-size: 0.85rem;
     }
 }
 

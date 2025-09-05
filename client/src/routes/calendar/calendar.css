@@ -28,7 +28,7 @@
 
 .dashboard-title p {
     margin: 0;
-    color: #d9edff;
+    color: var(--text-secondary);
     font-size: 1rem;
     transition: color 0.3s ease;
 }
@@ -37,25 +37,26 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    padding: 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    color: white;
-    display: flex;
+    transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease, color 120ms ease;
+    color: var(--text-secondary);
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    opacity: 0.6;
     z-index: 10;
-    animation: fadeInRight 0.6s ease-out 0.3s;
-    animation-fill-mode: both;
 }
 
 .settings-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: scale(1.05);
+    background: var(--hover-bg);
+    border-color: var(--border-color);
+    opacity: 1;
+    color: var(--text-primary);
 }
 
 .settings-button:active {
@@ -74,7 +75,7 @@
     min-width: 300px;
     width: 49%;
     box-sizing: border-box;
-    background: var(--bg-primary);
+    background: var(--module-bg);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 10px var(--shadow-color);
