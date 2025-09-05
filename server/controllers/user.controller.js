@@ -6,7 +6,7 @@ import fetch from 'node-fetch';
 
 import moodleToken from '../utils/connectMoodle.js';
 import testMoodleToken from '../utils/testMoodleToken.js';
-import { getSiteInfo, getUserCourses, getCourseContents, getCoursesByIds, buildCourseUrl, buildAuthenticatedFileUrl } from '../utils/moodleApi.js';
+import { getSiteInfo, getUserCourses, getCourseContents, buildCourseUrl, buildAuthenticatedFileUrl } from '../utils/moodleApi.js';
 
 // Helper to sanitize Moodle token (remove stray leading/trailing colons and trim)
 const sanitizeMoodleToken = (t) => {
@@ -280,26 +280,6 @@ export const listMyCourses = async (req, res) => {
                 image
             };
         });
-        // Fallback fetch for courses without image
-        const missing = simplified.filter(x => !x.image).map(x => x.id);
-        if (missing.length) {
-            try {
-                const details = await getCoursesByIds(token, missing);
-                const map = new Map(details.map(d => [d.id, d]));
-                simplified = simplified.map(x => {
-                    if (x.image) return x;
-                    const d = map.get(x.id);
-                    if (!d) return x;
-                    let imgUrl = null;
-                    if (d.courseimage) imgUrl = buildAuthenticatedFileUrl(d.courseimage, token) || d.courseimage;
-                    if (!imgUrl && Array.isArray(d.overviewfiles)) {
-                        const f = d.overviewfiles.find(f => (f?.fileurl && ((f?.mimetype || '').startsWith('image/') || /\.(png|jpe?g|webp|gif|svg)$/i.test(f?.filename || ''))));
-                        if (f?.fileurl) imgUrl = buildAuthenticatedFileUrl(f.fileurl, token) || f.fileurl;
-                    }
-                    return { ...x, image: imgUrl || x.image };
-                });
-            } catch {}
-        }
         if (!showHidden) {
             simplified = simplified.filter(c => !c.hidden);
         }

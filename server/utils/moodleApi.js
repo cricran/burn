@@ -220,23 +220,4 @@ export const buildAuthenticatedFileUrl = (rawUrl, token) => {
   }
 }
 
-// Fetch courses by ids to enrich info such as images
-export const getCoursesByIds = async (token, ids = []) => {
-  if (!ids || !ids.length) return [];
-  // Try REST first with flat args like options[ids][0]=123
-  try {
-    const args = {};
-    ids.forEach((id, i) => { args[`options[ids][${i}]`] = Number(id); });
-    const data = await callWs(token, 'core_course_get_courses', args);
-    return Array.isArray(data) ? data : [];
-  } catch (e) {
-    try {
-      const resp = await callMobile(token, [{ index: 0, methodname: 'core_course_get_courses', args: { options: { ids: ids.map(Number) } } }]);
-      return resp?.responses?.[0]?.data || [];
-    } catch {
-      return [];
-    }
-  }
-}
-
-export default { getSiteInfo, getUserCourses, getCoursesByClassification, setHiddenCoursesPreference, getCourseContents, getCoursesByIds, buildCourseUrl, buildAuthenticatedFileUrl };
+export default { getSiteInfo, getUserCourses, getCoursesByClassification, setHiddenCoursesPreference, getCourseContents, buildCourseUrl, buildAuthenticatedFileUrl };
