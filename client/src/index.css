@@ -11,6 +11,10 @@
   --accent-color: #007acc;
   --shadow-color: rgba(0, 0, 0, 0.1);
   --event-color: #007bff; /* Default event color */
+  --on-accent: #ffffff; /* Text/icon color on accent backgrounds */
+  --danger-color: #e74c3c; /* Destructive actions and errors */
+  --overlay-bg: rgba(0, 0, 0, 0.5); /* modal overlays */
+  --overlay-strong-bg: rgba(0, 0, 0, 0.7);
 
   /* Shared panel/module tokens (light) */
   --panel-bg: rgba(255,255,255,0.7);
@@ -37,8 +41,8 @@
   --nav-icon-hover: #000000;
   --nav-text-color: #000000;
   --nav-text-opacity: 0.7;
-  --nav-accent: #f90;
-  --nav-accent-bg: rgba(255, 153, 0, 0.1);
+  --nav-accent: var(--accent-color);
+  --nav-accent-bg: color-mix(in oklab, var(--accent-color) 16%, transparent);
   
   /* Calendar specific */
   --calendar-today-bg: rgba(255, 153, 0, 0.3);
@@ -58,6 +62,10 @@
   --accent-color: #66b3ff;
   --shadow-color: rgba(0, 0, 0, 0.3);
   --event-color: #66b3ff; /* Default event color for dark theme */
+  --on-accent: #0d1117; /* Text/icon on accent in dark theme */
+  --danger-color: #ff6b6b;
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --overlay-strong-bg: rgba(0, 0, 0, 0.7);
   
   /* Shared panel/module tokens (dark) */
   --panel-bg: rgba(255,255,255,0.08);
@@ -74,8 +82,8 @@
   --nav-icon-hover: #ffffff;
   --nav-text-color: #ffffff;
   --nav-text-opacity: 0.5;
-  --nav-accent: #f90;
-  --nav-accent-bg: rgba(255, 153, 0, 0.1);
+  --nav-accent: var(--accent-color);
+  --nav-accent-bg: color-mix(in oklab, var(--accent-color) 16%, transparent);
   
   /* Calendar specific */
   --calendar-today-bg: rgba(255, 153, 0, 0.3);
@@ -126,7 +134,7 @@ input[type="submit"]::-moz-focus-inner {
 
 body {
   font-family: "Montserrat", sans-serif;
-  background-color: var(--bg-primary);
+  background-color: transparent;
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -153,7 +161,6 @@ button {
   border-radius: var(--radius-md);
   padding: var(--space-3);
   border: 1px solid var(--border-color);
-  backdrop-filter: blur(8px);
 }
 
 .card { background: var(--module-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: var(--space-3); }
@@ -163,7 +170,7 @@ button {
 .list-item:hover { background: var(--hover-bg); border-color: var(--border-color); box-shadow: 0 2px 8px var(--shadow-color); }
 .list-item.active { background: var(--active-bg); border-color: var(--accent-color); box-shadow: 0 4px 12px var(--shadow-color); transform: translateY(-1px); }
 
-.btn { background: var(--accent-color); color: #fff; border: 1px solid var(--accent-color); padding: 6px 12px; border-radius: var(--radius-sm); transition: filter 120ms ease, opacity 120ms ease; }
+.btn { background: var(--accent-color); color: var(--on-accent); border: 1px solid var(--accent-color); padding: 6px 12px; border-radius: var(--radius-sm); transition: filter 120ms ease, opacity 120ms ease; }
 .btn:hover { filter: brightness(1.05); }
 .btn-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: var(--radius-sm); }
 .btn-outline:hover { background: var(--hover-bg); }
