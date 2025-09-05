@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 
 import moodleToken from '../utils/connectMoodle.js';
 import testMoodleToken from '../utils/testMoodleToken.js';
+import { getSiteInfo, getUserCourses, getCourseContents, getCoursesByIds, buildCourseUrl, buildAuthenticatedFileUrl } from '../utils/moodleApi.js';
 
 // Helper to sanitize Moodle token (remove stray leading/trailing colons and trim)
 const sanitizeMoodleToken = (t) => {
@@ -242,5 +243,105 @@ export const deleteCalendar = async (req, res) => {
         return res.status(200).json({ message: "Calendar deleted successfully." });
     } catch (error) {
         return res.status(500).json({ error: "Error while deleting calendar.", details: error.message });
+    }
+}
+
+// --- UniversiTice: list courses for current user ---
+export const listMyCourses = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+        const token = sanitizeMoodleToken(user.moodleToken);
+        const site = await getSiteInfo(token);
+        const courses = await getUserCourses(token, site.userid);
+        const hiddenSet = new Set(user.hiddenCourses || []);
+        const showHidden = String(req.query.showHidden || 'false') === 'true';
+        // Shape minimal data for UI
+        let simplified = courses.map(c => {
+            let image = null;
+            // Prefer Moodle-provided courseimage if available
+            if (c.courseimage) {
+                image = buildAuthenticatedFileUrl(c.courseimage, token) || c.courseimage;
+            }
+            if (!image) {
+                const files = Array.isArray(c.overviewfiles) ? c.overviewfiles : [];
+                const img = files.find(f => (f?.fileurl && ((f?.mimetype || '').startsWith('image/') || /\.(png|jpe?g|webp|gif|svg)$/i.test(f?.filename || ''))));
+                if (img?.fileurl) {
+                    image = buildAuthenticatedFileUrl(img.fileurl, token) || img.fileurl;
+                }
+            }
+            return {
+                id: c.id,
+                shortname: c.shortname,
+                fullname: c.fullname,
+                courseurl: buildCourseUrl(c.id),
+                hidden: hiddenSet.has(c.id),
+                image
+            };
+        });
+        // Fallback fetch for courses without image
+        const missing = simplified.filter(x => !x.image).map(x => x.id);
+        if (missing.length) {
+            try {
+                const details = await getCoursesByIds(token, missing);
+                const map = new Map(details.map(d => [d.id, d]));
+                simplified = simplified.map(x => {
+                    if (x.image) return x;
+                    const d = map.get(x.id);
+                    if (!d) return x;
+                    let imgUrl = null;
+                    if (d.courseimage) imgUrl = buildAuthenticatedFileUrl(d.courseimage, token) || d.courseimage;
+                    if (!imgUrl && Array.isArray(d.overviewfiles)) {
+                        const f = d.overviewfiles.find(f => (f?.fileurl && ((f?.mimetype || '').startsWith('image/') || /\.(png|jpe?g|webp|gif|svg)$/i.test(f?.filename || ''))));
+                        if (f?.fileurl) imgUrl = buildAuthenticatedFileUrl(f.fileurl, token) || f.fileurl;
+                    }
+                    return { ...x, image: imgUrl || x.image };
+                });
+            } catch {}
+        }
+        if (!showHidden) {
+            simplified = simplified.filter(c => !c.hidden);
+        }
+        return res.status(200).json({ courses: simplified });
+    } catch (e) {
+        if (e.code === 'invalidtoken') return res.status(401).json({ error: 'invalidtoken' });
+        return res.status(500).json({ error: 'Failed to fetch courses', details: e.message });
+    }
+}
+
+// --- UniversiTice: course contents ---
+export const getMyCourseContents = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { id } = req.params;
+        const courseId = Number(id);
+        if (!courseId) return res.status(400).json({ error: 'Invalid course id' });
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+        const token = sanitizeMoodleToken(user.moodleToken);
+        const contents = await getCourseContents(token, courseId);
+        // Post-process: attach direct file URLs with token where applicable
+        const processed = contents.map(section => ({
+            id: section.id,
+            name: section.name,
+            summary: section.summary,
+            modules: (section.modules || []).map(m => ({
+                id: m.id,
+                name: m.name,
+                modname: m.modname,
+                url: m.url,
+                contents: (m.contents || []).map(f => ({
+                    filename: f.filename,
+                    fileurl: buildAuthenticatedFileUrl(f.fileurl, token) || f.fileurl,
+                    filesize: f.filesize,
+                    mimetype: f.mimetype
+                }))
+            }))
+        }));
+        return res.status(200).json({ contents: processed });
+    } catch (e) {
+        if (e.code === 'invalidtoken') return res.status(401).json({ error: 'invalidtoken' });
+        return res.status(500).json({ error: 'Failed to fetch course contents', details: e.message });
     }
 }

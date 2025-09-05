@@ -40,3 +40,24 @@ apiRequest.interceptors.response.use(
 );
 
 export default apiRequest;
+
+// Optional: tiny client-side throttle/dedupe helpers (can be imported if needed)
+export const withThrottle = (() => {
+    let last = 0;
+    return async (ms, fn) => {
+        const now = Date.now();
+        if (now - last < ms) {
+            await new Promise(r => setTimeout(r, ms - (now - last)));
+        }
+        last = Date.now();
+        return fn();
+    };
+})();
+
+const inflight = new Map();
+export const dedupe = async (key, factory) => {
+    if (inflight.has(key)) return inflight.get(key);
+    const p = factory().finally(() => inflight.delete(key));
+    inflight.set(key, p);
+    return p;
+}

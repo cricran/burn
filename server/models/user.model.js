@@ -51,7 +51,12 @@ const userSchema = new Schema({
         byName: [{
             type: String
         }]
-    }
+    },
+    // Per-user hidden Moodle courses (by Moodle course id)
+    hiddenCourses: [{
+        type: Number,
+        default: []
+    }]
 },
     {
         timestamps: true,

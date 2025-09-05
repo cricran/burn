@@ -10,6 +10,7 @@ import calendarRouter from './routes/calendar.route.js';
 import noteRouter from './routes/note.route.js';
 import colorSettingsRouter from './routes/colorSettings.route.js';
 import hiddenEventsRouter from './routes/hiddenEvents.route.js';
+import hiddenCoursesRouter from './routes/hiddenCourses.route.js';
 
 
 const app = express();
@@ -45,6 +46,7 @@ app.use('/calendar', calendarRouter);
 app.use('/note', noteRouter);
 app.use('/color-settings', colorSettingsRouter);
 app.use('/hidden-events', hiddenEventsRouter);  
+app.use('/hidden-courses', hiddenCoursesRouter);
 
 
 // --- Start the Server ---
