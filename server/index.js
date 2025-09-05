@@ -10,6 +10,7 @@ import calendarRouter from './routes/calendar.route.js';
 import noteRouter from './routes/note.route.js';
 import colorSettingsRouter from './routes/colorSettings.route.js';
 import hiddenEventsRouter from './routes/hiddenEvents.route.js';
+import hiddenCoursesRouter from './routes/hiddenCourses.route.js';
 
 
 const app = express();
@@ -19,8 +20,22 @@ app.use(cookieParser());
 
 const PORT = process.env.PORT || 3000;
 
+const defaultOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:80',
+    'http://127.0.0.1:80'
+];
+const configuredOrigin = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [];
+const allowedOrigins = [...new Set([...configuredOrigin, ...defaultOrigins])];
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:80',
+    origin: (origin, cb) => {
+        // Allow non-browser clients (no origin)
+        if (!origin) return cb(null, true);
+        if (allowedOrigins.includes(origin)) return cb(null, true);
+        return cb(new Error(`Origin ${origin} not allowed by CORS`));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Accept', 'X-Requested-With']
@@ -31,6 +46,7 @@ app.use('/calendar', calendarRouter);
 app.use('/note', noteRouter);
 app.use('/color-settings', colorSettingsRouter);
 app.use('/hidden-events', hiddenEventsRouter);  
+app.use('/hidden-courses', hiddenCoursesRouter);
 
 
 // --- Start the Server ---

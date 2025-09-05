@@ -165,20 +165,17 @@ const moodleToken = async (username, password) => {
             return { success: false, message: "Aucun token trouvé dans l'en-tête de redirection." };
         }
 
-        // Extract the token after 'token='
-        const tokenEncoded = locationHeader.split('token=')[1];
-        // Decode from base64
-        const tokenDecoded = Buffer.from(tokenEncoded, 'base64').toString('utf-8');
-        // Get the middle part between the first and last '::'
-        const parts = tokenDecoded.split('::');
-        let middle = '';
-        if (parts.length >= 3) {
-            middle = parts[1];
-        } else {
-            middle = tokenDecoded; // fallback if format is unexpected
-        }
+    // Extract the token after 'token='
+    const tokenEncoded = locationHeader.split('token=')[1];
+    // Decode from base64
+    const tokenDecoded = Buffer.from(tokenEncoded, 'base64').toString('utf-8');
+    // Get the middle part between the first and last '::'
+    const parts = tokenDecoded.split('::');
+    let middle = parts.length >= 3 ? parts[1] : tokenDecoded; // fallback if format is unexpected
+    // Sanitize: trim whitespace and stray leading/trailing colons
+    middle = middle.trim().replace(/^:+/, '').replace(/:+$/, '');
 
-        return { success: true, token: middle };
+    return { success: true, token: middle };
 
     } catch (error) {
         console.error('[Login] Error details:', error);

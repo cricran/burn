@@ -20,7 +20,7 @@ const NavBar = () => {
                 </Link>
                 <Link
                     className={`buton${path === '/universitice' ? ' selected' : ''}`}
-                    to={'/UniversiTice'}
+                    to={'/universitice'}
                 >
                     <div className='icon'>
                         <BookMarked />

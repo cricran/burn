@@ -6,6 +6,13 @@ import fetch from 'node-fetch';
 
 import moodleToken from '../utils/connectMoodle.js';
 import testMoodleToken from '../utils/testMoodleToken.js';
+import { getSiteInfo, getUserCourses, getCourseContents, buildCourseUrl, buildAuthenticatedFileUrl } from '../utils/moodleApi.js';
+
+// Helper to sanitize Moodle token (remove stray leading/trailing colons and trim)
+const sanitizeMoodleToken = (t) => {
+    if (typeof t !== 'string') return '';
+    return t.trim().replace(/^:+/, '').replace(/:+$/, '');
+}
 
 export const loginUser = async (req, res) => {
     let { username, password } = req.body;
@@ -37,7 +44,7 @@ export const loginUser = async (req, res) => {
         res.cookie('jwt', JStoken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
             maxAge: 365 * 24 * 60 * 60 * 1000
         });
 
@@ -45,8 +52,14 @@ export const loginUser = async (req, res) => {
 
         return res.status(201).json(userData);
     } else {
-        const token = user.moodleToken;
-        if (testMoodleToken(token)) {
+        let token = sanitizeMoodleToken(user.moodleToken);
+        console.log("Existing user found. Testing Moodle token:", token);
+        if (await testMoodleToken(token)) {
+            console.log("Moodle token is valid for user:", username);
+            // If sanitized token differs from stored, persist the clean value
+            if (token !== user.moodleToken) {
+                try { user.moodleToken = token; await user.save(); } catch (_) { /* ignore */ }
+            }
             // If user exists, check password
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (isPasswordValid) {
@@ -58,7 +71,7 @@ export const loginUser = async (req, res) => {
                 res.cookie('jwt', JStoken, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'Strict',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
                 });
 
                 return res.status(200).json(userData);
@@ -73,9 +86,17 @@ export const loginUser = async (req, res) => {
                 return res.status(401).json({ error: 'Moodle connection failed.', message: 'L\'identifiant ou le mot de passe est incorrect.' });
             }
             // Update user with new token and password
-            user.moodleToken = newToken;
+            user.moodleToken = sanitizeMoodleToken(newToken.token);
             user.password = await bcrypt.hash(password, 10); // Update password hash
             await user.save();
+
+            // Issue JWT cookie
+            const JStoken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+            res.cookie('jwt', JStoken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
+            });
 
             const { password: _pw, ...userData } = user.toObject();
             return res.status(200).json(userData);
@@ -102,6 +123,37 @@ export const getUser = async (req, res) => {
     const { password: _pw, ...userData } = user.toObject();
 
     return res.status(200).json(userData);
+}
+
+// Test Moodle connectivity for the authenticated user by validating the stored token
+export const testMoodleConnection = async (req, res) => {
+    console.log("Testing Moodle connection for user:", req.userId);
+
+    try {
+        const userId = req.userId;
+        if (!userId) return res.status(401).json({ ok: false, error: 'Unauthorized' });
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ ok: false, error: 'User not found.' });
+
+        let token = sanitizeMoodleToken(user.moodleToken);
+        console.log("Using Moodle token:", token);
+
+        const ok = await testMoodleToken(token);
+        if (ok) {
+            console.log("Moodle connection successful for user:", user.username);
+            // If sanitized token differs from stored, persist the clean value
+            if (token !== user.moodleToken) {
+                try { user.moodleToken = token; await user.save(); } catch (_) { /* ignore */ }
+            }
+            return res.status(200).json({ ok: true, message: 'Moodle token is valid and reachable.' });
+        } else {
+            console.log("Moodle connection failed for user:", user.username);
+            return res.status(200).json({ ok: false, message: 'Failed to reach Moodle or token invalid.' });
+        }
+    } catch (error) {
+        return res.status(500).json({ ok: false, error: 'Internal error while testing Moodle connectivity.', details: error?.message });
+    }
 }
 
 export const addCalendar = async (req, res) => {
@@ -191,5 +243,85 @@ export const deleteCalendar = async (req, res) => {
         return res.status(200).json({ message: "Calendar deleted successfully." });
     } catch (error) {
         return res.status(500).json({ error: "Error while deleting calendar.", details: error.message });
+    }
+}
+
+// --- UniversiTice: list courses for current user ---
+export const listMyCourses = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+        const token = sanitizeMoodleToken(user.moodleToken);
+        const site = await getSiteInfo(token);
+        const courses = await getUserCourses(token, site.userid);
+        const hiddenSet = new Set(user.hiddenCourses || []);
+        const showHidden = String(req.query.showHidden || 'false') === 'true';
+        // Shape minimal data for UI
+        let simplified = courses.map(c => {
+            let image = null;
+            // Prefer Moodle-provided courseimage if available
+            if (c.courseimage) {
+                image = buildAuthenticatedFileUrl(c.courseimage, token) || c.courseimage;
+            }
+            if (!image) {
+                const files = Array.isArray(c.overviewfiles) ? c.overviewfiles : [];
+                const img = files.find(f => (f?.fileurl && ((f?.mimetype || '').startsWith('image/') || /\.(png|jpe?g|webp|gif|svg)$/i.test(f?.filename || ''))));
+                if (img?.fileurl) {
+                    image = buildAuthenticatedFileUrl(img.fileurl, token) || img.fileurl;
+                }
+            }
+            return {
+                id: c.id,
+                shortname: c.shortname,
+                fullname: c.fullname,
+                courseurl: buildCourseUrl(c.id),
+                hidden: hiddenSet.has(c.id),
+                image
+            };
+        });
+        if (!showHidden) {
+            simplified = simplified.filter(c => !c.hidden);
+        }
+        return res.status(200).json({ courses: simplified });
+    } catch (e) {
+        if (e.code === 'invalidtoken') return res.status(401).json({ error: 'invalidtoken' });
+        return res.status(500).json({ error: 'Failed to fetch courses', details: e.message });
+    }
+}
+
+// --- UniversiTice: course contents ---
+export const getMyCourseContents = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { id } = req.params;
+        const courseId = Number(id);
+        if (!courseId) return res.status(400).json({ error: 'Invalid course id' });
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+        const token = sanitizeMoodleToken(user.moodleToken);
+        const contents = await getCourseContents(token, courseId);
+        // Post-process: attach direct file URLs with token where applicable
+        const processed = contents.map(section => ({
+            id: section.id,
+            name: section.name,
+            summary: section.summary,
+            modules: (section.modules || []).map(m => ({
+                id: m.id,
+                name: m.name,
+                modname: m.modname,
+                url: m.url,
+                contents: (m.contents || []).map(f => ({
+                    filename: f.filename,
+                    fileurl: buildAuthenticatedFileUrl(f.fileurl, token) || f.fileurl,
+                    filesize: f.filesize,
+                    mimetype: f.mimetype
+                }))
+            }))
+        }));
+        return res.status(200).json({ contents: processed });
+    } catch (e) {
+        if (e.code === 'invalidtoken') return res.status(401).json({ error: 'invalidtoken' });
+        return res.status(500).json({ error: 'Failed to fetch course contents', details: e.message });
     }
 }
