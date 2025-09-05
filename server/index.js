@@ -11,11 +11,14 @@ import noteRouter from './routes/note.route.js';
 import colorSettingsRouter from './routes/colorSettings.route.js';
 import hiddenEventsRouter from './routes/hiddenEvents.route.js';
 import hiddenCoursesRouter from './routes/hiddenCourses.route.js';
+import assignmentsRouter from './routes/assignments.route.js';
 
 
 const app = express();
 
-app.use(express.json());
+// Increase body limit to support base64 uploads for assignment files
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser()); 
 
 const PORT = process.env.PORT || 3000;
@@ -47,6 +50,7 @@ app.use('/note', noteRouter);
 app.use('/color-settings', colorSettingsRouter);
 app.use('/hidden-events', hiddenEventsRouter);  
 app.use('/hidden-courses', hiddenCoursesRouter);
+app.use('/assignments', assignmentsRouter);
 
 
 // --- Start the Server ---

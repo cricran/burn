@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { PanelBottomClose, PanelLeftOpen, FileText, BookOpen, Link, File, Video, Image, Archive, HelpCircle, Upload, Download, EyeOff, Eye } from 'lucide-react'
+import { PanelBottomClose, PanelLeftOpen, FileText, BookOpen, Link, File, Video, Image, Archive, HelpCircle, Upload, Download, EyeOff, Eye, Lock } from 'lucide-react'
 import apiRequest from '../../utils/apiRequest'
 import './universitice.css'
 import useHiddenCoursesStore from '../../utils/hiddenCoursesStore'
@@ -149,6 +149,7 @@ const UniversiTice = () => {
       case 'quiz':
         return <HelpCircle size={16} />
       case 'assignment':
+      case 'assign':
         return <Upload size={16} />
       default:
         return <File size={16} />
@@ -158,6 +159,121 @@ const UniversiTice = () => {
   // Mark initial enter for animations
   const [entered, setEntered] = useState(false)
   useEffect(() => { setEntered(true) }, [])
+
+  // Assignment modal state
+  const [modal, setModal] = useState({ open: false, courseId: null, module: null })
+  const [files, setFiles] = useState([])
+  const [assignStatusLoading, setAssignStatusLoading] = useState(false)
+  const [statusNote, setStatusNote] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [errorNote, setErrorNote] = useState('')
+
+  const openSubmitModal = async (courseId, module) => {
+    setModal({ open: true, courseId, module })
+    setFiles([])
+    setStatusNote('')
+  setErrorNote('')
+    await fetchAssignStatusIfPossible(module)
+  }
+
+  const fetchAssignStatusIfPossible = async (module) => {
+    try {
+      setAssignStatusLoading(true)
+      const courseId = selectedId
+      if (!courseId) return
+  const { data } = await apiRequest.get(`/assignments/course/${courseId}`)
+  const list = data?.assignments || []
+      const candidates = [module.instance, module.id, module.cmid].map(x => Number(x)).filter(Boolean)
+      const match = list.find(a => candidates.includes(Number(a.cmid)))
+      const chosen = match || list.find(a => (module.name || '').trim() === (a.name || '').trim())
+      if (!chosen) { setStatusNote('Aucun devoir détecté'); return }
+      const statusRes = await apiRequest.get(`/assignments/${chosen.id}/status`)
+      const s = statusRes.data?.status
+      if (!s) return
+      const attemptNo = s?.lastattempt?.attemptnumber != null ? (Number(s.lastattempt.attemptnumber) + 1) : 1
+      const submitted = s?.lastattempt?.submission?.status === 'submitted'
+      const locked = s?.lastattempt?.canedit === false
+      const graded = s?.gradingsummary?.gradedcount > 0
+  const du = s?.lastattempt?.extensionduedate || s?.lastattempt?.duedate || s?.assignment?.duedate || s?.gradingsummary?.duedate || chosen?.duedate
+  const openFrom = s?.lastattempt?.allowsubmissionsfromdate || s?.assignment?.allowsubmissionsfromdate || chosen?.allowsubmissionsfromdate
+  const cutoff = s?.assignment?.cutoffdate || chosen?.cutoffdate || s?.lastattempt?.cutoffdate
+      const fmt = (ts) => ts ? new Date(ts*1000).toLocaleString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'
+      const details = {
+        title: module?.name || 'Devoir',
+        openLabel: openFrom ? `Ouverture : ${fmt(openFrom)}` : undefined,
+        dueLabel: du ? `Échéance : ${fmt(du)}` : undefined,
+        closeLabel: cutoff ? `Fermeture : ${fmt(cutoff)}` : undefined,
+        attempt: `Ceci est la tentative ${attemptNo}.`,
+        work: submitted ? 'Travaux remis' : 'Aucun devoir n’a encore été remis',
+        grading: graded ? 'Évalué' : 'Non évalué',
+        canEdit: !locked,
+        locked
+      }
+      setAssignDetails(details)
+      setStatusNote(submitted ? 'Déjà soumis' : locked ? '' : 'Brouillon possible')
+      setModal(prev => ({ ...prev, assignId: chosen.id }))
+    } catch (e) {
+      setAssignDetails(null)
+    } finally {
+      setAssignStatusLoading(false)
+    }
+  }
+
+  const [assignDetails, setAssignDetails] = useState(null)
+
+  const submitAssignmentFlow = async (finalize) => {
+    try {
+  setErrorNote('')
+      if (!modal.assignId) {
+        await fetchAssignStatusIfPossible(modal.module)
+        if (!modal.assignId) return
+      }
+      setSubmitting(true)
+      const payloadFiles = await Promise.all(files.map(fileToBase64))
+      const upRes = await apiRequest.post(`/assignments/${modal.assignId}/upload`, { files: payloadFiles })
+      const draftitemid = upRes.data?.draftitemid
+      if (!draftitemid) throw new Error('Upload échoué')
+      if (finalize) {
+        await apiRequest.post(`/assignments/${modal.assignId}/submit`, { draftitemid, acceptStatement: true })
+        setStatusNote('Remise définitive effectuée ✅')
+      } else {
+        await apiRequest.post(`/assignments/${modal.assignId}/save`, { draftitemid })
+        setStatusNote('Brouillon enregistré 💾')
+      }
+      setFiles([])
+    } catch (e) {
+      const status = e?.response?.status
+      let msg = ''
+      if (status === 413) msg = 'Fichier trop volumineux (max 50 Mo par envoi).'
+      else if (status === 401) msg = 'Session expirée. Veuillez vous reconnecter.'
+      else msg = e?.response?.data?.error || 'Erreur lors de la remise. Veuillez réessayer.'
+      setErrorNote(msg)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const fileToBase64 = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = reader.result
+      const base64 = typeof result === 'string' ? result.split(',').pop() : ''
+      resolve({ filename: file.name, mimetype: file.type || 'application/octet-stream', contentBase64: base64 })
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+
+  const onFilePick = (e) => {
+    const list = Array.from(e.target.files || [])
+    setFiles(list)
+  }
+  const onDragOver = (e) => { e.preventDefault() }
+  const onDrop = (e) => {
+    e.preventDefault()
+    const list = Array.from(e.dataTransfer.files || [])
+    setFiles(list)
+  }
 
   return (
     <div className={`content universitice ${entered ? 'page-enter' : ''}`}>
@@ -276,6 +392,14 @@ const UniversiTice = () => {
                               <div className="ut-module-title">{m.name}</div>
                             )}
                           </div>
+                          {/* Assignment action */}
+                          {(m.modname === 'assign' || m.modname === 'assignment') && (
+                            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>
+                              <button className="btn" onClick={() => openSubmitModal(selectedId, m)}>
+                                <Upload size={14} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Remettre
+                              </button>
+                            </div>
+                          )}
                           {m.contents && m.contents.length > 0 && (
                             <ul className="ut-files">
                               {m.contents.map((f, idx) => (
@@ -302,6 +426,69 @@ const UniversiTice = () => {
           )}
         </main>
       </div>
+      {/* Submit modal */}
+      {modal.open && (
+        <div className="ut-modal-backdrop" role="dialog" aria-modal="true">
+          <div className="ut-modal">
+            <div className="ut-modal-head">
+              <div className="ut-modal-title-row">
+                <div className="ut-modal-title">Remise de devoir — {modal.module?.name || ''}</div>
+                {assignDetails?.locked && (
+                  <div className="ut-status-chip locked"><Lock size={14} /> Verrouillé</div>
+                )}
+              </div>
+              <button className="icon-btn" onClick={() => setModal({ open: false })}>✕</button>
+            </div>
+            <div className="ut-modal-body">
+              {assignStatusLoading ? (
+                <Skeleton lines={3} />
+              ) : (
+                <>
+                  {assignDetails && (
+                    <div className="ut-status">
+                      <div className="ut-status-meta">
+                        {assignDetails.openLabel && <div className="ut-status-meta-item">{assignDetails.openLabel}</div>}
+                        {assignDetails.dueLabel && <div className="ut-status-meta-item">{assignDetails.dueLabel}</div>}
+                        {assignDetails.closeLabel && <div className="ut-status-meta-item">{assignDetails.closeLabel}</div>}
+                      </div>
+                      <div className="ut-status-section">Conditions d’achèvement</div>
+                      <div className="ut-status-section">Statut de remise</div>
+                      <div className="ut-status-grid">
+                        <div>Numéro de tentative</div>
+                        <div>{assignDetails.attempt}</div>
+                        <div>Statut des travaux remis</div>
+                        <div>{assignDetails.work}</div>
+                        <div>Statut de l’évaluation</div>
+                        <div>{assignDetails.grading}</div>
+                      </div>
+                    </div>
+                  )}
+                  {errorNote && <div className="ut-error-note">{errorNote}</div>}
+                  {statusNote && !errorNote && <div className="badge" style={{ marginTop: 8 }}>{statusNote}</div>}
+                  <div className="dropzone" onDragOver={onDragOver} onDrop={onDrop}>
+                    <input type="file" multiple onChange={onFilePick} />
+                    <p>Glissez-déposez des fichiers ici ou cliquez pour sélectionner</p>
+                    {files.length > 0 && (
+                      <ul className="file-list">
+                        {files.map((f, i) => (
+                          <li key={i}>{f.name} — {(f.size/1024/1024).toFixed(2)} Mo</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="ut-modal-foot">
+              <button className="btn-ghost" onClick={() => setModal({ open: false })}>Annuler</button>
+              <button className="btn-outline" disabled={submitting || files.length === 0} onClick={() => submitAssignmentFlow(false)}>Enregistrer comme brouillon</button>
+              <button className="btn" disabled={submitting || files.length === 0} onClick={() => submitAssignmentFlow(true)}>
+                {submitting ? 'Envoi…' : 'Remise définitive'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
