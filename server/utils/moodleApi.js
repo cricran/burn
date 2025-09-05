@@ -221,3 +221,111 @@ export const buildAuthenticatedFileUrl = (rawUrl, token) => {
 }
 
 export default { getSiteInfo, getUserCourses, getCoursesByClassification, setHiddenCoursesPreference, getCourseContents, buildCourseUrl, buildAuthenticatedFileUrl };
+
+// ---------- Assignments (mod_assign) helpers ----------
+
+// Get assignments for a course, includes mapping from cmid -> assign id
+export const getAssignmentsByCourse = async (token, courseid) => {
+  try {
+    // Moodle REST expects array style params: courseids[0]=id
+    const data = await callWs(token, 'mod_assign_get_assignments', { 'courseids[0]': Number(courseid) });
+    const list = (data?.courses?.[0]?.assignments) || [];
+    return list.map(a => ({
+      id: a.id,           // assign id
+      cmid: a.cmid,       // course module id
+      name: a.name,
+      duedate: a.duedate,
+      allowsubmissionsfromdate: a.allowsubmissionsfromdate,
+      cutoffdate: a.cutoffdate,
+      teamsubmission: a.teamsubmission,
+      submissionsenabled: a.submissionsenabled,
+      maxfilesubmissions: a.maxfilesubmissions,
+      maxsubmissionsizebytes: a.maxsubmissionsizebytes
+    }));
+  } catch (e) {
+    // Fallback to mobile service
+    const resp = await callMobile(token, [{ index: 0, methodname: 'mod_assign_get_assignments', args: { courseids: [Number(courseid)] } }]);
+    const list = resp?.responses?.[0]?.data?.courses?.[0]?.assignments || [];
+    return list.map(a => ({
+      id: a.id,
+      cmid: a.cmid,
+      name: a.name,
+      duedate: a.duedate,
+      allowsubmissionsfromdate: a.allowsubmissionsfromdate,
+      cutoffdate: a.cutoffdate,
+      teamsubmission: a.teamsubmission,
+      submissionsenabled: a.submissionsenabled,
+      maxfilesubmissions: a.maxfilesubmissions,
+      maxsubmissionsizebytes: a.maxsubmissionsizebytes
+    }));
+  }
+}
+
+export const getSubmissionStatus = async (token, assignid) => {
+  try {
+    const data = await callWs(token, 'mod_assign_get_submission_status', { assignid: Number(assignid) });
+    return data;
+  } catch (e) {
+    const resp = await callMobile(token, [{ index: 0, methodname: 'mod_assign_get_submission_status', args: { assignid: Number(assignid) } }]);
+    return resp?.responses?.[0]?.data;
+  }
+}
+
+export const saveSubmission = async (token, assignid, draftitemid, onlinetext) => {
+  // mod_assign_save_submission expects plugindata fields. For file submissions: files_filemanager = draftitemid
+  const plugindata = { files_filemanager: Number(draftitemid) };
+  if (onlinetext) {
+    plugindata.onlinetext_editor = { text: String(onlinetext), format: 1 }; // 1 = HTML
+  }
+  const args = { assignmentid: Number(assignid), plugindata: JSON.stringify(plugindata) };
+  try {
+    const data = await callWs(token, 'mod_assign_save_submission', args);
+    return data;
+  } catch (e) {
+    const resp = await callMobile(token, [{ index: 0, methodname: 'mod_assign_save_submission', args: { assignmentid: Number(assignid), plugindata } }]);
+    return resp?.responses?.[0]?.data;
+  }
+}
+
+export const submitForGrading = async (token, assignid, acceptStatement = true) => {
+  const args = { assignmentid: Number(assignid), acceptsubmissionstatement: acceptStatement ? 1 : 0 };
+  try {
+    const data = await callWs(token, 'mod_assign_submit_for_grading', args);
+    return data;
+  } catch (e) {
+    const resp = await callMobile(token, [{ index: 0, methodname: 'mod_assign_submit_for_grading', args }]);
+    return resp?.responses?.[0]?.data;
+  }
+}
+
+// Upload a list of files to the user draft area using webservice/upload.php, returning a draft itemid
+export const uploadFilesToDraft = async (token, files) => {
+  // files: Array<{ filename: string, buffer: Buffer, mimetype?: string }>
+  let itemid = 0;
+  for (const f of files) {
+    // Lazy require form-data to avoid ESM issues
+    const FormData = (await import('form-data')).default;
+    const form = new FormData();
+    form.append('filearea', 'draft');
+    form.append('itemid', String(itemid));
+    form.append('filepath', '/');
+    // node-fetch v2 expects form-data stream
+    form.append('file', f.buffer, { filename: f.filename, contentType: f.mimetype || 'application/octet-stream' });
+
+    const url = `${BASE}webservice/upload.php?wstoken=${encodeURIComponent(sanitizeToken(token))}`;
+    const res = await withSemaphore(() => fetchWithRetry(url, { method: 'POST', body: form, headers: { ...form.getHeaders(), ...commonHeaders } }));
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data) throw new Error(`Upload failed ${res.status}`);
+    // data should be an array with itemid
+    const uploadedItemId = Array.isArray(data) ? data[0]?.itemid : data?.itemid;
+    if (!uploadedItemId) throw new Error('No itemid from upload');
+    itemid = uploadedItemId;
+  }
+  return { itemid };
+}
+
+export const isAssignModule = (modname) => {
+  // Moodle returns 'assign' for assignment modules
+  return modname === 'assign' || modname === 'assignment';
+}
+

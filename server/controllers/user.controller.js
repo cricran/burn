@@ -308,6 +308,7 @@ export const getMyCourseContents = async (req, res) => {
             summary: section.summary,
             modules: (section.modules || []).map(m => ({
                 id: m.id,
+                instance: m.instance,
                 name: m.name,
                 modname: m.modname,
                 url: m.url,
