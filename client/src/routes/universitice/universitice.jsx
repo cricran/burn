@@ -432,6 +432,10 @@ const UniversiTice = () => {
                               <div className="ut-module-title">{m.name}</div>
                             )}
                           </div>
+                          {/* Render description/label HTML fully if provided */}
+                          {m.description && (
+                            <div className="ut-module-description" dangerouslySetInnerHTML={{ __html: m.description }} />
+                          )}
                           {/* Assignment action */}
                           {(m.modname === 'assign' || m.modname === 'assignment') && (
                             <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>

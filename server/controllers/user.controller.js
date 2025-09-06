@@ -311,6 +311,8 @@ export const getMyCourseContents = async (req, res) => {
                 instance: m.instance,
                 name: m.name,
                 modname: m.modname,
+                // Include full HTML description when available (e.g., labels)
+                description: m.description,
                 url: m.url,
                 contents: (m.contents || []).map(f => ({
                     filename: f.filename,

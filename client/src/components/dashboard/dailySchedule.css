@@ -42,7 +42,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 6px;
-    background: var(--bg-primary);
+    /* background: var(--bg-primary); */
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;

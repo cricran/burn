@@ -1,5 +1,5 @@
 /* UniversiTice Courses widget styles */
-.ut-widget { height: 100%; display: flex; flex-direction: column; gap: 12px; background: var(--module-bg, transparent); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; overflow: hidden; }
+.ut-widget { height: 100%; display: flex; flex-direction: column; gap: 12px; background: var(--module-bg, transparent); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; overflow: hidden; box-shadow: 0 2px 8px var(--shadow-color); transition: background-color 0.3s ease, box-shadow 0.3s ease; animation: fadeInUp 0.6s ease-out; animation-fill-mode: both; }
 .ut-widget .module-header { display: flex; align-items: center; justify-content: space-between; }
 .ut-widget .module-header h3 { margin: 0; font-size: 1rem; }
 .ut-widget .see-all { display: inline-flex; gap: 6px; align-items: center; color: var(--text-secondary); text-decoration: none; font-size: .9rem; }
@@ -10,5 +10,15 @@
 .utw-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); }
 .utw-thumb-placeholder { display: grid; place-items: center; font-weight: 700; color: var(--text-primary); background: linear-gradient(135deg, color-mix(in oklab, var(--accent-color) 30%, transparent), transparent 60%), color-mix(in oklab, var(--text-secondary) 10%, transparent); }
 .utw-meta { min-width: 0; }
-.utw-title { font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.utw-sub { color: var(--text-secondary); font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.utw-title { font-weight: 600; color: var(--text-primary); }
+.utw-sub { color: var(--text-secondary); font-size: .85rem; }
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
