@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start": "node index.js",
+  "reset-onboarding": "node scripts/resetOnboarding.js",
+  "reset-onboarding:user": "node scripts/resetOnboarding.js $USER"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +23,9 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
+  "imapflow": "^1.0.161",
     "jsonwebtoken": "^9.0.2",
+  "mailparser": "^3.7.1",
     "mongoose": "^8.16.1",
     "node-fetch": "^2.7.0",
     "node-ical": "^0.20.1"

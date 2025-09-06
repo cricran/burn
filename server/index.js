@@ -12,6 +12,8 @@ import colorSettingsRouter from './routes/colorSettings.route.js';
 import hiddenEventsRouter from './routes/hiddenEvents.route.js';
 import hiddenCoursesRouter from './routes/hiddenCourses.route.js';
 import assignmentsRouter from './routes/assignments.route.js';
+import mailRouter from './routes/mail.route.js';
+import mailSettingsRouter from './routes/mailSettings.route.js';
 
 
 const app = express();
@@ -40,7 +42,7 @@ app.use(cors({
         return cb(new Error(`Origin ${origin} not allowed by CORS`));
     },
     credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Accept', 'X-Requested-With']
 }));
 
@@ -51,6 +53,8 @@ app.use('/color-settings', colorSettingsRouter);
 app.use('/hidden-events', hiddenEventsRouter);  
 app.use('/hidden-courses', hiddenCoursesRouter);
 app.use('/assignments', assignmentsRouter);
+app.use('/mail', mailRouter);
+app.use('/mail-settings', mailSettingsRouter);
 
 
 // --- Start the Server ---

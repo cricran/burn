@@ -56,7 +56,12 @@ const userSchema = new Schema({
     hiddenCourses: [{
         type: Number,
         default: []
-    }]
+    }],
+    mailSettings: {
+        email: { type: String, default: '' },
+        login: { type: String, default: '' },
+        tourDone: { type: Boolean, default: false }
+    }
 },
     {
         timestamps: true,

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import './navBar.css'
-import { BookMarked, CalendarDaysIcon, Home, User } from 'lucide-react'
+import { BookMarked, CalendarDaysIcon, Home, Mail } from 'lucide-react'
 
 const NavBar = () => {
     const location = useLocation();
@@ -39,13 +39,13 @@ const NavBar = () => {
             </div>
             <div>
                 <Link
-                    className={`buton${path === '/profile' ? ' selected' : ''}`}
-                    to={'/profile'}
+                    className={`buton${path === '/mail' ? ' selected' : ''}`}
+                    to={'/mail'}
                 >
                     <div className='icon'>
-                        <User />
+                        <Mail />
                     </div>
-                    <div className='text'>Profile</div>
+                    <div className='text'>Mail</div>
                 </Link>
             </div>
         </div>

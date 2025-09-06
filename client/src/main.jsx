@@ -10,6 +10,7 @@ import Home from './routes/home/home'
 import MainLayout from './routes/layout/mainLayout'
 import Calendar from './routes/calendar/calendar'
 import UniversiTice from './routes/universitice/universitice'
+import Mail from './routes/mail/mail'
 
 const queryClient = new QueryClient();
 
@@ -50,7 +51,7 @@ root.render(
             <Route path='/my' element={<Home />} />
             <Route path='/universitice' element={<UniversiTice />} />
             <Route path='/edt' element={<Calendar />} />
-            <Route path='/profile' element={<LandingPage />} />
+            <Route path='/mail' element={<Mail />} />
           </Route>
         </Routes>
       </BrowserRouter>
