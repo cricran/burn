@@ -3,6 +3,7 @@ import { Settings, LogOut, User, Moon, Sun, Monitor } from 'lucide-react';
 import './settingsModal.css';
 import useAuthStore from '../utils/authStore';
 import useColorSettingsStore from '../utils/colorSettingsStore';
+import { openLayer, discard, closeTop } from '../utils/uiHistory';
 
 function SettingsModal({ isOpen, onClose }) {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -17,13 +18,25 @@ function SettingsModal({ isOpen, onClose }) {
         }
     }, [isOpen, currentUser, loadColorSettings]);
 
+    // Register UI history so back button closes the modal first
+    useEffect(() => {
+        if (!isOpen) return;
+        const token = openLayer(() => {
+            onClose?.();
+        });
+        return () => discard(token);
+        // Intentionally ignore onClose to avoid multiple pushState when its identity changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
+
     const handleLogout = async () => {
         setIsLoggingOut(true);
         try {
             // Attendre un peu pour l'effet visuel
             await new Promise(resolve => setTimeout(resolve, 500));
             clearCurrentUser();
-            onClose();
+            // Passer par l'historique pour fermer proprement la couche UI
+            requestClose();
         } catch (error) {
             console.error('Erreur lors de la déconnexion:', error);
         } finally {
@@ -35,17 +48,22 @@ function SettingsModal({ isOpen, onClose }) {
         e.stopPropagation();
     };
 
+    const requestClose = () => {
+        // Go through history so back stack stays in sync
+        closeTop();
+    };
+
     if (!isOpen) return null;
 
     return (
-        <div className="settings-overlay" onClick={onClose}>
+    <div className="settings-overlay" onClick={requestClose}>
             <div className="settings-modal" onClick={stopPropagation}>
                 <div className="settings-header">
                     <div className="settings-title">
                         <Settings size={20} />
                         <h3>Paramètres</h3>
                     </div>
-                    <button className="close-button" onClick={onClose}>
+            <button className="close-button" onClick={requestClose}>
                         ×
                     </button>
                 </div>

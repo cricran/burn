@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Check, X } from 'lucide-react';
 import './colorPicker.css';
+import { openLayer, discard, closeTop } from '../../utils/uiHistory';
 
 const ColorPicker = ({ currentColor, onColorChange, onClose, eventTitle }) => {
     const [selectedColor, setSelectedColor] = useState(currentColor || '#3B82F6');
@@ -217,7 +218,7 @@ const ColorPicker = ({ currentColor, onColorChange, onClose, eventTitle }) => {
 
     const handleSave = () => {
         onColorChange(selectedColor);
-        onClose();
+        closeTop();
     };
 
     const stopPropagation = (e) => {
@@ -231,8 +232,19 @@ const ColorPicker = ({ currentColor, onColorChange, onClose, eventTitle }) => {
         '#EC4899', '#6B7280', '#14B8A6', '#A855F7'
     ];
 
+    // Register UI layer on mount and cleanup on unmount
+    useEffect(() => {
+        const token = openLayer(() => {
+            onClose();
+        });
+        return () => discard(token);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const requestCloseViaHistory = () => closeTop();
+
     return (
-        <div className="color-picker-overlay" onClick={onClose}>
+        <div className="color-picker-overlay" onClick={requestCloseViaHistory}>
             <div className="color-picker-content" onClick={stopPropagation}>
                 <div className="color-picker-header">
                     <h3>Choisir une couleur</h3>
@@ -313,7 +325,7 @@ const ColorPicker = ({ currentColor, onColorChange, onClose, eventTitle }) => {
                 </div>
 
                 <div className="color-picker-actions">
-                    <button className="color-picker-cancel" onClick={onClose}>
+                    <button className="color-picker-cancel" onClick={requestCloseViaHistory}>
                         <X size={16} />
                         Annuler
                     </button>

@@ -4,6 +4,7 @@ import './hiddenEventsManager.css';
 import useHiddenEventsStore from '../../utils/hiddenEventsStore';
 import useNotificationStore from '../../utils/notificationStore';
 import { cleanCourseTitle } from '../../utils/colorUtils';
+import { openLayer, discard, closeTop } from '../../utils/uiHistory';
 
 function HiddenEventsManager({ onClose }) {
     const [courseList, setCourseList] = useState([]);
@@ -32,6 +33,15 @@ function HiddenEventsManager({ onClose }) {
     useEffect(() => {
         loadHiddenEvents();
     }, [loadHiddenEvents]);
+
+    // Back button closes this manager first
+    useEffect(() => {
+        const token = openLayer(() => {
+            onClose?.();
+        });
+        return () => discard(token);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Charger les événements une seule fois au montage
     useEffect(() => {
@@ -158,10 +168,12 @@ function HiddenEventsManager({ onClose }) {
         });
     }, [hiddenEvents.byName, allEvents]);
 
+    const requestCloseViaHistory = () => closeTop();
+
     return (
-        <div className='hidden-events-overlay' onClick={onClose}>
+        <div className='hidden-events-overlay' onClick={requestCloseViaHistory}>
             <div className='hidden-events-content' onClick={stopPropagation}>
-                <button className="hidden-events-close" onClick={onClose}>
+                <button className="hidden-events-close" onClick={requestCloseViaHistory}>
                     <X size={20} />
                 </button>
 

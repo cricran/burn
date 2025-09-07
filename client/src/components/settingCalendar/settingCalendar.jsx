@@ -8,6 +8,7 @@ import useColorSettingsStore from '../../utils/colorSettingsStore';
 import ColorModeSelector from '../colorModeSelector/colorModeSelector';
 import CancelledEventsToggle from '../cancelledEventsToggle/cancelledEventsToggle';
 import HiddenEventsManager from '../hiddenEventsManager/hiddenEventsManager';
+import { openLayer, discard, closeTop } from '../../utils/uiHistory';
 
 function SettingCalendar({ onClose }) {
     const [urls, setUrls] = useState([]);
@@ -55,6 +56,15 @@ function SettingCalendar({ onClose }) {
     // déclenche l'animation d'ouverture
     setTimeout(() => setIsOpen(true), 0);
     }, [notify, loadColorSettings]);
+
+    // Back button should close this modal first
+    useEffect(() => {
+        const token = openLayer(() => {
+            requestClose();
+        });
+        return () => discard(token);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         setLocalColorSettings(colorSettings);
@@ -120,10 +130,14 @@ function SettingCalendar({ onClose }) {
         }, 220);
     };
 
+    const requestCloseViaHistory = () => {
+        closeTop();
+    };
+
     return createPortal(
-        <div className={`settingCalendar ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestClose}>
+        <div className={`settingCalendar ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestCloseViaHistory}>
             <div className='settingCalendar-content' onClick={stopPropagation}>
-                <button className="settingCalendar-close" onClick={requestClose}>
+                <button className="settingCalendar-close" onClick={requestCloseViaHistory}>
                     <X size={20} />
                 </button>
                 <h2>Paramètres</h2>

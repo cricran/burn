@@ -5,6 +5,7 @@ import PopUp from '../PopUp/PopUp';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import useNotificationStore from '../../utils/notificationStore';
+import { openLayer, discard, closeTop } from '../../utils/uiHistory';
 
 
 function AddCalendar({ onClose }) {
@@ -54,10 +55,22 @@ function AddCalendar({ onClose }) {
         return () => clearTimeout(t);
     }, []);
 
+    // Back button closes this modal first
+    useEffect(() => {
+        const token = openLayer(() => {
+            requestClose();
+        });
+        return () => discard(token);
+    }, []);
+
     const requestClose = () => {
         if (isClosing) return;
         setIsClosing(true);
         setTimeout(() => onClose && onClose(), 220);
+    };
+
+    const requestCloseViaHistory = () => {
+        closeTop();
     };
 
     return createPortal(
@@ -82,9 +95,9 @@ function AddCalendar({ onClose }) {
                     onClose={() => setShowPopUp(false)}
                 />
             )}
-            <div className={`addCalendar ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestClose}>
+        <div className={`addCalendar ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestCloseViaHistory}>
                 <div className='addCalendar-content' onClick={stopPropagation}>
-                    <button className="addCalendar-close" onClick={requestClose}>
+            <button className="addCalendar-close" onClick={requestCloseViaHistory}>
                         <X size={20} />
                     </button>
                     <h2>Ajouter un Emploi du Temps</h2>

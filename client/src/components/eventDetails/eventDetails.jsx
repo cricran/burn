@@ -7,6 +7,7 @@ import useColorSettingsStore from '../../utils/colorSettingsStore';
 import useHiddenEventsStore from '../../utils/hiddenEventsStore';
 import { getEventColor, cleanCourseTitle, isEventCancelled } from '../../utils/colorUtils';
 import ColorPicker from '../colorPicker/colorPicker';
+import { openLayer, discard, closeTop } from '../../utils/uiHistory';
 
 function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode = 'modal' }) {
   const [event, setEvent] = useState(initialEvent);
@@ -49,6 +50,17 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
     return () => clearTimeout(t);
   }, []);
 
+  // UI history: close this layer on back
+  useEffect(() => {
+    if (displayMode !== 'modal') return;
+    const token = openLayer(() => {
+      requestClose();
+    });
+    return () => discard(token);
+    // Only once on mount for modal mode
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Effet pour forcer la mise à jour quand les tâches changent
   useEffect(() => {
     if (initialEvent && initialEvent.tasks) {
@@ -71,6 +83,10 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
     setTimeout(() => {
       onClose && onClose();
     }, 250);
+  };
+
+  const requestCloseViaHistory = () => {
+    closeTop();
   };
 
   const formatDate = (dateString) => {
@@ -229,7 +245,7 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
       const result = await hideIndividualEvent(event._id);
       if (result.success) {
         invalidateCache(); // Invalider le cache
-        onClose(); // Fermer le popup après masquage
+        requestCloseViaHistory(); // Fermer le popup via l'historique
       }
     } catch (error) {
       console.error('Erreur lors du masquage de l\'événement:', error);
@@ -248,7 +264,7 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
       const result = await hideEventsByName(cleanTitle);
       if (result.success) {
         invalidateCache(); // Invalider le cache
-        onClose(); // Fermer le popup après masquage
+        requestCloseViaHistory(); // Fermer le popup via l'historique
       }
     } catch (error) {
       console.error('Erreur lors du masquage des événements:', error);
@@ -440,7 +456,7 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
   }
 
   return (
-    <div className={`event-details-overlay ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestClose}>
+  <div className={`event-details-overlay ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={requestCloseViaHistory}>
       {showColorPicker && (
         <ColorPicker
           currentColor={eventColor}
@@ -451,7 +467,7 @@ function EventDetails({ event: initialEvent, onClose, onEventUpdate, displayMode
       )}
       
       <div className={`event-details-content ${isOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`} onClick={stopPropagation}>
-        <button className="event-details-close" onClick={requestClose}>
+  <button className="event-details-close" onClick={requestCloseViaHistory}>
           <X size={20} />
         </button>
         
