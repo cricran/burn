@@ -6,11 +6,13 @@ import { useState } from 'react'
 import EventDetails from '../../components/eventDetails/eventDetails'
 import useAuthStore from '../../utils/authStore'
 import useCalendarStore from '../../utils/calendarStore'
+import { Calendar as CalendarIcon, NotebookPen } from 'lucide-react'
 
 const Calendar = () => {
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [showEventDetails, setShowEventDetails] = useState(false)
     const [, setUpdateKey] = useState(0)
+    const [activeTab, setActiveTab] = useState('calendar') // 'calendar' | 'notes' (mobile only)
     const { currentUser } = useAuthStore()
     const { currentEvents, fetchEvents } = useCalendarStore()
 
@@ -48,9 +50,37 @@ const Calendar = () => {
                     </div>
                 </div>
 
+                {/* Mobile tabs to switch between Calendar and Notes */}
+                <div className='mobile-tabs' role='tablist' aria-label='Vue mobile calendrier et notes'>
+                    <button
+                        type='button'
+                        role='tab'
+                        aria-selected={activeTab === 'calendar'}
+                        className={`tab-btn ${activeTab === 'calendar' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('calendar')}
+                    >
+                        <CalendarIcon size={18} />
+                        <span>EDT</span>
+                    </button>
+                    <button
+                        type='button'
+                        role='tab'
+                        aria-selected={activeTab === 'notes'}
+                        className={`tab-btn ${activeTab === 'notes' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('notes')}
+                    >
+                        <NotebookPen size={18} />
+                        <span>Notes</span>
+                    </button>
+                </div>
+
                 <div className='calendar'>
-                    <WeekCalendar onEventClick={handleEventClick} />
-                    <Notes onEventClick={handleEventClick} />
+                    <div className={`calendar-pane ${activeTab !== 'calendar' ? 'mobile-hidden' : ''}`}>
+                        <WeekCalendar onEventClick={handleEventClick} />
+                    </div>
+                    <div className={`notes-pane ${activeTab !== 'notes' ? 'mobile-hidden' : ''}`}>
+                        <Notes onEventClick={handleEventClick} />
+                    </div>
                 </div>
             </div>
 

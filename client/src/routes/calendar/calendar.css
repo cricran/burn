@@ -92,6 +92,8 @@
     animation-delay: 0.2s;
 }
 
+.mobile-tabs { display: none; }
+
 @media (max-width: 1150px) {
     .calendar {
         flex-direction: column;
@@ -108,6 +110,68 @@
         padding: 10px;
         background: transparent;
         box-shadow: none;
+    }
+
+    /* Mobile tabs bar */
+    .mobile-tabs {
+        /* position: sticky; */
+        top: 0;
+        z-index: 5;
+        display: flex;
+        gap: 8px;
+        /* background: var(--bg-primary); */
+        padding: 8px 10px 0 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .mobile-tabs .tab-btn {
+        position: relative;
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 10px 10px 0 0;
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+        border-bottom: none;
+        cursor: pointer;
+        transition: background 120ms ease, border-color 120ms ease, color 120ms ease, opacity 120ms ease;
+    }
+
+    .mobile-tabs .tab-btn:hover {
+        /* background: var(--hover-bg); */
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .mobile-tabs .tab-btn svg { opacity: 0.8; }
+    .mobile-tabs .tab-btn.active svg { opacity: 1; }
+
+    .mobile-tabs .tab-btn.active {
+        color: var(--text-primary);
+        /* background: var(--module-bg); */
+        border-color: var(--border-color);
+        box-shadow: 0 -2px 8px var(--shadow-color);
+    }
+
+    /* subtle accent indicator to match controls */
+    .mobile-tabs .tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 20%;
+        right: 20%;
+        height: 2px;
+        background: var(--nav-accent);
+        border-radius: 2px;
+    }
+
+    /* Show only the active pane on mobile */
+    .calendar .mobile-hidden {
+        display: none !important;
     }
 }
 

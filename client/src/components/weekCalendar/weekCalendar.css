@@ -97,6 +97,32 @@
         border-radius: 0;
         background: transparent;
     }
+
+  /* Smaller event typography on mobile */
+  .custom-event-content { 
+    font-size: 0.68rem; 
+    line-height: 1.05; 
+  }
+  .event-title { 
+    font-size: 0.62rem; 
+    margin-top: 0px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  /* Hide hour on mobile */
+  .event-time { 
+    display: none !important;
+  }
+  .event-location { 
+    font-size: 0.62rem; 
+    margin-top: 2px; 
+    gap: 2px;
+  }
+  /* Hide location icon on mobile, keep text */
+  .event-location svg { 
+    display: none !important; 
+  }
 }
 
 /* Revert to original layout on desktop */
@@ -280,10 +306,13 @@ span.rbc-label {
 
 /* Ajouter ces styles à la fin du fichier */
 .event-title {
-  font-weight: 500;
-  /* white-space: nowrap; */
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 600;
+  font-size: 0.8rem;
+  line-height: 1.1;
+  white-space: normal;
+  overflow-wrap: anywhere; /* allow breaking anywhere */
+  word-break: break-word;  /* fallback */
+  margin-top: 2px;
 }
 
 .event-location {
@@ -292,9 +321,10 @@ span.rbc-label {
   gap: 4px;
   font-size: 0.7rem;
   margin-top: 3px;
-  /* white-space: nowrap; */
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex-wrap: wrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   opacity: 0.9;
 }
 
@@ -302,9 +332,64 @@ span.rbc-label {
   flex-shrink: 0;
 }
 
+.event-location span {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-size: 10px;
+}
+
 /* Supprimer l'affichage de l'heure par défaut */
 .rbc-event-label {
   display: none !important;
+}
+
+/* Add compact time row like the daily widget */
+.event-time {
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
+.custom-event-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* allow children to wrap inside flex container */
+}
+
+/* Ensure the event content sits at the top of the event block */
+.rbc-event-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  /* override RBC defaults to allow wrapping */
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  min-width: 0;
+}
+
+/* Ensure the event block aligns items to the top (not centered) */
+.rbc-day-slot .rbc-event {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0 !important; /* override inline padding */
+}
+
+/* Also remove extra top padding globally to pin content to the top edge */
+.rbc-event {
+  padding-top: 0 !important;
+}
+
+/* Extra safety: make sure the event container itself does not force ellipsis */
+.rbc-event {
+  white-space: normal !important;
+}
+
+/* Ensure title never ellipsizes and can break anywhere */
+.event-title {
+  overflow: visible;
 }
 
 

@@ -1,5 +1,5 @@
 import './weekCalendar.css'
-import { CalendarPlus, CalendarCog } from 'lucide-react'
+import { CalendarPlus, CalendarCog, MapPin } from 'lucide-react'
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay, addWeeks } from 'date-fns'
 import fr from 'date-fns/locale/fr'
@@ -194,7 +194,21 @@ function WeekCalendar({ onEventClick }) {
             style={{ height: '80vh' }}
             eventPropGetter={eventStyleGetter}
             components={{
-              toolbar: MonToolbar
+              toolbar: MonToolbar,
+              event: ({ event }) => (
+                <div className="custom-event-content">
+                  <div className="event-time">
+                    {format(new Date(event.start), 'HH:mm')} - {format(new Date(event.end), 'HH:mm')}
+                  </div>
+                  <div className="event-title" title={event.title}>{event.title}</div>
+                  {event.location && (
+                    <div className="event-location" title={event.location}>
+                      <MapPin size={10} />
+                      <span>{event.location}</span>
+                    </div>
+                  )}
+                </div>
+              )
             }}
           />
         </div>
