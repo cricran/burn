@@ -40,7 +40,6 @@
 ### ✉️ Messagerie moderne
 
 - Interface épurée pour les mails universitaires
-- Connexion sécurisée à SOGo
 - Consultation et gestion simplifiées
 
 ### 🎨 Personnalisation
@@ -215,7 +214,3 @@ Développé avec ❤️ par la communauté étudiante pour la communauté étudi
 
 - 🐛 **Issues :** [GitHub Issues](https://github.com/cricran/burn/issues)
 - 💬 **Discussions :** [GitHub Discussions](https://github.com/cricran/burn/discussions)
-
----
-
-**BURN** - Parce que les outils universitaires peuvent être modernes ! 🎓✨
