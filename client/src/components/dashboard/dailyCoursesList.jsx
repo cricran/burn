@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Clock, MapPin, Calendar } from 'lucide-react';
 import './dailyCoursesList.css';
 import useCalendarStore from '../../utils/calendarStore';
@@ -6,32 +6,96 @@ import useColorSettingsStore from '../../utils/colorSettingsStore';
 import { getEventColor, cleanCourseTitle, isEventCancelled } from '../../utils/colorUtils';
 
 function DailyCoursesList({ onEventClick }) {
-    const [todayEvents, setTodayEvents] = useState([]);
+    const [dayEvents, setDayEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [displayedDate, setDisplayedDate] = useState(new Date());
+    const [relativeLabel, setRelativeLabel] = useState('aujourd\'hui');
 
-    const { currentEvents } = useCalendarStore();
+    const { currentEvents, events: weeksCache, fetchEventsForDate, getWeekKeyFor } = useCalendarStore();
     const { colorSettings } = useColorSettingsStore();
 
+    const formatRelative = useCallback((targetDate) => {
+        const start = new Date();
+        start.setHours(0,0,0,0);
+        const d = new Date(targetDate);
+        d.setHours(0,0,0,0);
+        const diffDaysRaw = (d - start) / (1000 * 60 * 60 * 24);
+        const diffDays = Math.max(0, Math.floor(diffDaysRaw));
+        if (diffDays === 0) return "aujourd'hui";
+        if (diffDays === 1) return 'demain';
+        if (diffDays === 7) return 'dans une semaine';
+        if (diffDays < 7) return `dans ${diffDays} jours`;
+        if (diffDays < 30) {
+            const weeks = Math.round(diffDays / 7);
+            return weeks === 1 ? 'dans une semaine' : `dans ${weeks} semaines`;
+        }
+        const months = Math.round(diffDays / 30);
+        return months === 1 ? 'dans un mois' : `dans ${months} mois`;
+    }, []);
+
+    const isSameLocalDay = (a, b) => {
+        const da = new Date(a);
+        const db = new Date(b);
+        return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
+    };
+
     useEffect(() => {
-        const loadTodayEvents = () => {
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
+        let cancelled = false;
 
-            // Filtrer les événements d'aujourd'hui
-            const events = currentEvents.filter(event => {
-                const eventDate = new Date(event.start).toISOString().split('T')[0];
-                return eventDate === todayStr;
-            });
-
-            // Trier par heure de début
-            events.sort((a, b) => new Date(a.start) - new Date(b.start));
-
-            setTodayEvents(events);
-            setIsLoading(false);
+        const getEventsForDate = async (date) => {
+            // Find events locally matching the provided date
+            // Prefer currentEvents if same week
+            const weekKey = getWeekKeyFor ? getWeekKeyFor(date) : null;
+            let weekEvents = weekKey && weeksCache[weekKey] ? weeksCache[weekKey] : null;
+            if (!weekEvents) {
+                weekEvents = await fetchEventsForDate(date);
+            }
+            const events = (weekEvents || [])
+                .filter(ev => isSameLocalDay(ev.start, date))
+                .sort((a, b) => new Date(a.start) - new Date(b.start));
+            return events;
         };
 
-        loadTodayEvents();
-    }, [currentEvents]);
+        const loadBestDay = async () => {
+            setIsLoading(true);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            // First, try today using currentEvents fast path
+            const now = new Date();
+            const remainingToday = (currentEvents || [])
+                .filter(e => isSameLocalDay(e.start, today) && new Date(e.end) >= now);
+            let events = (currentEvents || [])
+                .filter(e => isSameLocalDay(e.start, today))
+                .sort((a, b) => new Date(a.start) - new Date(b.start));
+
+            // If none, look ahead up to 60 days
+            let chosenDate = new Date(today);
+            if (remainingToday.length === 0) {
+                for (let i = 1; i <= 60; i++) {
+                    const candidate = new Date(today);
+                    candidate.setDate(candidate.getDate() + i);
+                    // eslint-disable-next-line no-await-in-loop
+                    const dayEvents = await getEventsForDate(candidate);
+                    if (dayEvents.length > 0) {
+                        events = dayEvents;
+                        chosenDate = candidate;
+                        break;
+                    }
+                }
+            }
+
+            if (!cancelled) {
+                setDayEvents(events);
+                setDisplayedDate(chosenDate);
+                setRelativeLabel(formatRelative(chosenDate));
+                setIsLoading(false);
+            }
+        };
+
+        loadBestDay();
+        return () => { cancelled = true; };
+    }, [currentEvents, weeksCache, fetchEventsForDate, getWeekKeyFor, formatRelative]);
 
     const formatTime = (dateString) => {
         const date = new Date(dateString);
@@ -63,17 +127,22 @@ function DailyCoursesList({ onEventClick }) {
         <div className="daily-courses-list">
             <div className="module-header">
                 <h3>Cours du jour</h3>
-                <span className="event-count">{todayEvents.length} cours</span>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <span className="event-count">{dayEvents.length} cours</span>
+                    <span className="event-count" title={displayedDate.toLocaleDateString('fr-FR')}>
+                        {relativeLabel}
+                    </span>
+                </div>
             </div>
 
             <div className="courses-container">
-                {todayEvents.length === 0 ? (
+                {dayEvents.length === 0 ? (
                     <div className="no-events">
                         <Calendar size={48} />
-                        <p>Aucun cours prévu aujourd'hui</p>
+                        <p>Aucun cours prévu à venir</p>
                     </div>
                 ) : (
-                    todayEvents.map((event, index) => {
+                    dayEvents.map((event, index) => {
                         const eventColor = getEventColor(event, colorSettings);
                         const isCancelled = isEventCancelled(event);
 

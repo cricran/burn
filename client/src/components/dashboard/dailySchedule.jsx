@@ -25,24 +25,103 @@ const localizer = dateFnsLocalizer({
 function DailySchedule({ onEventClick }) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isLoading, setIsLoading] = useState(true);
+    const [relativeLabel, setRelativeLabel] = useState("aujourd'hui");
+    const [eventsForDay, setEventsForDay] = useState([]);
 
-    const { currentEvents } = useCalendarStore();
+    const { currentEvents, events: weeksCache, fetchEventsForDate, getWeekKeyFor } = useCalendarStore();
     const { colorSettings } = useColorSettingsStore();
 
-    // Filtrer les événements d'aujourd'hui seulement
-    const todayEvents = useMemo(() => {
-        const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
-
-        return currentEvents.filter(event => {
-            const eventDate = new Date(event.start).toISOString().split('T')[0];
-            return eventDate === todayStr;
-        });
-    }, [currentEvents]);
+    // Événements du jour affiché uniquement
+    const dayEvents = useMemo(() => {
+        return (eventsForDay || []).slice().sort((a,b) => new Date(a.start) - new Date(b.start));
+    }, [eventsForDay]);
 
     useEffect(() => {
         setIsLoading(false);
     }, [currentEvents]);
+
+    const formatRelative = useCallback((targetDate) => {
+        const start = new Date();
+        start.setHours(0,0,0,0);
+        const d = new Date(targetDate);
+        d.setHours(0,0,0,0);
+        const diffDaysRaw = (d - start) / (1000 * 60 * 60 * 24);
+        const diffDays = Math.max(0, Math.floor(diffDaysRaw));
+        if (diffDays === 0) return "aujourd'hui";
+        if (diffDays === 1) return 'demain';
+        if (diffDays === 7) return 'dans une semaine';
+        if (diffDays < 7) return `dans ${diffDays} jours`;
+        if (diffDays < 30) {
+            const weeks = Math.round(diffDays / 7);
+            return weeks === 1 ? 'dans une semaine' : `dans ${weeks} semaines`;
+        }
+        const months = Math.round(diffDays / 30);
+        return months === 1 ? 'dans un mois' : `dans ${months} mois`;
+    }, []);
+
+    const isSameLocalDay = (a, b) => {
+        const da = new Date(a);
+        const db = new Date(b);
+        return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
+    };
+
+    // Si aucun événement aujourd'hui, chercher le prochain jour avec des cours (jusqu'à 60 jours)
+    useEffect(() => {
+        let cancelled = false;
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        const getEventsForDate = async (date) => {
+            // pick from cache/API, filter by local day
+            const weekKey = getWeekKeyFor ? getWeekKeyFor(date) : null;
+            let weekEvents = weekKey && weeksCache[weekKey] ? weeksCache[weekKey] : null;
+            if (!weekEvents) {
+                weekEvents = await fetchEventsForDate(date);
+            }
+            return (weekEvents || []).filter(ev => isSameLocalDay(ev.start, date));
+        };
+
+        const ensureDayWithEvents = async () => {
+            // Quick check for today using currentEvents
+            const now = new Date();
+            const todayList = (currentEvents || []).filter(e => {
+                const sameDay = isSameLocalDay(e.start, today);
+                return sameDay && new Date(e.end) >= now; // only remaining courses today
+            });
+            if (todayList.length > 0) {
+                if (!cancelled) {
+                    setCurrentDate(today);
+                    setEventsForDay((currentEvents || []).filter(e => isSameLocalDay(e.start, today)));
+                    setRelativeLabel("aujourd'hui");
+                }
+                return;
+            }
+
+            for (let i = 1; i <= 60; i++) {
+                const candidate = new Date(today);
+                candidate.setDate(candidate.getDate() + i);
+                // eslint-disable-next-line no-await-in-loop
+                const list = await getEventsForDate(candidate);
+                if (list.length > 0) {
+                    if (!cancelled) {
+                        setCurrentDate(candidate);
+                        setEventsForDay(list);
+                        setRelativeLabel(formatRelative(candidate));
+                    }
+                    return;
+                }
+            }
+            // No events found in horizon; keep today label
+            if (!cancelled) {
+                setCurrentDate(today);
+                setEventsForDay([]);
+                setRelativeLabel("aujourd'hui");
+            }
+        };
+
+        ensureDayWithEvents();
+        return () => { cancelled = true; };
+    }, [currentEvents, weeksCache, fetchEventsForDate, getWeekKeyFor, formatRelative]);
 
     // Fonction pour styliser les événements avec les couleurs et contraste optimal
     const eventStyleGetter = useCallback((event) => {
@@ -93,29 +172,34 @@ function DailySchedule({ onEventClick }) {
         <div className="daily-schedule">
             <div className="module-header">
                 <h3>Emploi du temps</h3>
-                <span className="event-count">{todayEvents.length} cours</span>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <span className="event-count">{dayEvents.length} cours</span>
+                    <span className="event-count" title={currentDate.toLocaleDateString('fr-FR')}>
+                        {relativeLabel}
+                    </span>
+                </div>
             </div>
 
             <div className="calendar-container">
-                {todayEvents.length === 0 ? (
+        {dayEvents.length === 0 ? (
                     <div className="no-events">
                         <Clock size={48} />
-                        <p>Aucun cours prévu aujourd'hui</p>
+            <p>Aucun cours prévu à venir</p>
                     </div>
                 ) : (
                     <Calendar
                         localizer={localizer}
-                        events={todayEvents}
+            events={dayEvents}
                         defaultView='day'
                         views={['day']}
                         view='day'
                         date={currentDate}
                         startAccessor='start'
                         endAccessor='end'
-                        min={new Date(2025, 0, 1, 8, 0)}
-                        max={new Date(2025, 0, 1, 19, 0)}
+                        min={new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 8, 0)}
+                        max={new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 19, 0)}
                         culture='fr'
-                        style={{ height: '400px' }}
+                        style={{ height: '400px', width: '100%' }}
                         eventPropGetter={eventStyleGetter}
                         onSelectEvent={handleSelectEvent}
                         toolbar={false}

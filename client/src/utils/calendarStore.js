@@ -18,6 +18,12 @@ const useCalendarStore = create((set, get) => ({
     const end = endOfWeek(currentDate, { weekStartsOn: 1 });
     return `${start.toISOString()}-${end.toISOString()}`;
   },
+  // Obtenir la clé de semaine pour une date donnée sans modifier l'état courant
+  getWeekKeyFor: (date) => {
+    const start = startOfWeek(date, { weekStartsOn: 1 });
+    const end = endOfWeek(date, { weekStartsOn: 1 });
+    return `${start.toISOString()}-${end.toISOString()}`;
+  },
 
   // Actions
   setCurrentDate: (date) => set({ currentDate: date }),
@@ -69,6 +75,53 @@ const useCalendarStore = create((set, get) => ({
     } catch (err) {
       set({ error: err.message, isLoading: false });
       console.error('Error fetching events:', err);
+      return [];
+    }
+  },
+
+  // Récupérer les événements pour la semaine contenant `date` sans toucher
+  // à currentDate ni currentEvents. Met à jour le cache et renvoie le tableau.
+  fetchEventsForDate: async (date, force = false) => {
+    const { events, lastFetch } = get();
+
+    // Calculer les bornes de la semaine pour la date passée
+    const start = startOfWeek(date, { weekStartsOn: 1 });
+    const end = endOfWeek(date, { weekStartsOn: 1 });
+    start.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+
+    const weekKey = `${start.toISOString()}-${end.toISOString()}`;
+
+    // Vérifier le cache (30 min)
+    const cachedEvents = events[weekKey];
+    const lastFetchTime = lastFetch[weekKey] || 0;
+    const isCacheFresh = (Date.now() - lastFetchTime) < 30 * 60 * 1000;
+
+    if (!force && cachedEvents && isCacheFresh) {
+      return cachedEvents;
+    }
+
+    // Sinon, requête API pour cette semaine spécifique
+    try {
+      const res = await apiRequest.get(
+        `/calendar?start=${start.toISOString()}&end=${end.toISOString()}`
+      );
+
+      const parsed = (res.data.events || []).map(ev => ({
+        ...ev,
+        start: new Date(ev.start),
+        end: new Date(ev.end),
+      }));
+
+      // Mettre à jour uniquement le cache, sans toucher currentEvents/currentDate
+      set(state => ({
+        events: { ...state.events, [weekKey]: parsed },
+        lastFetch: { ...state.lastFetch, [weekKey]: Date.now() },
+      }));
+
+      return parsed;
+    } catch (err) {
+      console.error('Error fetching events for date:', err);
       return [];
     }
   },
