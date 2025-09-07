@@ -197,10 +197,10 @@ function WeekCalendar({ onEventClick }) {
               toolbar: MonToolbar,
               event: ({ event }) => (
                 <div className="custom-event-content">
+                  <div className="event-title" title={event.title}>{event.title}</div>
                   <div className="event-time">
                     {format(new Date(event.start), 'HH:mm')} - {format(new Date(event.end), 'HH:mm')}
                   </div>
-                  <div className="event-title" title={event.title}>{event.title}</div>
                   {event.location && (
                     <div className="event-location" title={event.location}>
                       <MapPin size={10} />

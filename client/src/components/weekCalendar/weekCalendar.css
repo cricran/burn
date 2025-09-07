@@ -101,14 +101,22 @@
   /* Smaller event typography on mobile */
   .custom-event-content { 
     font-size: 0.68rem; 
-    line-height: 1.05; 
+    line-height: 1.05;
+    display: flex;
+    flex-direction: column !important;
+    height: 100%;
   }
   .event-title { 
-    font-size: 0.62rem; 
+    font-size: 0.64rem; 
     margin-top: 0px;
+    margin-bottom: 4px;
     white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
+    font-weight: 600;
+    order: -1 !important; /* Always display title at the top */
+    position: relative;
+    z-index: 10; /* Higher z-index to ensure it's on top */
   }
   /* Hide hour on mobile */
   .event-time { 
@@ -118,6 +126,11 @@
     font-size: 0.62rem; 
     margin-top: 2px; 
     gap: 2px;
+    display: block; /* Force block display */
+    opacity: 0.85; /* Make location slightly faded */
+    order: 1 !important; /* Force location below title */
+    position: relative;
+    z-index: 5; /* Lower z-index */
   }
   /* Hide location icon on mobile, keep text */
   .event-location svg { 
@@ -302,17 +315,25 @@ span.rbc-label {
   padding-right: 6px;
   box-sizing: border-box;
   min-height: 40px !important;
+  /* display: flex !important;
+  flex-direction: column !important;
+  overflow: visible !important;  */
 }
 
 /* Ajouter ces styles à la fin du fichier */
 .event-title {
   font-weight: 600;
-  font-size: 0.8rem;
-  line-height: 1.1;
+  font-size: 0.7rem;
+  line-height: 1;
   white-space: normal;
   overflow-wrap: anywhere; /* allow breaking anywhere */
   word-break: break-word;  /* fallback */
   margin-top: 2px;
+  order: -1 !important; /* Always display title at the top */
+  margin-bottom: 3px;
+  position: relative;
+  z-index: 10; /* Ensure title is always on top */
+  display: block; /* Force block display */
 }
 
 .event-location {
@@ -326,6 +347,10 @@ span.rbc-label {
   overflow-wrap: anywhere;
   word-break: break-word;
   opacity: 0.9;
+  line-height: 1.1;
+  order: 1 !important; /* Always display location after title */
+  position: relative;
+  z-index: 5; /* Lower z-index than title */
 }
 
 .event-location svg {
@@ -349,18 +374,24 @@ span.rbc-label {
 .event-time {
   font-size: 0.7rem;
   opacity: 0.9;
+  order: 0 !important; /* Place between title and location */
+  position: relative;
+  z-index: 7;
 }
 
 .custom-event-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: column !important;
   min-width: 0; /* allow children to wrap inside flex container */
+  height: 100%;
+  justify-content: flex-start;
+  position: relative; /* Add positioning context */
 }
 
 /* Ensure the event content sits at the top of the event block */
 .rbc-event-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: column !important;
   justify-content: flex-start;
   height: 100%;
   /* override RBC defaults to allow wrapping */
@@ -368,6 +399,7 @@ span.rbc-label {
   overflow: visible !important;
   text-overflow: unset !important;
   min-width: 0;
+  padding: 2px 0;
 }
 
 /* Ensure the event block aligns items to the top (not centered) */
