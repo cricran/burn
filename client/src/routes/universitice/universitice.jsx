@@ -4,6 +4,7 @@ import { PanelBottomClose, PanelLeftOpen, FileText, BookOpen, Link, File, Video,
 import apiRequest from '../../utils/apiRequest'
 import './universitice.css'
 import useHiddenCoursesStore from '../../utils/hiddenCoursesStore'
+import { openLayer, discard, closeTop } from '../../utils/uiHistory'
 
 const Skeleton = ({ lines = 3 }) => (
   <div className="skel">
@@ -103,6 +104,16 @@ const UniversiTice = () => {
     mq.addEventListener?.('change', onChange)
     return () => mq.removeEventListener?.('change', onChange)
   }, [])
+
+  // UI history for mobile course view
+  useEffect(() => {
+    if (isMobile && selectedId) {
+      const token = openLayer(() => {
+        setSelectedId(null)
+      })
+      return () => discard(token)
+    }
+  }, [isMobile, selectedId])
 
   useEffect(() => {
     let cancelled = false
@@ -369,7 +380,7 @@ const UniversiTice = () => {
         <main className={`ut-details ${selectedId ? 'has-selection' : ''} ${isMobile && selectedId ? 'mobile-open' : ''}`}>
           {isMobile && selectedId && (
             <div className="ut-mobile-bar">
-              <button className="ut-close" aria-label="Fermer" onClick={() => setSelectedId(null)}>✕</button>
+              <button className="ut-close" aria-label="Fermer" onClick={() => closeTop()}>✕</button>
             </div>
           )}
           {!selectedId && !isMobile && (

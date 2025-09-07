@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import './mail.css'
 import useMailSettingsStore from '../../utils/mailSettingsStore'
 import { rsaEncryptPassword, testMail, listMail, getMessage, deleteMessage, getSogoLink, markSeen } from '../../utils/mailApi'
+import { openLayer, discard, closeTop } from '../../utils/uiHistory'
 
 const Mail = () => {
   const { email, login, encPass, tourDone, loadFromServer, saveToServer, setLocal } = useMailSettingsStore()
@@ -173,6 +174,17 @@ const Mail = () => {
 
   const isMobile = useMemo(() => typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(max-width: 820px)').matches : false, [])
 
+  // UI history for mobile mail view
+  useEffect(() => {
+    if (isMobile && selected) {
+      const token = openLayer(() => {
+        setSelected(null)
+        setMessage(null)
+      })
+      return () => discard(token)
+    }
+  }, [isMobile, selected])
+
   const visibleItems = useMemo(() => {
     let list = items
     if (unreadOnly) list = list.filter(m => !m.seen)
@@ -303,7 +315,7 @@ const Mail = () => {
           <main className={`mail-details ${selected ? 'has-selection' : ''} ${isMobile && selected ? 'mobile-open' : ''}`}>
             {isMobile && selected && (
               <div className='ut-mobile-bar'>
-                <button className='ut-close' onClick={() => { setSelected(null); setMessage(null) }}>✕</button>
+                <button className='ut-close' onClick={() => closeTop()}>✕</button>
               </div>
             )}
             {!selected && !isMobile && <div className='placeholder'>Sélectionnez un mail</div>}
