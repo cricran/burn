@@ -418,6 +418,22 @@
 
 /* Responsive pour le mode inline */
 @media (max-width: 768px) {
+  .event-details-overlay {
+    padding: 0;
+  }
+
+  .event-details-content {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
   .event-details-content-inline {
     padding: 16px;
   }
