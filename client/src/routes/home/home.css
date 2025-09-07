@@ -3,6 +3,8 @@
     width: 100vw;
     height: 100vh;
     padding: min(75px, 1%) 25px min(75px, 1%) 100px;
+    /* Ensure some breathing room at the bottom */
+    padding-bottom: 80px;
     box-sizing: border-box;
     /* Desktop: scroll vertical activé pour le contenu dépassant */
     overflow-y: auto;
@@ -18,6 +20,7 @@
         width: 100vw;
         height: calc(100vh - 75px);
         padding: 70px 16px 40px 16px;
+    padding-bottom: 64px; /* extra room on mobile */
         margin-bottom: 0;
         box-sizing: border-box;
         /* Mobile: scroll vertical fluide et optimisé */
@@ -35,12 +38,18 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* Disable internal scrolling; let .content handle scroll */
+    overflow: visible;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     padding-bottom: 20px;
+    /* Hide scrollbars just in case on any UA */
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;    /* Firefox */
 }
+
+/* Hide scrollbar for WebKit browsers */
+.home-dashboard::-webkit-scrollbar { display: none; }
 
 .dashboard-header {
     display: flex;
@@ -133,12 +142,14 @@
 /* Desktop: 2 colonnes pour vues larges */
 @media (min-width: 1024px) {
     .dashboard-grid {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto;
-        grid-template-areas:
-            "courses schedule"
-            "ut notes"
-            "ut mails";
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto auto auto;
+          /* Right column: schedule (top & middle) + mails (bottom)
+              Left column: courses (top), notes (middle), ut (bottom) */
+          grid-template-areas:
+                "courses schedule"
+                "notes schedule"
+                "ut mails";
     }
 
     .module-1 { grid-area: courses; }
