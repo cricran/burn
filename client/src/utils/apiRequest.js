@@ -2,7 +2,8 @@ import axios from "axios";
 import useAuthStore from './authStore';
 
 const apiRequest = axios.create({
-    baseURL: import.meta.env.VITE_API_ENDPOINT,
+    // Use same-origin by default so cookies work via Vite/Nginx proxy; env override allowed
+    baseURL: import.meta.env.VITE_API_ENDPOINT || '/',
     withCredentials: true,
 });
 

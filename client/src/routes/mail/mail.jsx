@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import './mail.css'
 import useMailSettingsStore from '../../utils/mailSettingsStore'
 import { rsaEncryptPassword, testMail, listMail, getMessage, deleteMessage, getSogoLink, markSeen } from '../../utils/mailApi'
@@ -28,6 +29,12 @@ const Mail = () => {
   // Mark initial enter for animations
   const [entered, setEntered] = useState(false)
   useEffect(() => { setEntered(true) }, [])
+
+  // Handle deep-link open from query string (uid or seq)
+  const [searchParams] = useSearchParams()
+  const targetUid = searchParams.get('uid')
+  const targetSeq = searchParams.get('seq')
+  const openedFromParams = useRef(false)
 
   // Load server settings and decide if onboarding
   useEffect(() => {
@@ -80,6 +87,24 @@ const Mail = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, showOnboarding, login, encPass])
 
+  // After first page loads, if a target uid/seq is present, open it once.
+  useEffect(() => {
+    if (!ready || showOnboarding || openedFromParams.current) return
+    const uidNum = targetUid ? Number(targetUid) : null
+    const seqNum = targetSeq ? Number(targetSeq) : null
+    if (!uidNum && !seqNum) return
+    // If the item is in the current list we can pass seq; otherwise open by uid only
+    const inList = items.find(m => (uidNum && m.uid === uidNum) || (seqNum && m.seq === seqNum))
+    if (uidNum) {
+      openMessage(uidNum, inList?.seq || undefined)
+    } else if (seqNum) {
+      openMessage(undefined, seqNum)
+    }
+    openedFromParams.current = true
+    // run only when items change or params change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, ready, showOnboarding, targetUid, targetSeq])
+
   useEffect(() => {
     const el = sentinelRef.current
     if (!el) return
@@ -97,15 +122,16 @@ const Mail = () => {
   }, [sentinelRef, loading, hasMore, page, error, query, unreadOnly])
 
   const openMessage = async (uid, seq) => {
-    setSelected(uid)
+    setSelected(uid ?? seq ?? null)
     setMessage(null)
     try {
       const data = await getMessage({ login, encPass, uid, seq })
       setMessage(data)
       // mark as seen locally
-      setItems(prev => prev.map(m => m.uid === uid ? { ...m, seen: true } : m))
+      if (uid)
+        setItems(prev => prev.map(m => m.uid === uid ? { ...m, seen: true } : m))
   // fire-and-forget server-side mark seen
-  markSeen({ login, encPass, uid }).catch(() => {})
+  if (uid) markSeen({ login, encPass, uid }).catch(() => {})
     } catch (e) {
       setMessage({ error: 'Impossible d\'ouvrir le message' })
     }

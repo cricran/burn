@@ -125,6 +125,20 @@ export const getUser = async (req, res) => {
     return res.status(200).json(userData);
 }
 
+// Return authenticated user from JWT cookie
+export const getMe = async (req, res) => {
+    try {
+        const userId = req.userId;
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+        const { password: _pw, ...userData } = user.toObject();
+        return res.status(200).json(userData);
+    } catch (e) {
+        return res.status(500).json({ error: 'Failed to load user', details: e?.message });
+    }
+}
+
 // Test Moodle connectivity for the authenticated user by validating the stored token
 export const testMoodleConnection = async (req, res) => {
     console.log("Testing Moodle connection for user:", req.userId);

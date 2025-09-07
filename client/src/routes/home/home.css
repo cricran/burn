@@ -6,7 +6,8 @@
     padding-left: 100px;
     padding-right: 25px;
     box-sizing: border-box;
-    overflow: auto;
+    /* Desktop: pas de scroll de page, les widgets gèrent leur propre scroll */
+    overflow: hidden;
     overflow-x: hidden;
     transition: opacity .3s, transform .75s cubic-bezier(0,0,0,1), filter .5s;
 }
@@ -19,7 +20,8 @@
         padding: min(75px, 5%);
         margin-bottom: 100px !important;
         box-sizing: border-box;
-        overflow: auto;
+    /* Mobile: la page peut scroller */
+    overflow: auto;
         overflow-x: hidden;
     }
 }
@@ -89,14 +91,17 @@
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr auto;
+    /* Desktop: 4 lignes égales pour pouvoir empiler EDT + Mail de même hauteur */
+    grid-template-rows: repeat(4, 1fr);
     gap: 16px;
     min-height: 0; /* Important pour que les modules puissent scroller */
 }
 
+/* Modules: remplissent la case de la grille; le contenu interne défile si besoin */
 .dashboard-module {
-    min-height: 260px;
-    max-height: 420px;
+    min-height: 0;
+    height: 100%;
+    max-height: none;
 }
 
 /* Layout des modules */
@@ -107,7 +112,7 @@
 
 .module-2 {
     grid-column: 2;
-    grid-row: 1 / span 3; /* S'étend sur 3 lignes car 4 modules */
+    grid-row: 1 / span 2; /* EDT demi-hauteur de la colonne de droite */
 }
 
 .module-3 {
@@ -120,11 +125,22 @@
     grid-row: 3;
 }
 
+.module-5 {
+    grid-column: 2;
+    grid-row: 3 / span 2; /* Mail juste sous l'EDT, même hauteur */
+}
+
+/* Forcer EDT et Mail à remplir leur zone sur desktop */
+.module-2, .module-5 {
+    height: 100%;
+    max-height: none;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
     .dashboard-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto auto;
         gap: 16px;
     }
 
@@ -136,7 +152,6 @@
     .module-2 {
         grid-column: 1;
         grid-row: 2;
-        max-height: 400px;
     }
 
     .module-3 {
@@ -147,6 +162,11 @@
     .module-4 {
         grid-column: 1;
         grid-row: 4;
+    }
+
+    .module-5 {
+        grid-column: 1;
+        grid-row: 5;
     }
 }
 
@@ -176,8 +196,9 @@
     }
 
     .dashboard-module {
-    min-height: 220px;
-    max-height: 340px;
+        min-height: 220px;
+        height: auto;
+        max-height: none;
     }
 }
 
@@ -208,6 +229,9 @@
 .module-3 {
     animation-delay: 0.3s;
 }
+
+.module-4 { animation-delay: 0.4s; }
+.module-5 { animation-delay: 0.5s; }
 
 @keyframes fadeInUp {
     from {

@@ -66,4 +66,18 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
   },
+  server: {
+    proxy: {
+      // Proxy API routes to backend in dev, preserving cookies
+      '/user': { target: 'http://localhost:3000', changeOrigin: true },
+      '/calendar': { target: 'http://localhost:3000', changeOrigin: true },
+      '/note': { target: 'http://localhost:3000', changeOrigin: true },
+      '/color-settings': { target: 'http://localhost:3000', changeOrigin: true },
+      '/hidden-events': { target: 'http://localhost:3000', changeOrigin: true },
+      '/hidden-courses': { target: 'http://localhost:3000', changeOrigin: true },
+      '/assignments': { target: 'http://localhost:3000', changeOrigin: true },
+      '/mail': { target: 'http://localhost:3000', changeOrigin: true },
+      '/mail-settings': { target: 'http://localhost:3000', changeOrigin: true },
+    }
+  }
 });
