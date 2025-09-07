@@ -64,7 +64,16 @@ button.danger { background: var(--danger-color); color: #fff; border: none; padd
 .error { color: var(--danger-color); margin-top: 8px; }
 
 .ut-mobile-bar { position: sticky; top: 0; display: flex; justify-content: flex-end; background: var(--module-bg); padding: 8px 10px; border-bottom: 1px solid var(--border-color); z-index: 1; }
-.ut-close { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px; transition: background 120ms ease; }
+  .ut-close {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background 120ms ease;
+    font-size: 18px;
+    line-height: 1;
+  }
 .ut-close:hover { background: var(--hover-bg); }
 
 @media (max-width: 820px) {

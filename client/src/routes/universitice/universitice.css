@@ -180,7 +180,7 @@
   .universitice .ut-details.mobile-open { display: flex; flex-direction: column; position: fixed; inset: 0; z-index: 30; height: 100svh; min-height: 100vh; width: 100vw; overflow: hidden; background: var(--module-bg); border: none; border-radius: 0; box-shadow: none; transform: none; opacity: 1; pointer-events: auto; }
   .universitice .ut-mobile-bar { position: sticky; top: 0; flex: 0 0 auto; display: flex; justify-content: flex-end; background: var(--module-bg); padding: 10px 12px; border-bottom: 1px solid var(--border-color); z-index: 1; margin-bottom: 8px; }
   .universitice .ut-course { flex: 1 1 auto; overflow: auto; min-height: 0; padding: 0 12px 12px 12px; }
-  .universitice .ut-close { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; }
+  .universitice .ut-close { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); padding: 6px 8px; border-radius: 8px; font-size: 18px; line-height: 1; }
   .universitice .ut-close:hover { background: var(--hover-bg); }
   /* Hide the list when details open */
   .universitice .mobile-details-open .ut-courses { display: none; }

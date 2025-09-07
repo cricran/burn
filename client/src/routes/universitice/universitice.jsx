@@ -369,7 +369,7 @@ const UniversiTice = () => {
         <main className={`ut-details ${selectedId ? 'has-selection' : ''} ${isMobile && selectedId ? 'mobile-open' : ''}`}>
           {isMobile && selectedId && (
             <div className="ut-mobile-bar">
-              <button className="ut-close" aria-label="Fermer" onClick={() => setSelectedId(null)}>Fermer</button>
+              <button className="ut-close" aria-label="Fermer" onClick={() => setSelectedId(null)}>✕</button>
             </div>
           )}
           {!selectedId && !isMobile && (

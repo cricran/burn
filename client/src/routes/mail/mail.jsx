@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { RefreshCw } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import './mail.css'
 import useMailSettingsStore from '../../utils/mailSettingsStore'
@@ -233,7 +234,7 @@ const Mail = () => {
           <p>Boîte INBOX</p>
         </div>
         <div className='ut-actions'>
-          <button className='link-btn' onClick={() => loadPage(1)}>Actualiser</button>
+          <button className='link-btn' onClick={() => loadPage(1)} title="Actualiser"><RefreshCw size={16} /></button>
           <a className='link-btn' href={sogo} target='_blank' rel='noreferrer noopener'>Ouvrir SOGo</a>
         </div>
       </div>
@@ -302,7 +303,7 @@ const Mail = () => {
           <main className={`mail-details ${selected ? 'has-selection' : ''} ${isMobile && selected ? 'mobile-open' : ''}`}>
             {isMobile && selected && (
               <div className='ut-mobile-bar'>
-                <button className='ut-close' onClick={() => { setSelected(null); setMessage(null) }}>Fermer</button>
+                <button className='ut-close' onClick={() => { setSelected(null); setMessage(null) }}>✕</button>
               </div>
             )}
             {!selected && !isMobile && <div className='placeholder'>Sélectionnez un mail</div>}
