@@ -2,14 +2,14 @@
     position: absolute;
     width: 100vw;
     height: 100vh;
-    padding: min(75px, 1%);
-    padding-left: 100px;
-    padding-right: 25px;
+    padding: min(75px, 1%) 25px min(75px, 1%) 100px;
     box-sizing: border-box;
-    /* Desktop: pas de scroll de page, les widgets gèrent leur propre scroll */
-    overflow: hidden;
+    /* Desktop: scroll vertical activé pour le contenu dépassant */
+    overflow-y: auto;
     overflow-x: hidden;
     transition: opacity .3s, transform .75s cubic-bezier(0,0,0,1), filter .5s;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
 }
 
 @media screen and (max-width: 620px) {
@@ -17,12 +17,14 @@
         position: absolute;
         width: 100vw;
         height: calc(100vh - 75px);
-        padding: min(75px, 5%);
-        margin-bottom: 100px !important;
+        padding: 70px 16px 40px 16px;
+        margin-bottom: 0;
         box-sizing: border-box;
-    /* Mobile: la page peut scroller */
-    overflow: auto;
+        /* Mobile: scroll vertical fluide et optimisé */
+        overflow-y: auto;
         overflow-x: hidden;
+        -webkit-overflow-scrolling: touch; /* Scroll fluide sur iOS */
+        scroll-behavior: smooth; /* Animation de scroll fluide */
     }
 }
 
@@ -33,6 +35,11 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-bottom: 20px;
 }
 
 .dashboard-header {
@@ -87,14 +94,33 @@
     transform: scale(0.95);
 }
 
+/* Améliorations générales pour la responsivité */
 .dashboard-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    /* Desktop: 4 lignes égales pour pouvoir empiler EDT + Mail de même hauteur */
-    grid-template-rows: repeat(4, 1fr);
     gap: 16px;
-    min-height: 0; /* Important pour que les modules puissent scroller */
+    min-height: 0;
+    /* Layout adaptatif selon la taille d'écran */
+}
+
+/* Ajustements pour écrans très larges */
+@media (min-width: 1400px) {
+    .dashboard-grid {
+        max-width: 1400px;
+        margin: 0 auto;
+        gap: 20px;
+    }
+
+    .dashboard-module {
+        min-width: 350px;
+    }
+}
+
+/* Ajustements pour écrans moyens */
+@media (min-width: 1024px) and (max-width: 1399px) {
+    .dashboard-grid {
+        gap: 18px;
+    }
 }
 
 /* Modules: remplissent la case de la grille; le contenu interne défile si besoin */
@@ -104,101 +130,149 @@
     max-height: none;
 }
 
-/* Layout des modules */
-.module-1 {
-    grid-column: 1;
-    grid-row: 1;
+/* Desktop: 2 colonnes pour vues larges */
+@media (min-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+            "courses schedule"
+            "ut notes"
+            "ut mails";
+    }
+
+    .module-1 { grid-area: courses; }
+    .module-2 { grid-area: schedule; }
+    .module-3 { grid-area: notes; }
+    .module-4 { grid-area: ut; }
+    .module-5 { grid-area: mails; }
 }
 
-.module-2 {
-    grid-column: 2;
-    grid-row: 1 / span 2; /* EDT demi-hauteur de la colonne de droite */
-}
-
-.module-3 {
-    grid-column: 1;
-    grid-row: 2;
-}
-
-.module-4 {
-    grid-column: 1;
-    grid-row: 3;
-}
-
-.module-5 {
-    grid-column: 2;
-    grid-row: 3 / span 2; /* Mail juste sous l'EDT, même hauteur */
-}
-
-/* Forcer EDT et Mail à remplir leur zone sur desktop */
-.module-2, .module-5 {
-    height: 100%;
-    max-height: none;
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
+/* Mobile/Tablette: 1 colonne pour vues étroites */
+@media (max-width: 1023px) {
     .dashboard-grid {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto auto auto;
-        gap: 16px;
+        grid-template-areas:
+            "courses"
+            "schedule"
+            "mails"
+            "notes"
+            "ut";
     }
 
-    .module-1 {
-        grid-column: 1;
-        grid-row: 1;
+    .module-1 { grid-area: courses; }
+    .module-2 { grid-area: schedule; }
+    .module-3 { grid-area: notes; }
+    .module-4 { grid-area: ut; }
+    .module-5 { grid-area: mails; }
+}
+
+/* Dimensions minimums pour chaque widget */
+@media (min-width: 1024px) {
+    .dashboard-module {
+        min-height: 200px;
+        min-width: 300px;
     }
 
-    .module-2 {
-        grid-column: 1;
-        grid-row: 2;
+    /* Dimensions spécifiques selon le contenu */
+    .module-1 { /* Liste des cours */
+        min-height: 250px;
     }
 
-    .module-3 {
-        grid-column: 1;
-        grid-row: 3;
+    .module-2 { /* Emploi du temps */
+        min-height: 300px;
     }
 
-    .module-4 {
-        grid-column: 1;
-        grid-row: 4;
+    .module-3 { /* Notes du jour */
+        min-height: 200px;
     }
 
-    .module-5 {
-        grid-column: 1;
-        grid-row: 5;
+    .module-4 { /* Cours UniversiTice - colonne gauche, s'étend sur 2 rangées */
+        min-height: 350px; /* Augmenté car s'étend verticalement */
+    }
+
+    .module-5 { /* Mails récents */
+        min-height: 250px;
     }
 }
 
-@media (max-width: 768px) {
-    .content {
-        padding-left: 20px;
-        padding-right: 20px;
+@media (max-width: 1023px) {
+    .dashboard-module {
+        height: auto;
+        min-height: 250px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch; /* Scroll fluide sur iOS */
+        scroll-behavior: smooth; /* Animation de scroll fluide */
     }
 
-    .dashboard-header {
-        flex-direction: column;
-        gap: 16px;
-        align-items: stretch;
+    /* Dimensions généreuses pour mobile - lisibilité optimale */
+    .module-1 { /* Liste des cours */
+        min-height: 280px;
     }
 
-    .dashboard-title h1 {
-        font-size: 1.5rem;
+    .module-2 { /* Emploi du temps */
+        min-height: 320px;
     }
 
-    .settings-button {
-        align-self: flex-end;
-        width: fit-content;
+    .module-3 { /* Notes du jour */
+        min-height: 250px;
     }
 
+    .module-4 { /* Cours UniversiTice */
+        min-height: 280px;
+    }
+
+    .module-5 { /* Mails récents */
+        min-height: 280px;
+    }
+}
+
+/* Ajustements pour écrans mobiles moyens */
+@media (min-width: 481px) and (max-width: 620px) {
     .dashboard-grid {
         gap: 16px;
+        padding: 0 8px 20px 8px;
     }
 
     .dashboard-module {
         min-height: 220px;
-        height: auto;
-        max-height: none;
+    }
+
+    .module-1 { min-height: 250px; }
+    .module-2 { min-height: 280px; }
+    .module-3 { min-height: 220px; }
+    .module-4 { min-height: 250px; }
+    .module-5 { min-height: 250px; }
+}
+
+/* Ajustements pour très petits écrans mobiles */
+@media (max-width: 480px) {
+    .dashboard-grid {
+        gap: 14px;
+        padding: 0 6px 20px 6px;
+    }
+
+    .dashboard-module {
+        min-height: 200px;
+    }
+
+    .module-1 { min-height: 220px; }
+    .module-2 { min-height: 250px; }
+    .module-3 { min-height: 200px; }
+    .module-4 { min-height: 220px; }
+    .module-5 { min-height: 220px; }
+
+    .dashboard-title h1 {
+        font-size: 1.2rem;
+    }
+
+    .dashboard-title p {
+        font-size: 0.85rem;
     }
 }
 
@@ -212,26 +286,79 @@
     }
 }
 
-/* Animations d'entrée */
-.dashboard-module {
-    animation: fadeInUp 0.6s ease-out;
-    animation-fill-mode: both;
+/* Styles des barres de scroll pour une meilleure UX */
+@media (max-width: 1023px) {
+    .dashboard-module::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .dashboard-module::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .dashboard-module::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+    }
+
+    .dashboard-module::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+
+    .content::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .home-dashboard::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .home-dashboard::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .home-dashboard::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+
+    .home-dashboard::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
 }
 
 .module-1 {
-    animation-delay: 0.1s;
+    animation-delay: 0.1s; /* Courses - premier widget */
 }
 
 .module-2 {
-    animation-delay: 0.2s;
+    animation-delay: 0.2s; /* Schedule - deuxième widget important */
+}
+
+.module-4 {
+    animation-delay: 0.3s; /* UT Courses - colonne gauche, milieu-bas */
 }
 
 .module-3 {
-    animation-delay: 0.3s;
+    animation-delay: 0.4s; /* Notes - en bas à droite */
 }
 
-.module-4 { animation-delay: 0.4s; }
-.module-5 { animation-delay: 0.5s; }
+.module-5 {
+    animation-delay: 0.5s; /* Mails - en bas à droite */
+}
 
 @keyframes fadeInUp {
     from {
