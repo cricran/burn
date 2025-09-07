@@ -17,7 +17,7 @@ const Home = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showSettings, setShowSettings] = useState(false);
     const [showEventDetails, setShowEventDetails] = useState(false);
-    const [updateKey, setUpdateKey] = useState(0);
+    const [, setUpdateKey] = useState(0);
 
     const { currentUser } = useAuthStore();
     const { currentEvents, fetchEvents } = useCalendarStore();
@@ -116,7 +116,7 @@ const Home = () => {
 
                 {showEventDetails && selectedEvent && (
                     <EventDetails
-                        key={`event-${selectedEvent._id}-${updateKey}`}
+                        key={`event-${selectedEvent._id}`}
                         event={selectedEvent}
                         onClose={handleCloseEventDetails}
                         onEventUpdate={handleEventUpdate}

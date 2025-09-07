@@ -10,7 +10,7 @@ import useCalendarStore from '../../utils/calendarStore'
 const Calendar = () => {
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [showEventDetails, setShowEventDetails] = useState(false)
-    const [updateKey, setUpdateKey] = useState(0)
+    const [, setUpdateKey] = useState(0)
     const { currentUser } = useAuthStore()
     const { currentEvents, fetchEvents } = useCalendarStore()
 
@@ -56,7 +56,7 @@ const Calendar = () => {
 
             {showEventDetails && selectedEvent && (
                 <EventDetails
-                    key={`event-${selectedEvent._id}-${updateKey}`}
+                    key={`event-${selectedEvent._id}`}
                     event={selectedEvent}
                     onClose={handleCloseEventDetails}
                     onEventUpdate={handleEventUpdate}
