@@ -6,7 +6,7 @@ services:
     image: mongo:5
     restart: always
     volumes:
-      - mongodb_data:/data/db
+      - ${MONGO_DATA_PATH:-./mongo_data}:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
@@ -52,7 +52,7 @@ services:
 
 # Volumes persistants
 volumes:
-  mongodb_data:
+  # mongodb_data volume removed; using bind mount instead
 
 # Réseau partagé entre les conteneurs
 networks:

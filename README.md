@@ -102,11 +102,35 @@
 
 ## 🐳 Docker
 
-Utilisation avec Docker Compose :
+### Déploiement avec Docker Compose et accès aux fichiers MongoDB
+
+Pour déployer l'application et accéder aux fichiers MongoDB sur votre machine hôte :
+
+1. Les données MongoDB sont stockées dans le dossier `mongo_data` à la racine du projet. Vous pouvez y accéder directement pour sauvegarde ou inspection.
+2. Lancez les conteneurs :
 
 ```bash
 docker-compose up -d
 ```
+
+3. Pour arrêter les conteneurs :
+
+```bash
+docker-compose down
+```
+
+### Déploiement avec Portainer
+
+Portainer permet de gérer vos conteneurs Docker via une interface web.
+
+1. Installez Portainer sur votre serveur :
+   https://docs.portainer.io/start/install/server/docker
+2. Clonez le dépôt GitHub sur votre serveur.
+3. Connectez-vous à Portainer (généralement sur `http://<votre-ip>:9000`).
+4. Créez un nouveau "Stack" et collez le contenu de votre `docker-compose.yml`.
+5. Définissez les variables d'environnement à partir de `.env`.
+6. Déployez le stack. Les données MongoDB seront accessibles dans le dossier `mongo_data`.
+7. Pour mettre à jour, faites un `git pull` puis redeployez le stack dans Portainer.
 
 ## 🔧 Configuration
 
