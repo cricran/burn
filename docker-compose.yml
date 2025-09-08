@@ -51,8 +51,6 @@ services:
       - app_network
 
 # Volumes persistants
-volumes:
-  # mongodb_data volume removed; using bind mount instead
 
 # Réseau partagé entre les conteneurs
 networks:
