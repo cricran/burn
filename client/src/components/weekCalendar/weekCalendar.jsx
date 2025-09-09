@@ -94,6 +94,7 @@ function WeekCalendar({ onEventClick }) {
 
   // Récupérer les événements et paramètres de couleur au chargement
   useEffect(() => {
+    // Avoid duplicate fetch if Home prefetch already warmed cache; fetchEvents() itself caches
     fetchEvents().catch(err => {
       notify({
         type: "error",
@@ -165,7 +166,8 @@ function WeekCalendar({ onEventClick }) {
   // Gérer la fermeture des paramètres avec rechargement des couleurs
   const handleCloseSettings = useCallback(() => {
     setShowSetting(false);
-    fetchEvents(true);
+    // Force refresh only if necessary; cache will be used otherwise
+    fetchEvents();
     // Pas besoin de recharger les colorSettings car le store se met à jour automatiquement
   }, [fetchEvents]);
 

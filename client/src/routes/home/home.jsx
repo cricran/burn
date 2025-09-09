@@ -20,12 +20,14 @@ const Home = () => {
     const [, setUpdateKey] = useState(0);
 
     const { currentUser } = useAuthStore();
-    const { currentEvents, fetchEvents } = useCalendarStore();
+    const { currentEvents, fetchEvents, prefetchDaysAhead } = useCalendarStore();
 
     useEffect(() => {
-        // Charger les événements au montage du composant
+        // Prefetch a wide range once to populate caches and reduce calls
+        prefetchDaysAhead(60);
+        // Also ensure current week is present promptly for immediate UI
         fetchEvents();
-    }, [fetchEvents]);
+    }, [fetchEvents, prefetchDaysAhead]);
 
     const handleEventClick = (event) => {
         setSelectedEvent(event);

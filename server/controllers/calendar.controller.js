@@ -26,7 +26,10 @@ export const getCalendar = async (req, res) => {
         return res.status(404).json({ error: 'User not found.' });
     }
 
-    await updateCalendar(userId, user.icalURL, new Date());
+    // Only attempt sync if user has sources; updateCalendar already rate-limits by 30min
+    if (Array.isArray(user.icalURL) && user.icalURL.length > 0) {
+        await updateCalendar(userId, user.icalURL, new Date());
+    }
 
     // Filtrer les événements dans l'intervalle demandé
     let calendar = await Calendar.find({

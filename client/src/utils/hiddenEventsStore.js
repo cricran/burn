@@ -41,7 +41,6 @@ const useHiddenEventsStore = create((set, get) => ({
             });
             // Invalider le cache du calendrier et recharger les événements
             useCalendarStore.getState().invalidateCache();
-            await useCalendarStore.getState().fetchEvents(true);
             return { success: true };
         } catch (error) {
             set({
@@ -64,7 +63,6 @@ const useHiddenEventsStore = create((set, get) => ({
             });
             // Invalider le cache du calendrier et recharger les événements
             useCalendarStore.getState().invalidateCache();
-            await useCalendarStore.getState().fetchEvents(true);
             return { success: true };
         } catch (error) {
             set({
@@ -87,7 +85,6 @@ const useHiddenEventsStore = create((set, get) => ({
             });
             // Invalider le cache du calendrier et recharger les événements
             useCalendarStore.getState().invalidateCache();
-            await useCalendarStore.getState().fetchEvents(true);
             return { success: true };
         } catch (error) {
             set({
@@ -110,7 +107,6 @@ const useHiddenEventsStore = create((set, get) => ({
             });
             // Invalider le cache du calendrier et recharger les événements
             useCalendarStore.getState().invalidateCache();
-            await useCalendarStore.getState().fetchEvents(true);
             return { success: true };
         } catch (error) {
             set({

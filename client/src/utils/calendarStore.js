@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { addWeeks, startOfWeek, endOfWeek } from 'date-fns';
-import apiRequest from './apiRequest';
+import apiRequest, { dedupe } from './apiRequest';
 
 const useCalendarStore = create((set, get) => ({
   // État
@@ -53,8 +53,9 @@ const useCalendarStore = create((set, get) => ({
     // Sinon, faire une requête API
     set({ isLoading: true, error: null });
     try {
-      const res = await apiRequest.get(
-        `/calendar?start=${start.toISOString()}&end=${end.toISOString()}`
+      const res = await dedupe(
+        `week:${start.toISOString()}-${end.toISOString()}`,
+        () => apiRequest.get(`/calendar?start=${start.toISOString()}&end=${end.toISOString()}`)
       );
       
       const parsed = (res.data.events || []).map(ev => ({
@@ -103,8 +104,9 @@ const useCalendarStore = create((set, get) => ({
 
     // Sinon, requête API pour cette semaine spécifique
     try {
-      const res = await apiRequest.get(
-        `/calendar?start=${start.toISOString()}&end=${end.toISOString()}`
+      const res = await dedupe(
+        `week:${start.toISOString()}-${end.toISOString()}`,
+        () => apiRequest.get(`/calendar?start=${start.toISOString()}&end=${end.toISOString()}`)
       );
 
       const parsed = (res.data.events || []).map(ev => ({
@@ -123,6 +125,67 @@ const useCalendarStore = create((set, get) => ({
     } catch (err) {
       console.error('Error fetching events for date:', err);
       return [];
+    }
+  },
+
+  // Prefetch a single range (e.g., next 60 days) in one request and populate week caches
+  prefetchDaysAhead: async (days = 60) => {
+    const { currentDate } = get();
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + days);
+    end.setHours(23, 59, 59, 999);
+
+    try {
+      const res = await dedupe(
+        `range:${start.toISOString()}-${end.toISOString()}`,
+        () => apiRequest.get(`/calendar?start=${start.toISOString()}&end=${end.toISOString()}`)
+      );
+
+      const parsed = (res.data.events || []).map(ev => ({
+        ...ev,
+        start: new Date(ev.start),
+        end: new Date(ev.end),
+      }));
+
+      // Group events by week key
+      const byWeek = new Map();
+      parsed.forEach(ev => {
+        const wStart = startOfWeek(new Date(ev.start), { weekStartsOn: 1 });
+        const wEnd = endOfWeek(new Date(ev.start), { weekStartsOn: 1 });
+        const wk = `${wStart.toISOString()}-${wEnd.toISOString()}`;
+        if (!byWeek.has(wk)) byWeek.set(wk, []);
+        byWeek.get(wk).push(ev);
+      });
+
+      // Build new caches
+      set(state => {
+        const newEvents = { ...state.events };
+        const newLastFetch = { ...state.lastFetch };
+
+        byWeek.forEach((list, wk) => {
+          // sort events inside the week for consistency
+          const sorted = list.slice().sort((a,b) => new Date(a.start) - new Date(b.start));
+          newEvents[wk] = sorted;
+          newLastFetch[wk] = Date.now();
+        });
+
+        // Optionally update currentEvents for the current week
+        const nowWStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+        const nowWEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+        const nowKey = `${nowWStart.toISOString()}-${nowWEnd.toISOString()}`;
+        const currentEvents = newEvents[nowKey] || state.currentEvents;
+
+        return { events: newEvents, lastFetch: newLastFetch, currentEvents };
+      });
+
+      return true;
+    } catch (err) {
+      // do not break the UI if prefetch fails
+      // eslint-disable-next-line no-console
+      console.error('Error prefetching calendar range:', err);
+      return false;
     }
   },
   

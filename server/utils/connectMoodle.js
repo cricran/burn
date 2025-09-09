@@ -23,6 +23,7 @@ class CookieJar {
 
 // --- HTTP Request Helper with Cookie Management ---
 async function makeRequest(url, method = 'GET', body = null, headers = {}, cookieJar, followRedirects = true) {
+    const debug = process.env.DEBUG_MOODLE === 'true';
     const defaultHeaders = {
         'User-Agent': "Mozilla/5.0 (Linux; Android 12; ...MoodleMobile 4.5.0 (45002)",
         'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -41,25 +42,25 @@ async function makeRequest(url, method = 'GET', body = null, headers = {}, cooki
         agent: new https.Agent({ rejectUnauthorized: false, keepAlive: true })
     };
     if (body) options.body = body;
-    console.log(`[Request] ${method} ${url}`);
+    if (debug) console.log(`[Request] ${method} ${url}`);
     try {
         const response = await fetch(url, options);
         // Handle cookies
         const setCookieHeaders = response.headers.raw()['set-cookie'];
         if (setCookieHeaders) {
             cookieJar.addCookies(setCookieHeaders);
-            console.log('[Cookies] Updated cookie jar:', cookieJar.getCookieHeader());
+            if (debug) console.log('[Cookies] Updated cookie jar:', cookieJar.getCookieHeader());
         }
         // Handle manual redirects for CAS
         if ((response.status === 302 || response.status === 301)) {
             const location = response.headers.get('location');
-            console.log('[Request] Redirect to:', location);
+            if (debug) console.log('[Request] Redirect to:', location);
             if (location) return { redirect: true, location, response };
         }
         return { redirect: false, response };
     } catch (error) {
         if (error.type === 'max-redirect') {
-            console.log('[Request] Redirect chain analysis:', error.redirectChain);
+            if (debug) console.log('[Request] Redirect chain analysis:', error.redirectChain);
             if (error.response) return { redirect: false, response: error.response };
         }
         throw error;
