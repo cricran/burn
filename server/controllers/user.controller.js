@@ -7,6 +7,7 @@ import fetch from 'node-fetch';
 import moodleToken from '../utils/connectMoodle.js';
 import testMoodleToken from '../utils/testMoodleToken.js';
 import { getSiteInfo, getUserCourses, getCourseContents, buildCourseUrl, buildAuthenticatedFileUrl } from '../utils/moodleApi.js';
+import authCookieOptions from '../utils/cookieOptions.js';
 
 // Helper to sanitize Moodle token (remove stray leading/trailing colons and trim)
 const sanitizeMoodleToken = (t) => {
@@ -39,14 +40,8 @@ export const loginUser = async (req, res) => {
             moodleToken: moodleRes.token,
         });
 
-        const JStoken = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
-
-        res.cookie('jwt', JStoken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
-            maxAge: 365 * 24 * 60 * 60 * 1000
-        });
+    const JStoken = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
+    res.cookie('jwt', JStoken, authCookieOptions());
 
         const { password: _pw, ...userData } = newUser.toObject();
 
@@ -67,12 +62,7 @@ export const loginUser = async (req, res) => {
                 const { password: _pw, ...userData } = user.toObject();
 
                 const JStoken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-
-                res.cookie('jwt', JStoken, {
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
-                });
+                res.cookie('jwt', JStoken, authCookieOptions());
 
                 return res.status(200).json(userData);
             } else {
@@ -92,11 +82,7 @@ export const loginUser = async (req, res) => {
 
             // Issue JWT cookie
             const JStoken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-            res.cookie('jwt', JStoken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
-            });
+            res.cookie('jwt', JStoken, authCookieOptions());
 
             const { password: _pw, ...userData } = user.toObject();
             return res.status(200).json(userData);
@@ -108,12 +94,9 @@ export const loginUser = async (req, res) => {
 export const logoutUser = async (req, res) => {
     // Clear JWT cookie with matching options to ensure deletion in all envs
     try {
-        res.clearCookie('jwt', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
-            path: '/',
-        });
+        // Use same attributes as set to ensure proper deletion
+        const opts = authCookieOptions();
+        res.clearCookie('jwt', { ...opts, expires: new Date(0), maxAge: 0 });
     } catch (_) { /* ignore */ }
 
     return res.status(200).json({ message: 'Logged out successfully' });
