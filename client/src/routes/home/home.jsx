@@ -75,7 +75,7 @@ const Home = () => {
                 {/* Header avec titre */}
                 <div className='dashboard-header'>
                     <div className='dashboard-title'>
-                        <h1>Bonjour {currentUser.username}</h1>
+                        <h1>Bonjour {currentUser?.username || ''}</h1>
                         <p>Voici votre tableau de bord pour aujourd'hui</p>
                     </div>
                 </div>

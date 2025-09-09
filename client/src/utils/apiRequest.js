@@ -12,7 +12,7 @@ apiRequest.interceptors.response.use(
     (response) => response,
     (error) => {
         const status = error?.response?.status;
-        if (status === 401) {
+        if (status === 401 || status === 403) {
             // Effacer l'utilisateur stocké
             try {
                 useAuthStore.getState().clearCurrentUser();

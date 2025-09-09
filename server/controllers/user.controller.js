@@ -106,7 +106,15 @@ export const loginUser = async (req, res) => {
 }
 
 export const logoutUser = async (req, res) => {
-    res.clearCookie('jwt');
+    // Clear JWT cookie with matching options to ensure deletion in all envs
+    try {
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax',
+            path: '/',
+        });
+    } catch (_) { /* ignore */ }
 
     return res.status(200).json({ message: 'Logged out successfully' });
 }

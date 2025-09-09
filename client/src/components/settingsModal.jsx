@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Settings, LogOut, User, Moon, Sun, Monitor } from 'lucide-react';
 import './settingsModal.css';
 import useAuthStore from '../utils/authStore';
 import useColorSettingsStore from '../utils/colorSettingsStore';
 import { openLayer, discard, closeTop } from '../utils/uiHistory';
+import apiRequest from '../utils/apiRequest';
 
 function SettingsModal({ isOpen, onClose }) {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const { currentUser, clearCurrentUser } = useAuthStore();
     const { colorSettings, toggleTheme, loadColorSettings } = useColorSettingsStore();
+    const navigate = useNavigate();
 
     // Load color settings when modal opens and user is logged in
     useEffect(() => {
@@ -32,11 +35,12 @@ function SettingsModal({ isOpen, onClose }) {
     const handleLogout = async () => {
         setIsLoggingOut(true);
         try {
-            // Attendre un peu pour l'effet visuel
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Demander au serveur d'invalider le cookie JWT
+            try { await apiRequest.post('/user/auth/logout'); } catch (_) { /* ignore */ }
+            // Effacer l'état client
             clearCurrentUser();
-            // Passer par l'historique pour fermer proprement la couche UI
-            requestClose();
+            // Rediriger proprement vers la page d'auth (évite les races avec history.back)
+            navigate('/auth', { replace: true });
         } catch (error) {
             console.error('Erreur lors de la déconnexion:', error);
         } finally {
