@@ -4,6 +4,7 @@ import './dailyCoursesList.css';
 import useCalendarStore from '../../utils/calendarStore';
 import useColorSettingsStore from '../../utils/colorSettingsStore';
 import { getEventColor, cleanCourseTitle, isEventCancelled } from '../../utils/colorUtils';
+import { computeTodayWindow, isSameLocalDay as sameLocalDay, eventOverlapsWindow } from '../../utils/timeWindow';
 
 function DailyCoursesList({ onEventClick }) {
     const [dayEvents, setDayEvents] = useState([]);
@@ -33,11 +34,7 @@ function DailyCoursesList({ onEventClick }) {
         return months === 1 ? 'dans un mois' : `dans ${months} mois`;
     }, []);
 
-    const isSameLocalDay = (a, b) => {
-        const da = new Date(a);
-        const db = new Date(b);
-        return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
-    };
+    const isSameLocalDay = (a, b) => sameLocalDay(a, b);
 
     useEffect(() => {
         let cancelled = false;
@@ -83,8 +80,19 @@ function DailyCoursesList({ onEventClick }) {
                 }
             }
 
+            // If chosen date is today, keep only current course and following, starting from
+            // current course start or now-10m, until end of last course
+            const chosenIsToday = isSameLocalDay(chosenDate, new Date());
+            let finalEvents = events;
+            if (chosenIsToday && events.length > 0) {
+                const window = computeTodayWindow(events);
+                if (window) {
+                    finalEvents = events.filter(ev => eventOverlapsWindow(ev, window.startWindow, window.endWindow));
+                }
+            }
+
             if (!cancelled) {
-                setDayEvents(events);
+                setDayEvents(finalEvents);
                 setDisplayedDate(chosenDate);
                 setRelativeLabel(formatRelative(chosenDate));
                 setIsLoading(false);

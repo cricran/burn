@@ -8,6 +8,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import useCalendarStore from '../../utils/calendarStore';
 import useColorSettingsStore from '../../utils/colorSettingsStore';
 import { getEventColor, cleanCourseTitle, isEventCancelled, getOptimalTextColor } from '../../utils/colorUtils';
+import { computeTodayWindow, isSameLocalDay as sameLocalDay, eventOverlapsWindow } from '../../utils/timeWindow';
 
 // Localisation en français
 const locales = {
@@ -59,11 +60,7 @@ function DailySchedule({ onEventClick }) {
         return months === 1 ? 'dans un mois' : `dans ${months} mois`;
     }, []);
 
-    const isSameLocalDay = (a, b) => {
-        const da = new Date(a);
-        const db = new Date(b);
-        return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
-    };
+    const isSameLocalDay = (a, b) => sameLocalDay(a, b);
 
     // Si aucun événement aujourd'hui, chercher le prochain jour avec des cours (jusqu'à 60 jours)
     useEffect(() => {
@@ -173,12 +170,26 @@ function DailySchedule({ onEventClick }) {
         );
     }
 
+    // Compute min/max window and filtered events for "today"
+    const isToday = isSameLocalDay(currentDate, new Date());
+    let calendarMin = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 8, 0);
+    let calendarMax = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 19, 0);
+    let filteredDayEvents = dayEvents;
+    if (isToday && dayEvents.length > 0) {
+        const window = computeTodayWindow(dayEvents);
+        if (window) {
+            calendarMin = new Date(window.startWindow);
+            calendarMax = new Date(window.endWindow);
+            filteredDayEvents = dayEvents.filter(ev => eventOverlapsWindow(ev, window.startWindow, window.endWindow));
+        }
+    }
+
     return (
         <div className="daily-schedule">
             <div className="module-header">
                 <h3>Emploi du temps</h3>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <span className="event-count">{dayEvents.length} cours</span>
+                    <span className="event-count">{filteredDayEvents.length} cours</span>
                     <span className="event-count" title={currentDate.toLocaleDateString('fr-FR')}>
                         {relativeLabel}
                     </span>
@@ -186,7 +197,7 @@ function DailySchedule({ onEventClick }) {
             </div>
 
             <div className="calendar-container">
-        {dayEvents.length === 0 ? (
+        {filteredDayEvents.length === 0 ? (
                     <div className="no-events">
                         <Clock size={48} />
             <p>Aucun cours prévu à venir</p>
@@ -194,15 +205,15 @@ function DailySchedule({ onEventClick }) {
                 ) : (
                     <Calendar
                         localizer={localizer}
-            events={dayEvents}
+            events={filteredDayEvents}
                         defaultView='day'
                         views={['day']}
                         view='day'
                         date={currentDate}
                         startAccessor='start'
                         endAccessor='end'
-                        min={new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 8, 0)}
-                        max={new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 19, 0)}
+                        min={calendarMin}
+                        max={calendarMax}
                         culture='fr'
                         style={{ height: '400px', width: '100%' }}
                         eventPropGetter={eventStyleGetter}

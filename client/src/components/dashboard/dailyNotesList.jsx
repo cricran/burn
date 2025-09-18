@@ -3,6 +3,7 @@ import { FileText } from 'lucide-react';
 import './dailyNotesList.css';
 import useCalendarStore from '../../utils/calendarStore';
 import GroupNotes from '../groupNotes/groupNotes';
+import { computeTodayWindow, isSameLocalDay as sameLocalDay, eventOverlapsWindow } from '../../utils/timeWindow';
 
 function DailyNotesList({ onEventClick }) {
     const { currentEvents, isLoading, events: weeksCache, getWeekKeyFor } = useCalendarStore();
@@ -19,18 +20,23 @@ function DailyNotesList({ onEventClick }) {
     }, [currentEvents, initialLoadDone]);
 
     // Helper hoisted so it's available in hooks below
-    function isSameLocalDay(a, b) {
-        const da = new Date(a);
-        const db = new Date(b);
-        return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
-    }
+    function isSameLocalDay(a, b) { return sameLocalDay(a, b); }
 
     // Utiliser useMemo pour calculer les données de notes uniquement quand currentEvents change
-    const todayNotesData = useMemo(() => {
+        const todayNotesData = useMemo(() => {
         // Regrouper par jour (seulement la date affichée)
         const groupedByDay = {};
 
-        (eventsForDay || []).forEach(event => {
+        // If displayed date is today, filter events within the computed window
+        let sourceEvents = eventsForDay || [];
+        if (isSameLocalDay(displayedDate, new Date()) && sourceEvents.length > 0) {
+            const window = computeTodayWindow(sourceEvents);
+            if (window) {
+                sourceEvents = sourceEvents.filter(ev => eventOverlapsWindow(ev, window.startWindow, window.endWindow));
+            }
+        }
+
+        sourceEvents.forEach(event => {
             if (event.tasks && event.tasks.length > 0) {
                 if (isSameLocalDay(event.start, displayedDate)) {
                     const day = new Date(event.start).toLocaleDateString('fr-FR', {
@@ -54,7 +60,7 @@ function DailyNotesList({ onEventClick }) {
                     });
                 }
             }
-        });
+    });
 
         // Convertir en format pour les composants
         return Object.keys(groupedByDay).map(day => ({
