@@ -71,7 +71,7 @@
 
 @media screen and (max-width: 620px) {
     .navBar {
-        z-index: 1;
+        z-index: 1000; /* Increased z-index to ensure it stays above content */
         width: 100vw;
         top: calc(100vh - 75px);
         height: 75px;
@@ -88,6 +88,8 @@
         border-right: solid 1px var(--border-color);
         border-top: solid 1px var(--border-color);
         font-weight: 500;
+        transition: transform 0.3s ease-out; /* Smooth transition for keyboard adjustments */
+        position: fixed; /* Ensure it's fixed positioned */
     }
 
     .navBar .butonList {
