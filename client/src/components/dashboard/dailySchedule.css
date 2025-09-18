@@ -24,7 +24,7 @@
 .module-header h3 {
     margin: 0;
     color: var(--text-primary);
-    font-size: 1.2rem;
+    font-size: 1.rem;
     font-weight: 600;
 }
 
@@ -154,7 +154,7 @@
 }
 
 .calendar-container .rbc-event-content {
-    color: inherit;
+    color: var(--text-primary);
     font-size: inherit;
     font-weight: inherit;
     text-shadow: 0 1px 2px var(--shadow-color);
@@ -175,14 +175,14 @@
 }
 
 .event-time {
-    font-size: 0.7rem;
+    font-size: 0.8rem !important;
     font-weight: 600;
     opacity: 0.9;
     line-height: 1;
 }
 
 .event-title {
-    font-size: 0.8rem;
+    font-size: 1.0rem !important;
     font-weight: 600;
     line-height: 1.1;
     display: -webkit-box;
@@ -194,7 +194,7 @@
 }
 
 .event-location {
-    font-size: 0.65rem;
+    font-size: 0.8rem !important;
     opacity: 0.8;
     font-weight: 500;
     line-height: 1;

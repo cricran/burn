@@ -203,14 +203,10 @@
 }
 
 .event-time {
-    background: var(--nav-accent);
-    color: var(--on-accent);
-    padding: 4px 8px;
     border-radius: var(--radius-sm);
     font-size: 12px;
     font-weight: 600;
     min-width: 60px;
-    text-align: center;
 }
 
 .event-details {

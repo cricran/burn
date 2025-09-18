@@ -435,7 +435,7 @@ span.rbc-label {
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
-  font-size: 10px;
+  font-size: 9px;
 }
 
 /* Supprimer l'affichage de l'heure par défaut */
@@ -450,6 +450,7 @@ span.rbc-label {
   order: 0 !important; /* Place between title and location */
   position: relative;
   z-index: 7;
+  white-space: nowrap;
 }
 
 .custom-event-content {

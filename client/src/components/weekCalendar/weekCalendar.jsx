@@ -395,7 +395,6 @@ function WeekCalendar({ onEventClick }) {
                   </div>
                   {event.location && (
                     <div className="event-location" title={event.location}>
-                      <MapPin size={10} />
                       <span>{event.location}</span>
                     </div>
                   )}
