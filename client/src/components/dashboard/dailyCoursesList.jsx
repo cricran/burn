@@ -52,6 +52,7 @@ function DailyCoursesList({ onEventClick }) {
             }
             const events = (weekEvents || [])
                 .filter(ev => isSameLocalDay(ev.start, date))
+                .filter(ev => !isEventCancelled(ev))
                 .sort((a, b) => new Date(a.start) - new Date(b.start));
             return events;
         };
@@ -64,9 +65,9 @@ function DailyCoursesList({ onEventClick }) {
             // First, try today using currentEvents fast path
             const now = new Date();
             const remainingToday = (currentEvents || [])
-                .filter(e => isSameLocalDay(e.start, today) && new Date(e.end) >= now);
+                .filter(e => isSameLocalDay(e.start, today) && new Date(e.end) >= now && !isEventCancelled(e));
             let events = (currentEvents || [])
-                .filter(e => isSameLocalDay(e.start, today))
+                .filter(e => isSameLocalDay(e.start, today) && !isEventCancelled(e))
                 .sort((a, b) => new Date(a.start) - new Date(b.start));
 
             // If none, look ahead up to 60 days

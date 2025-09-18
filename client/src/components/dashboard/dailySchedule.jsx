@@ -78,7 +78,10 @@ function DailySchedule({ onEventClick }) {
             if (!weekEvents) {
                 weekEvents = await fetchEventsForDate(date);
             }
-            return (weekEvents || []).filter(ev => isSameLocalDay(ev.start, date));
+            // Dashboard: never include cancelled courses
+            return (weekEvents || [])
+                .filter(ev => isSameLocalDay(ev.start, date))
+                .filter(ev => !isEventCancelled(ev));
         };
 
         const ensureDayWithEvents = async () => {
@@ -86,12 +89,17 @@ function DailySchedule({ onEventClick }) {
             const now = new Date();
             const todayList = (currentEvents || []).filter(e => {
                 const sameDay = isSameLocalDay(e.start, today);
-                return sameDay && new Date(e.end) >= now; // only remaining courses today
+                // only remaining, and exclude cancelled for dashboard
+                return sameDay && new Date(e.end) >= now && !isEventCancelled(e);
             });
             if (todayList.length > 0) {
                 if (!cancelled) {
                     setCurrentDate(today);
-                    setEventsForDay((currentEvents || []).filter(e => isSameLocalDay(e.start, today)));
+                    // Exclude cancelled for dashboard
+                    setEventsForDay((currentEvents || [])
+                        .filter(e => isSameLocalDay(e.start, today))
+                        .filter(e => !isEventCancelled(e))
+                    );
                     setRelativeLabel("aujourd'hui");
                 }
                 return;

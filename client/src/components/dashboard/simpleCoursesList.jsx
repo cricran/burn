@@ -20,7 +20,8 @@ function SimpleCoursesList({ onEventClick }) {
             // Filtrer les événements d'aujourd'hui
             const events = currentEvents.filter(event => {
                 const eventDate = new Date(event.start).toISOString().split('T')[0];
-                return eventDate === todayStr;
+                // Dashboard should ignore cancelled courses entirely
+                return eventDate === todayStr && !isEventCancelled(event);
             });
 
             // Trier par heure de début
