@@ -1,7 +1,7 @@
 .note {
     background: var(--module-bg);
     border-radius: 12px;
-    padding: 12px; /* plus compact */
+    padding: 8px; /* plus compact */
     box-shadow: 0 2px 8px var(--shadow-color);
     height: 100%;
     display: flex;

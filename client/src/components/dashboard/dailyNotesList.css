@@ -1,7 +1,7 @@
 .daily-notes-list {
     background: var(--module-bg);
     border-radius: 12px;
-    padding: 12px;
+    padding: 8px;
     box-shadow: 0 2px 8px var(--shadow-color);
     height: 100%;
     display: flex;
@@ -117,7 +117,7 @@
 /* Responsive */
 @media (max-width: 768px) {
     .daily-notes-list {
-    padding: 10px;
+    padding: 6px;
     }
     .notes-count { font-size: 0.75rem; padding: 2px 5px; }
 }
