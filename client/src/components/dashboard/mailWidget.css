@@ -3,7 +3,7 @@
 .mail-widget .mw-loading, .mail-widget .mw-error, .mail-widget .mw-empty { display: grid; place-items: center; padding: 24px; color: var(--text-secondary); text-align: center; gap: 8px; }
 .mail-widget .mw-link { background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
 .mail-widget .mw-list { list-style: none; margin: 0; padding: 4px; display: grid; gap: 8px; overflow: auto; max-height: 100%; }
-.mail-widget .mw-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px 10px; cursor: pointer; transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, background 140ms ease; position: relative; overflow: hidden; }
+.mail-widget .mw-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px 10px; cursor: pointer; transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, background 140ms ease; position: relative; overflow: hidden; height: max-content; }
 .mail-widget .mw-item:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--shadow-color); }
 .mail-widget .mw-item.unread { background: color-mix(in oklab, var(--accent-color) 8%, var(--panel-bg)); border-color: color-mix(in oklab, var(--accent-color) 20%, var(--border-color)); }
 .mail-widget .mw-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--text-secondary); }
