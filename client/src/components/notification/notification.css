@@ -6,26 +6,37 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    pointer-events: none; /* Allow clicks to pass through the container */
+}
+
+.notification-container > * {
+    pointer-events: auto; /* Re-enable pointer events for notifications */
 }
 
 .notification {
     min-width: 300px;
     max-width: 380px;
-    background: var(--module-bg);
-    color: var(--text-primary);
+    background: var(--module-bg, #fafafa);
+    color: var(--text-primary, #212529);
     border-radius: 12px;
     margin-bottom: 0;
     overflow: hidden;
     font-family: inherit;
     animation: fadeIn 0.3s;
     position: relative;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px var(--shadow-color);
+    border: 1px solid var(--border-color, #e1e4e8);
+    box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.1));
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px);}
-    to { opacity: 1; transform: translateY(0);}
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
 }
 
 .notification-content {
@@ -33,32 +44,40 @@
     align-items: flex-start;
     gap: 12px;
     padding: 16px 18px 10px 14px;
+    position: relative;
+    z-index: 1;
 }
 
 .notification-icon {
     flex-shrink: 0;
     margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .notification-text {
     flex: 1;
+    min-width: 0; /* Allow text to wrap */
 }
 
 .notification-title {
     font-weight: 700;
     font-size: 1.08em;
     margin-bottom: 2px;
+    line-height: 1.3;
 }
 
 .notification-message {
     font-size: 0.98em;
     opacity: 0.85;
+    line-height: 1.4;
 }
 
 .notification-close {
     background: none;
     border: none;
-    color: var(--text-primary);
+    color: var(--text-primary, #212529);
     cursor: pointer;
     margin-left: 8px;
     margin-top: 2px;
@@ -68,7 +87,7 @@
 }
 
 .notification-close:hover {
-    background: var(--bg-hover);
+    background: var(--bg-hover, #f4f6f8);
 }
 
 .notification-progress {
