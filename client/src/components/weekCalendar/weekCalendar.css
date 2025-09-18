@@ -191,7 +191,8 @@
   }
   /* Hide hour on mobile */
   .event-time { 
-    display: none !important;
+    display: block !important;
+    color: inherit; /* keep same text color as event, not blue */
   }
   .event-location { 
     font-size: 0.62rem; 
