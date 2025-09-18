@@ -28,7 +28,7 @@ function DailySchedule({ onEventClick }) {
     const [relativeLabel, setRelativeLabel] = useState("aujourd'hui");
     const [eventsForDay, setEventsForDay] = useState([]);
 
-    const { currentEvents, events: weeksCache, fetchEventsForDate, getWeekKeyFor } = useCalendarStore();
+    const { currentEvents, events: weeksCache, getWeekKeyFor } = useCalendarStore();
     const { colorSettings } = useColorSettingsStore();
 
     // Événements du jour affiché uniquement
@@ -75,9 +75,6 @@ function DailySchedule({ onEventClick }) {
             // pick from cache/API, filter by local day
             const weekKey = getWeekKeyFor ? getWeekKeyFor(date) : null;
             let weekEvents = weekKey && weeksCache[weekKey] ? weeksCache[weekKey] : null;
-            if (!weekEvents) {
-                weekEvents = await fetchEventsForDate(date);
-            }
             // Dashboard: never include cancelled courses
             return (weekEvents || [])
                 .filter(ev => isSameLocalDay(ev.start, date))
@@ -129,7 +126,7 @@ function DailySchedule({ onEventClick }) {
 
         ensureDayWithEvents();
         return () => { cancelled = true; };
-    }, [currentEvents, weeksCache, fetchEventsForDate, getWeekKeyFor, formatRelative]);
+    }, [currentEvents, weeksCache, getWeekKeyFor, formatRelative]);
 
     // Fonction pour styliser les événements avec les couleurs et contraste optimal
     const eventStyleGetter = useCallback((event) => {

@@ -5,7 +5,7 @@ import useCalendarStore from '../../utils/calendarStore';
 import GroupNotes from '../groupNotes/groupNotes';
 
 function DailyNotesList({ onEventClick }) {
-    const { currentEvents, isLoading, events: weeksCache, fetchEventsForDate, getWeekKeyFor } = useCalendarStore();
+    const { currentEvents, isLoading, events: weeksCache, getWeekKeyFor } = useCalendarStore();
     const [initialLoadDone, setInitialLoadDone] = useState(false);
     const [displayedDate, setDisplayedDate] = useState(new Date());
     const [relativeLabel, setRelativeLabel] = useState("aujourd'hui");
@@ -105,9 +105,6 @@ function DailyNotesList({ onEventClick }) {
             const dayStr = date.toISOString().split('T')[0];
             const weekKey = getWeekKeyFor ? getWeekKeyFor(date) : null;
             let weekEvents = weekKey && weeksCache[weekKey] ? weeksCache[weekKey] : null;
-            if (!weekEvents) {
-                weekEvents = await fetchEventsForDate(date);
-            }
             const filtered = (weekEvents || []).filter(ev => {
                 return isSameLocalDay(ev.start, date) && ev.tasks && ev.tasks.length > 0;
             });
@@ -148,7 +145,7 @@ function DailyNotesList({ onEventClick }) {
 
         ensureDayWithNotes();
         return () => { cancelled = true; };
-    }, [currentEvents, weeksCache, fetchEventsForDate, getWeekKeyFor, formatRelative]);
+    }, [currentEvents, weeksCache, getWeekKeyFor, formatRelative]);
 
     // Montrer l'indicateur de chargement uniquement lors du chargement initial
     const showLoading = isLoading && !initialLoadDone;

@@ -20,14 +20,13 @@ const Home = () => {
     const [, setUpdateKey] = useState(0);
 
     const { currentUser } = useAuthStore();
-    const { currentEvents, fetchEvents, prefetchDaysAhead } = useCalendarStore();
+    const { currentEvents, prefetchDaysAhead } = useCalendarStore();
 
     useEffect(() => {
         // Prefetch a wide range once to populate caches and reduce calls
+        // This also sets currentEvents for the current week in the store
         prefetchDaysAhead(60);
-        // Also ensure current week is present promptly for immediate UI
-        fetchEvents();
-    }, [fetchEvents, prefetchDaysAhead]);
+    }, [prefetchDaysAhead]);
 
     const handleEventClick = (event) => {
         setSelectedEvent(event);
@@ -42,7 +41,8 @@ const Home = () => {
     // Fonction pour mettre à jour l'événement sélectionné après modification
     const handleEventUpdate = async () => {
         if (selectedEvent) {
-            await fetchEvents();
+            // Refresh current week cache if needed (range prefetch should usually cover)
+            // Keeping minimal to avoid extra calls; widget views will use cache
             // Mettre à jour l'événement sélectionné avec la version fraîche du store
             const updatedEvents = useCalendarStore.getState().currentEvents || [];
             const updated = updatedEvents.find(e => e._id === selectedEvent._id);

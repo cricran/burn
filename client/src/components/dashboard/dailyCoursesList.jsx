@@ -11,7 +11,7 @@ function DailyCoursesList({ onEventClick }) {
     const [displayedDate, setDisplayedDate] = useState(new Date());
     const [relativeLabel, setRelativeLabel] = useState('aujourd\'hui');
 
-    const { currentEvents, events: weeksCache, fetchEventsForDate, getWeekKeyFor } = useCalendarStore();
+    const { currentEvents, events: weeksCache, getWeekKeyFor } = useCalendarStore();
     const { colorSettings } = useColorSettingsStore();
 
     const formatRelative = useCallback((targetDate) => {
@@ -47,9 +47,6 @@ function DailyCoursesList({ onEventClick }) {
             // Prefer currentEvents if same week
             const weekKey = getWeekKeyFor ? getWeekKeyFor(date) : null;
             let weekEvents = weekKey && weeksCache[weekKey] ? weeksCache[weekKey] : null;
-            if (!weekEvents) {
-                weekEvents = await fetchEventsForDate(date);
-            }
             const events = (weekEvents || [])
                 .filter(ev => isSameLocalDay(ev.start, date))
                 .filter(ev => !isEventCancelled(ev))
@@ -96,7 +93,7 @@ function DailyCoursesList({ onEventClick }) {
 
         loadBestDay();
         return () => { cancelled = true; };
-    }, [currentEvents, weeksCache, fetchEventsForDate, getWeekKeyFor, formatRelative]);
+    }, [currentEvents, weeksCache, getWeekKeyFor, formatRelative]);
 
     const formatTime = (dateString) => {
         const date = new Date(dateString);
