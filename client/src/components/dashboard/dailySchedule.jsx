@@ -159,30 +159,53 @@ function DailySchedule({ onEventClick }) {
         }
     }, [onEventClick]);
 
-    if (isLoading) {
-        return (
-            <div className="daily-schedule">
-                <div className="module-header">
-                    <h3>Emploi du temps</h3>
-                </div>
-                <div className="loading">Chargement...</div>
-            </div>
-        );
-    }
+    // Note: Do not early-return on loading to keep hooks order stable.
 
-    // Compute min/max window and filtered events for "today"
+    // Compute min/max window and filtered events
     const isToday = isSameLocalDay(currentDate, new Date());
+    let filteredDayEvents = dayEvents;
+
+    // Default bounds
     let calendarMin = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 8, 0);
     let calendarMax = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 19, 0);
-    let filteredDayEvents = dayEvents;
-    if (isToday && dayEvents.length > 0) {
-        const window = computeTodayWindow(dayEvents);
-        if (window) {
-            calendarMin = new Date(window.startWindow);
-            calendarMax = new Date(window.endWindow);
-            filteredDayEvents = dayEvents.filter(ev => eventOverlapsWindow(ev, window.startWindow, window.endWindow));
+
+    if (dayEvents.length > 0) {
+        // Find earliest start and latest end for the selected day
+        const earliestStart = new Date(
+            Math.min.apply(null, dayEvents.map(e => new Date(e.start).getTime()))
+        );
+        const latestEnd = new Date(
+            Math.max.apply(null, dayEvents.map(e => new Date(e.end).getTime()))
+        );
+
+        if (isToday) {
+            // For today, focus on a window around now to avoid huge empty space
+            const window = computeTodayWindow(dayEvents);
+            if (window) {
+                calendarMin = new Date(window.startWindow);
+                calendarMax = new Date(window.endWindow);
+                filteredDayEvents = dayEvents.filter(ev => eventOverlapsWindow(ev, window.startWindow, window.endWindow));
+            } else {
+                // Fallback to full-day bounds
+                calendarMin = new Date(earliestStart.getFullYear(), earliestStart.getMonth(), earliestStart.getDate(), earliestStart.getHours() - 1, 0);
+                calendarMax = new Date(latestEnd.getFullYear(), latestEnd.getMonth(), latestEnd.getDate(), latestEnd.getHours() + 1, 0);
+            }
+        } else {
+            // For other days, show full bounds of that day's events with a small padding
+            calendarMin = new Date(earliestStart.getFullYear(), earliestStart.getMonth(), earliestStart.getDate(), Math.max(0, earliestStart.getHours() - 1), 0);
+            calendarMax = new Date(latestEnd.getFullYear(), latestEnd.getMonth(), latestEnd.getDate(), Math.min(23, latestEnd.getHours() + 1), 0);
         }
     }
+
+    // Initial scroll anchor for react-big-calendar
+    const scrollToTime = useMemo(() => {
+        if (dayEvents.length === 0) return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 8, 0);
+        if (isToday) return new Date();
+        const earliestStart = new Date(
+            Math.min.apply(null, dayEvents.map(e => new Date(e.start).getTime()))
+        );
+        return earliestStart;
+    }, [dayEvents, currentDate, isToday]);
 
     return (
         <div className="daily-schedule">
@@ -197,10 +220,12 @@ function DailySchedule({ onEventClick }) {
             </div>
 
             <div className="calendar-container">
-        {filteredDayEvents.length === 0 ? (
+                {isLoading ? (
+                    <div className="loading">Chargement...</div>
+                ) : filteredDayEvents.length === 0 ? (
                     <div className="no-events">
                         <Clock size={48} />
-            <p>Aucun cours prévu à venir</p>
+                        <p>Aucun cours prévu à venir</p>
                     </div>
                 ) : (
                     <Calendar
@@ -215,7 +240,8 @@ function DailySchedule({ onEventClick }) {
                         min={calendarMin}
                         max={calendarMax}
                         culture='fr'
-                        style={{ height: '400px', width: '100%' }}
+                        style={{ height: '100%', width: '100%' }}
+                        scrollToTime={scrollToTime}
                         eventPropGetter={eventStyleGetter}
                         onSelectEvent={handleSelectEvent}
                         toolbar={false}
