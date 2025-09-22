@@ -58,6 +58,27 @@ const useCalendarStore = create((set, get) => ({
         () => apiRequest.get(`/calendar?start=${start.toISOString()}&end=${end.toISOString()}`)
       );
       
+      // If backend signals a sync warning (e.g., ADE outage), let UI know via a lightweight console and optional notification
+      try {
+        if (res?.data?.syncWarning === 'fetch-empty' && typeof window !== 'undefined') {
+          // Lazy import to avoid tight coupling
+          import('./notificationStore').then(mod => {
+            const notify = mod.default.getState().notify;
+            notify({
+              type: 'warning',
+              title: "Mise à jour EDT indisponible",
+              message: "Le serveur ADE ne répond pas. Affichage des cours déjà enregistrés.",
+              duration: 6000
+            });
+          }).catch(() => {
+            // no-op
+          });
+          // Also log for devs
+          // eslint-disable-next-line no-console
+          console.warn('Calendar sync warning: upstream returned no data; using cached DB events.');
+        }
+      } catch (_) { /* ignore */ }
+
       const parsed = (res.data.events || []).map(ev => ({
         ...ev,
         start: new Date(ev.start),
@@ -104,10 +125,24 @@ const useCalendarStore = create((set, get) => ({
 
     // Sinon, requête API pour cette semaine spécifique
     try {
-      const res = await dedupe(
+  const res = await dedupe(
         `week:${start.toISOString()}-${end.toISOString()}`,
         () => apiRequest.get(`/calendar?start=${start.toISOString()}&end=${end.toISOString()}`)
       );
+
+      try {
+        if (res?.data?.syncWarning === 'fetch-empty' && typeof window !== 'undefined') {
+          import('./notificationStore').then(mod => {
+            const notify = mod.default.getState().notify;
+            notify({
+              type: 'warning',
+              title: "Mise à jour EDT indisponible",
+              message: "Le serveur ADE ne répond pas. Affichage des cours déjà enregistrés.",
+              duration: 6000
+            });
+          }).catch(() => {});
+        }
+      } catch (_) { /* ignore */ }
 
       const parsed = (res.data.events || []).map(ev => ({
         ...ev,

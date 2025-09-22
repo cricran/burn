@@ -6,7 +6,8 @@
   "test": "echo \"Error: no test specified\" && exit 1",
   "start": "node index.js",
   "reset-onboarding": "node scripts/resetOnboarding.js",
-  "reset-onboarding:user": "node scripts/resetOnboarding.js $USER"
+  "reset-onboarding:user": "node scripts/resetOnboarding.js $USER",
+  "cleanup-calendars": "node scripts/cleanupDeletedTimetables.js"
   },
   "keywords": [],
   "author": "",

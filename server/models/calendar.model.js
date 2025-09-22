@@ -8,6 +8,8 @@ const calendarSchema = new Schema({
     location: String,
     start: Date,
     end: Date,
+    // Provenance of the event to support per-source cleanup
+    sourceUrl: { type: String, index: true },
     userId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User' 

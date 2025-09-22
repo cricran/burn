@@ -27,8 +27,9 @@ export const getCalendar = async (req, res) => {
     }
 
     // Only attempt sync if user has sources; updateCalendar already rate-limits by 30min
+    let syncStatus = null;
     if (Array.isArray(user.icalURL) && user.icalURL.length > 0) {
-        await updateCalendar(userId, user.icalURL, new Date());
+        syncStatus = await updateCalendar(userId, user.icalURL, new Date());
     }
 
     // Filtrer les événements dans l'intervalle demandé
@@ -74,5 +75,10 @@ export const getCalendar = async (req, res) => {
         notes: ev.notes || []
     }));
 
-    return res.status(200).json({ events: mappedEvents });
+    const response = { events: mappedEvents };
+    if (syncStatus?.error) {
+        response.syncWarning = 'fetch-empty';
+    }
+
+    return res.status(200).json(response);
 }
