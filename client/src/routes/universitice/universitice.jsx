@@ -25,6 +25,7 @@ const UniversiTice = () => {
   const [error, setError] = useState(null)
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(max-width: 820px)').matches : false)
   const [openSections, setOpenSections] = useState(new Set())
+  const storageKey = (courseId) => `ut:sections:${courseId}`
 
   // Simple in-memory cache per session to avoid re-fetching
   const contentsCache = useMemo(() => new Map(), [])
@@ -37,13 +38,32 @@ const UniversiTice = () => {
     return (words[0][0] + words[1][0]).toUpperCase()
   }
 
-  // Ouvrir toutes les sections par défaut quand le contenu est chargé
+  // Charger l'état ouvert/fermé depuis le stockage local pour le cours sélectionné
   useEffect(() => {
-    if (content && content.length > 0) {
-      const allSectionIds = new Set(content.map(section => section.id))
-      setOpenSections(allSectionIds)
+    if (!selectedId || !content) return
+    try {
+      const raw = localStorage.getItem(storageKey(selectedId))
+      if (raw) {
+        const arr = JSON.parse(raw)
+        const asSet = new Set(Array.isArray(arr) ? arr : [])
+        setOpenSections(asSet)
+      } else {
+        // Par défaut: toutes les sections repliées (ne rien ouvrir)
+        setOpenSections(new Set())
+      }
+    } catch {
+      setOpenSections(new Set())
     }
-  }, [content])
+  }, [selectedId, content])
+
+  // Persister l'état à chaque bascule
+  useEffect(() => {
+    if (!selectedId || !content) return
+    try {
+      const arr = Array.from(openSections)
+      localStorage.setItem(storageKey(selectedId), JSON.stringify(arr))
+    } catch {}
+  }, [openSections, selectedId, content])
 
   useEffect(() => {
     let cancelled = false
@@ -152,14 +172,8 @@ const UniversiTice = () => {
   }
 
   const handleSectionClick = (section) => {
-    // Si la section contient des modules avec des URLs, ouvrir le premier document
-    const modulesWithUrls = section.modules?.filter(m => m.url) || []
-    if (modulesWithUrls.length > 0) {
-      window.open(modulesWithUrls[0].url, '_blank', 'noopener,noreferrer')
-    } else {
-      // Sinon, juste toggle la section
-      toggleSection(section.id)
-    }
+    // Cliquer sur le titre doit ouvrir/fermer la section
+    toggleSection(section.id)
   }
 
   const toggleSection = (sectionId) => {
@@ -460,8 +474,7 @@ const UniversiTice = () => {
                       {section.name && (
                         <h3 
                           className="ut-section-title" 
-                          onClick={() => handleSectionClick(section)} 
-                          style={{ cursor: section.modules?.some(m => m.url) ? 'pointer' : 'default' }}
+                          onClick={() => handleSectionClick(section)}
                         >
                           {section.name}
                         </h3>

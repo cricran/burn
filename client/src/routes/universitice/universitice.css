@@ -121,7 +121,8 @@
   opacity: 1;
 }
 .universitice .ut-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.universitice .ut-section-title { font-size: 1.2rem; margin-left: 10px; font-weight: 600; color: var(--text-primary); }
+.universitice .ut-section-title { font-size: 1.2rem; margin-left: 10px; font-weight: 600; color: var(--text-primary); cursor: pointer; user-select: none; }
+.universitice .ut-section-title:hover { color: var(--accent-color); }
 .universitice .ut-toggle-btn { 
   background: transparent; 
   border: 1px solid var(--border-color); 
