@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { PanelBottomClose, PanelLeftOpen, FileText, BookOpen, Link, File, Video, Image, Archive, HelpCircle, Upload, Download, EyeOff, Eye, Lock } from 'lucide-react'
 import apiRequest from '../../utils/apiRequest'
@@ -266,6 +266,56 @@ const UniversiTice = () => {
 
   const [assignDetails, setAssignDetails] = useState(null)
 
+  // Support Bootstrap-like collapse toggles embedded in Moodle HTML descriptions
+  const courseRef = useRef(null)
+  useEffect(() => {
+    const root = courseRef.current
+    if (!root) return
+
+    const esc = (s) => {
+      if (window.CSS && typeof window.CSS.escape === 'function') return window.CSS.escape(s)
+      return String(s).replace(/[^a-zA-Z0-9_-]/g, '\\$&')
+    }
+
+    const initStates = () => {
+      const anchors = root.querySelectorAll('a.icons-collapse-expand[href^="#"], a[data-toggle="collapse"][href^="#"]')
+      anchors.forEach((a) => {
+        const targetSel = a.getAttribute('href') || a.dataset.target
+        if (!targetSel) return
+        const id = targetSel.startsWith('#') ? targetSel.slice(1) : targetSel
+        const panel = root.querySelector(`#${esc(id)}`)
+        if (!panel) return
+        // Trust the actual panel state first; fallback to anchor class if needed
+        let expanded = panel.classList.contains('show')
+        if (!expanded && !panel.classList.contains('show')) {
+          expanded = !a.classList.contains('collapsed')
+        }
+        panel.classList.toggle('show', expanded)
+        a.classList.toggle('collapsed', !expanded)
+        a.setAttribute('aria-expanded', String(expanded))
+      })
+    }
+
+    const onClick = (e) => {
+      const a = e.target.closest('a.icons-collapse-expand, a[data-toggle="collapse"]')
+      if (!a || !root.contains(a)) return
+      const targetSel = a.getAttribute('href') || a.dataset.target
+      if (!targetSel) return
+      e.preventDefault()
+      const id = targetSel.startsWith('#') ? targetSel.slice(1) : targetSel
+      const panel = root.querySelector(`#${esc(id)}`)
+      if (!panel) return
+      const isShown = panel.classList.contains('show')
+      panel.classList.toggle('show', !isShown)
+      a.classList.toggle('collapsed', isShown)
+      a.setAttribute('aria-expanded', String(!isShown))
+    }
+
+    initStates()
+    root.addEventListener('click', onClick)
+    return () => root.removeEventListener('click', onClick)
+  }, [content])
+
   const submitAssignmentFlow = async (finalize) => {
     try {
   setErrorNote('')
@@ -394,7 +444,7 @@ const UniversiTice = () => {
           )}
 
           {selectedId && !contentLoading && content && (
-            <div className="ut-course">
+            <div className="ut-course" ref={courseRef}>
               <div className="ut-course-toolbar">
                 {courses.find(x => x.id === selectedId)?.courseurl && (
                   <button className="link-btn" onClick={() => openOnUniversiTice(courses.find(x => x.id === selectedId).courseurl)}>

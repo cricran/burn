@@ -142,12 +142,13 @@
 .universitice .ut-modules { 
   display: grid; 
   gap: 5px; 
-  transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease 0.1s;
   transform: translateY(0);
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  /* Merge transitions into a single declaration to avoid overrides */
+  transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, transform 0.3s ease;
 }
 .universitice .ut-section.closed .ut-modules {
   transform: translateY(-10px);
+  pointer-events: none; /* prevent interacting with hidden content */
 }
 .universitice .ut-module { border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: var(--panel-bg); }
 .universitice .ut-module-head { display: flex; align-items: center; margin-bottom: 6px; gap: 8px; }
@@ -155,8 +156,112 @@
 .universitice .ut-module-title { font-weight: 600; color: var(--text-primary); word-wrap: break-word; overflow-wrap: anywhere; }
 .universitice .ut-module-title-link { font-weight: 600; color: var(--text-primary); text-decoration: none; transition: color 120ms ease; white-space: normal; overflow: visible; }
 .universitice .ut-module-title-link:hover { color: var(--accent-color); text-decoration: underline; }
-.universitice .ut-module-description { margin-top: 6px; color: var(--text-primary); white-space: pre-wrap; overflow-wrap: anywhere; }
-.universitice .ut-module-description p { margin: 0 0 6px 0; }
+/* Text content: normalize whitespace/line-height so <br> are not oversized */
+.universitice .ut-module-description,
+.universitice .ut-summary {
+  margin-top: 6px;
+  color: var(--text-primary);
+  white-space: normal; /* rely on HTML tags (<p>, <br>, <ul>, …) */
+  line-height: 1.45; /* tighter, reduces visual size of <br> */
+  overflow-wrap: break-word;
+}
+.universitice .ut-module-description p,
+.universitice .ut-summary p { margin: 0 0 6px 0; }
+/* Lists inside rich HTML should stay within the card */
+.universitice .ut-module-description ul,
+.universitice .ut-module-description ol,
+.universitice .ut-summary ul,
+.universitice .ut-summary ol {
+  margin: 6px 0;
+  padding-left: 1.2rem; /* keep bullets inside container */
+  list-style-position: outside;
+}
+.universitice .ut-module-description li,
+.universitice .ut-summary li { margin: 2px 0; }
+.universitice .ut-module-description ul ul,
+.universitice .ut-module-description ol ol,
+.universitice .ut-summary ul ul,
+.universitice .ut-summary ol ol { padding-left: 1.2rem; }
+/* Native collapsibles support (if content uses <details>) */
+.universitice .ut-module-description details,
+.universitice .ut-summary details {
+  margin: 6px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--panel-bg);
+}
+.universitice .ut-module-description details > summary,
+.universitice .ut-summary details > summary {
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.universitice .ut-module-description details[open] > summary,
+.universitice .ut-summary details[open] > summary {
+  border-bottom: 1px solid var(--border-color);
+}
+.universitice .ut-module-description details > summary::-webkit-details-marker,
+.universitice .ut-summary details > summary::-webkit-details-marker { display: none; }
+
+/* Bootstrap-like collapse support present in Moodle HTML */
+.universitice .ut-module-description .collapse,
+.universitice .ut-summary .collapse {
+  display: block; /* ensure size animation works */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+  opacity: 0;
+  padding: 0 2px; /* keep closed block tight */
+}
+.universitice .ut-module-description .collapse.show,
+.universitice .ut-summary .collapse.show {
+  max-height: 1000px; /* large enough to reveal typical content */
+  opacity: 1;
+  padding-top: 8px;
+}
+.universitice .ut-module-description a.icons-collapse-expand,
+.universitice .ut-summary a.icons-collapse-expand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 8px 28px; /* space for arrow */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  margin: 6px 0;
+  position: relative;
+  cursor: pointer;
+}
+.universitice .ut-module-description a.icons-collapse-expand:hover,
+.universitice .ut-summary a.icons-collapse-expand:hover {
+  background: var(--hover-bg);
+  border-color: color-mix(in oklab, var(--accent-color) 30%, var(--border-color));
+}
+.universitice .ut-module-description a.icons-collapse-expand:focus-visible,
+.universitice .ut-summary a.icons-collapse-expand:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--accent-color) 50%, transparent);
+  outline-offset: 2px;
+}
+/* Add a disclosure arrow independent of FA icons */
+.universitice .ut-module-description a.icons-collapse-expand::before,
+.universitice .ut-summary a.icons-collapse-expand::before {
+  content: '▸';
+  position: absolute;
+  left: 10px;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+}
+.universitice .ut-module-description a.icons-collapse-expand[aria-expanded="true"]::before,
+.universitice .ut-summary a.icons-collapse-expand[aria-expanded="true"]::before {
+  content: '▾';
+}
+.universitice a.icons-collapse-expand .expanded-icon { display: none; }
+.universitice a.icons-collapse-expand[aria-expanded="true"] .expanded-icon { display: inline-block; }
+.universitice a.icons-collapse-expand[aria-expanded="true"] .collapsed-icon { display: none; }
 .universitice .ut-files { list-style: none; margin: 0; padding: 0; }
 .universitice .ut-files li { padding: 4px 0; }
 .universitice .ut-files li a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; word-break: break-word; overflow-wrap: anywhere; }
@@ -166,6 +271,16 @@
 .skel { display: grid; gap: 8px; }
 .skel-line { height: 14px; background: color-mix(in oklab, Canvas 85%, CanvasText 15%); border-radius: 6px; animation: pulse 1.1s ease-in-out infinite alternate; }
 @keyframes pulse { from { opacity: .6; } to { opacity: 1; } }
+
+/* Screen-reader-only helper used by Moodle content */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
 
 /* Animations */
 .fade-in { animation: fin 160ms ease-out; }
