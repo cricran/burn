@@ -83,6 +83,13 @@
     }
 }
 
+/* On smartphone-sized non-touch windows, hide the mobile week indicator to avoid duplicates */
+@media (max-width: 820px) and (hover: hover) and (pointer: fine) {
+  .mobile-week-indicator {
+    display: none !important;
+  }
+}
+
 /* Hide mobile week indicator on desktop */
 .mobile-week-indicator {
     display: none;
@@ -155,21 +162,25 @@
         background: transparent;
     }
 
-    /* Hide rbc-toolbar on touch devices */
-    @media (hover: none) and (pointer: coarse) {
-        .rbc-toolbar {
-            display: none !important;
-        }
-    }
+}
 
-    /* Show rbc-toolbar on non-touch devices (desktop with mouse) */
-    @media (hover: hover) and (pointer: fine) {
-        .rbc-toolbar {
-            display: flex !important;
-        }
-    }
+/* On smartphone-sized touch devices, hide the full RBC toolbar (incl. Prev/Next) */
+@media (max-width: 820px) and (hover: none) and (pointer: coarse) {
+  .rbc-toolbar {
+    display: none !important;
+  }
+}
 
-  /* Smaller event typography on mobile */
+
+/* On smartphone-sized non-touch (e.g., small desktop window), keep the toolbar visible */
+@media (max-width: 820px) and (hover: hover) and (pointer: fine) {
+  .rbc-toolbar {
+    display: flex !important;
+  }
+}
+
+/* Smaller event typography on mobile */
+@media (max-width: 820px) {
   .custom-event-content { 
     font-size: 0.68rem; 
     line-height: 1.05;
@@ -189,7 +200,7 @@
     position: relative;
     z-index: 10; /* Higher z-index to ensure it's on top */
   }
-  /* Hide hour on mobile */
+  /* Keep time visible on mobile */
   .event-time { 
     display: block !important;
     color: inherit; /* keep same text color as event, not blue */
@@ -238,7 +249,7 @@
 
 /* Agrandir chaque ligne horaire */
 .rbc-time-slot {
-  min-height: 70px; /* ou plus si tu veux */
+  min-height: 54px; /* réduire la hauteur d'une heure de cours */
 }
 
 /* Couleur du texte général */
@@ -345,12 +356,12 @@ span.rbc-label {
 }
 
 @media (max-width: 820px) {
-    .rbc-btn-group:first-child {
-        margin: 0 10px;
-        padding: 6px 12px;
-        font-size: 12px;
-        display: none !important; /* Hide buttons in mobile view */
-    }
+  .rbc-btn-group:first-child {
+    margin: 0 10px;
+    padding: 6px 12px;
+    font-size: 12px;
+    /* Do NOT force-hide by default; visibility handled by touch queries above */
+  }
 }
 
 .rbc-btn-group:last-child {
@@ -498,8 +509,8 @@ span.rbc-label {
   overflow: visible;
 }
 
-/* Swipe gesture styles for mobile view */
-@media (max-width: 820px) {
+/* Swipe gesture styles for all touch devices (phone/tablet), regardless of width */
+@media (hover: none) and (pointer: coarse) {
   .wcContent {
     position: relative;
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Spring-like easing for natural feel */
