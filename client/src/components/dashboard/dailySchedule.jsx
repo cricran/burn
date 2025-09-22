@@ -30,7 +30,7 @@ function DailySchedule({ onEventClick }) {
     const [eventsForDay, setEventsForDay] = useState([]);
 
     const { currentEvents, events: weeksCache, getWeekKeyFor } = useCalendarStore();
-    const { colorSettings } = useColorSettingsStore();
+    const { colorSettings, loadColorSettings } = useColorSettingsStore();
 
     // Événements du jour affiché uniquement
     const dayEvents = useMemo(() => {
@@ -40,6 +40,11 @@ function DailySchedule({ onEventClick }) {
     useEffect(() => {
         setIsLoading(false);
     }, [currentEvents]);
+
+    // Ensure color settings are loaded like on /edt
+    useEffect(() => {
+        loadColorSettings();
+    }, [loadColorSettings]);
 
     const formatRelative = useCallback((targetDate) => {
         const start = new Date();
@@ -72,10 +77,10 @@ function DailySchedule({ onEventClick }) {
             // pick from cache/API, filter by local day
             const weekKey = getWeekKeyFor ? getWeekKeyFor(date) : null;
             let weekEvents = weekKey && weeksCache[weekKey] ? weeksCache[weekKey] : null;
-            // Dashboard: never include cancelled courses
+            // Respect showCancelledEvents like /edt
             return (weekEvents || [])
                 .filter(ev => isSameLocalDay(ev.start, date))
-                .filter(ev => !isEventCancelled(ev));
+                .filter(ev => (colorSettings.showCancelledEvents ? true : !isEventCancelled(ev)));
         };
 
         const ensureDayWithEvents = async () => {
@@ -83,16 +88,16 @@ function DailySchedule({ onEventClick }) {
             const now = new Date();
             const todayList = (currentEvents || []).filter(e => {
                 const sameDay = isSameLocalDay(e.start, today);
-                // only remaining, and exclude cancelled for dashboard
-                return sameDay && new Date(e.end) >= now && !isEventCancelled(e);
+                // only remaining; include/exclude cancelled based on settings
+                return sameDay && new Date(e.end) >= now && (colorSettings.showCancelledEvents ? true : !isEventCancelled(e));
             });
             if (todayList.length > 0) {
                 if (!cancelled) {
                     setCurrentDate(today);
-                    // Exclude cancelled for dashboard
+                    // Apply cancelled filter according to settings
                     setEventsForDay((currentEvents || [])
                         .filter(e => isSameLocalDay(e.start, today))
-                        .filter(e => !isEventCancelled(e))
+                        .filter(e => (colorSettings.showCancelledEvents ? true : !isEventCancelled(e)))
                     );
                     setRelativeLabel("aujourd'hui");
                 }

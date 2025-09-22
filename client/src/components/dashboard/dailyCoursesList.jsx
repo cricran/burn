@@ -13,7 +13,7 @@ function DailyCoursesList({ onEventClick }) {
     const [relativeLabel, setRelativeLabel] = useState('aujourd\'hui');
 
     const { currentEvents, events: weeksCache, getWeekKeyFor } = useCalendarStore();
-    const { colorSettings } = useColorSettingsStore();
+    const { colorSettings, loadColorSettings } = useColorSettingsStore();
 
     const formatRelative = useCallback((targetDate) => {
         const start = new Date();
@@ -38,6 +38,7 @@ function DailyCoursesList({ onEventClick }) {
 
     useEffect(() => {
         let cancelled = false;
+    loadColorSettings();
 
         const getEventsForDate = async (date) => {
             // Find events locally matching the provided date
@@ -46,7 +47,7 @@ function DailyCoursesList({ onEventClick }) {
             let weekEvents = weekKey && weeksCache[weekKey] ? weeksCache[weekKey] : null;
             const events = (weekEvents || [])
                 .filter(ev => isSameLocalDay(ev.start, date))
-                .filter(ev => !isEventCancelled(ev))
+                .filter(ev => (colorSettings.showCancelledEvents ? true : !isEventCancelled(ev)))
                 .sort((a, b) => new Date(a.start) - new Date(b.start));
             return events;
         };
@@ -59,9 +60,11 @@ function DailyCoursesList({ onEventClick }) {
             // First, try today using currentEvents fast path
             const now = new Date();
             const remainingToday = (currentEvents || [])
-                .filter(e => isSameLocalDay(e.start, today) && new Date(e.end) >= now && !isEventCancelled(e));
+                .filter(e => isSameLocalDay(e.start, today) && new Date(e.end) >= now)
+                .filter(e => (colorSettings.showCancelledEvents ? true : !isEventCancelled(e)));
             let events = (currentEvents || [])
-                .filter(e => isSameLocalDay(e.start, today) && !isEventCancelled(e))
+                .filter(e => isSameLocalDay(e.start, today))
+                .filter(e => (colorSettings.showCancelledEvents ? true : !isEventCancelled(e)))
                 .sort((a, b) => new Date(a.start) - new Date(b.start));
 
             // If none, look ahead up to 60 days
@@ -101,7 +104,7 @@ function DailyCoursesList({ onEventClick }) {
 
         loadBestDay();
         return () => { cancelled = true; };
-    }, [currentEvents, weeksCache, getWeekKeyFor, formatRelative]);
+    }, [currentEvents, weeksCache, getWeekKeyFor, formatRelative, loadColorSettings, colorSettings.showCancelledEvents]);
 
     const formatTime = (dateString) => {
         const date = new Date(dateString);
