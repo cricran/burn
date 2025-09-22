@@ -94,6 +94,77 @@
     margin-bottom: 0;
 }
 
+.general-info {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 14px;
+    overflow: hidden;
+}
+
+.release-notes .release-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.release-notes .release-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.release-notes .release-version {
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.release-notes .release-body {
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    overflow-wrap: anywhere;
+}
+
+.release-notes .release-body.muted {
+    color: var(--text-secondary);
+}
+
+.release-notes .release-body.error {
+    color: var(--danger-color);
+}
+
+.release-notes .release-body p {
+    margin: 6px 0;
+}
+
+.release-notes .release-body ul,
+.release-notes .release-body ol {
+    margin: 6px 0 6px 16px;
+    padding-left: 16px;
+    list-style-position: inside; /* bullets inside to avoid overflow */
+}
+
+.release-notes .release-body li {
+    margin: 4px 0;
+}
+
+.release-notes .release-toggle {
+    margin-top: 8px;
+    background: var(--bg-hover);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.release-notes .release-links {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
 .section-header {
     display: flex;
     align-items: center;

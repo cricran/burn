@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Settings, LogOut, User, Moon, Sun, Monitor } from 'lucide-react';
+import { Settings, LogOut, User, Moon, Sun, Monitor, Info } from 'lucide-react';
 import './settingsModal.css';
 import useAuthStore from '../utils/authStore';
 import useColorSettingsStore from '../utils/colorSettingsStore';
 import { openLayer, discard, closeTop } from '../utils/uiHistory';
 import apiRequest from '../utils/apiRequest';
+import ReleaseNotes from './general/ReleaseNotes';
 
 function SettingsModal({ isOpen, onClose }) {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -139,6 +140,17 @@ function SettingsModal({ isOpen, onClose }) {
                                 </>
                             )}
                         </button>
+                    </div>
+
+                    {/* Général (dernier bloc) */}
+                    <div className="settings-section">
+                        <div className="section-header">
+                            <Info size={16} />
+                            <h4>Général</h4>
+                        </div>
+                        <div className="general-info">
+                            <ReleaseNotes />
+                        </div>
                     </div>
                 </div>
             </div>
