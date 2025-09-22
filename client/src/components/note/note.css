@@ -104,6 +104,12 @@
     line-height: 1.4;
     word-break: break-word;
     color: var(--text-primary);
+    cursor: pointer; /* allow toggling via text */
+}
+
+.note .item p.done {
+    text-decoration: line-through;
+    opacity: 0.7;
 }
 
 .note .list {

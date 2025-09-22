@@ -102,7 +102,13 @@ function Note({ eventId, title, tasks, onOpenEventDetails }) {
               onChange={() => handleToggleNote(index, task.done)}
               disabled={togglingNoteIndex === index}
             />
-            <p>{task.text}</p>
+            <p 
+              className={task.done ? 'done' : ''}
+              onClick={() => handleToggleNote(index, task.done)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleToggleNote(index, task.done) }}
+            >{task.text}</p>
             <button 
               className='note-delete' 
               onClick={() => handleDeleteNote(index)}
