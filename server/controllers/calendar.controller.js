@@ -5,12 +5,22 @@ import updateCalendar from '../utils/updateCalendar.js';
 // Fonction utilitaire pour nettoyer le titre du cours
 const cleanCourseTitle = (title) => {
     if (!title) return '';
-    
-    // Supprimer les préfixes CM, TD, TP, CC (insensible à la casse, avec variations possibles)
-    return title
-        .replace(/^(cm|td|tp|cc)\s*[-:]?\s*/gi, '')
-        .replace(/\s*(cm|td|tp|cc)\s*$/gi, '')
-        .trim();
+
+    // Règles:
+    // - Enlever les préfixes de type CM/TD/TP/CC éventuellement suivis d'un numéro (ex: "TP2", "TD 3", "CM: ", "TP n°4 -")
+    // - Enlever les suffixes similaires (ex: "- TD2")
+    // - Normaliser les espaces
+    let s = String(title).trim();
+
+    // Supprimer préfixes étendus avec balises, séparateurs, numéros/lettres et groupes (G1, Groupe 2, Grp 3)
+    s = s.replace(/^(?:\s*[\[(]?\s*(?:cm|td|tp|cc)(?:\s*[/+]\s*(?:cm|td|tp|cc))*\s*(?:n?°|no\.|#)?\s*(?:[A-Z]?\d{1,3}|[A-Z])?(?:\s*(?:g(?:rp|roupe)?\s*\d+|g\s*\d+))?\s*[\])]?\s*[-–—:.,]*\s*)+/i, '');
+
+    // Supprimer suffixes étendus (balises + séparateurs + numéros/lettres + groupes)
+    s = s.replace(/\s*(?:[-–—:.,]*\s*[\[(]?\s*(?:cm|td|tp|cc)(?:\s*[/+]\s*(?:cm|td|tp|cc))*\s*(?:n?°|no\.|#)?\s*(?:[A-Z]?\d{1,3}|[A-Z])?(?:\s*(?:g(?:rp|roupe)?\s*\d+|g\s*\d+))?\s*[\])]?)+\s*$/i, '');
+
+    // Nettoyage espaces multiples
+    s = s.replace(/\s{2,}/g, ' ').replace(/^[\s\-–—:.,]+|[\s\-–—:.,]+$/g, '').trim();
+    return s;
 };
 
 export const getCalendar = async (req, res) => {
