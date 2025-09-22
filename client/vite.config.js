@@ -7,7 +7,16 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // Ensure the service worker is injected and auto-updates
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
+      workbox: {
+        // Take control immediately and clean old caches
+        clientsClaim: true,
+        skipWaiting: true,
+        cleanupOutdatedCaches: true,
+        navigateFallback: '/index.html',
+      },
       manifest: {
         name: 'Burn',
         short_name: 'Burn',
