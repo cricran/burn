@@ -136,6 +136,8 @@ export async function getMessage(req, res) {
     await client.mailboxOpen(mailbox, { readOnly: true })
     console.log('[IMAP] getMessage start', { mailbox, uid: uidNum, seq: seqNum })
     let parsed
+    let resolvedUid = uidNum || null
+    let resolvedSeq = seqNum || null
     try {
       if (uidNum) {
         console.log('[IMAP] getMessage download(uid)', { uid: uidNum })
@@ -145,6 +147,11 @@ export async function getMessage(req, res) {
         console.log('[IMAP] getMessage download(seq)', { seq: seqNum })
         const { content } = await client.download(seqNum)
         parsed = await simpleParser(content)
+        // Try to resolve UID from seq
+        try {
+          const meta = await client.fetchOne(seqNum, { uid: true })
+          if (meta?.uid) resolvedUid = Number(meta.uid)
+        } catch (_) {}
       }
     } catch (e1) {
       console.error('[IMAP] getMessage download failed', e1?.code, e1?.message)
@@ -158,10 +165,11 @@ export async function getMessage(req, res) {
           parsed = await simpleParser(raw)
         } else {
           console.log('[IMAP] getMessage fetchOne(source) by seq', { seq: seqNum })
-          const msg = await client.fetchOne(seqNum, { source: true })
+          const msg = await client.fetchOne(seqNum, { source: true, uid: true })
           const raw = msg?.source
           if (!raw) throw new Error('Empty message source')
           parsed = await simpleParser(raw)
+          if (msg?.uid) resolvedUid = Number(msg.uid)
         }
       } catch (e2) {
         console.error('[IMAP] getMessage fetchOne failed', e2?.code, e2?.message)
@@ -185,12 +193,13 @@ export async function getMessage(req, res) {
           // Fallback 3: search by UID then fetch
           try {
             console.log('[IMAP] getMessage UID search')
-            const found = await client.search({ uid: `${uidNum}:${uidNum}` })
+    const found = await client.search({ uid: `${uidNum || resolvedUid}:${uidNum || resolvedUid}` })
             if (!found || !found.length) throw new Error('UID not found in search')
             const msg = await client.fetchOne(found[0], { uid: true, source: true })
             const raw = msg?.source
             if (!raw) throw new Error('Empty message source after search')
             parsed = await simpleParser(raw)
+    if (msg?.uid) resolvedUid = Number(msg.uid)
           } catch (e4) {
             console.error('[IMAP] getMessage search+fetch failed', e4?.code, e4?.message)
             throw e1 || e2 || e3 || e4
@@ -200,7 +209,8 @@ export async function getMessage(req, res) {
     }
     await client.logout()
     return res.status(200).json({
-      uid,
+  uid: resolvedUid || uidNum || null,
+  seq: resolvedSeq || null,
       subject: parsed.subject || '(Sans objet)',
       from: parsed.from?.text || '',
       to: parsed.to?.text || '',
@@ -230,22 +240,37 @@ export async function getMessage(req, res) {
 }
 
 export async function deleteMessage(req, res) {
-  const { login, encPass, mailbox = 'INBOX', uid } = req.body || {}
-  if (!login || !encPass || !uid) return res.status(400).json({ error: 'login, encPass and uid required' })
+  const { login, encPass, mailbox = 'INBOX', uid, seq } = req.body || {}
+  if (!login || !encPass || (!uid && !seq)) return res.status(400).json({ error: 'login, encPass and uid or seq required' })
   let password
   try { password = decryptWithPrivateKey(String(encPass)) } catch (_) { return res.status(400).json({ error: 'Invalid encPass' }) }
   const client = buildClient({ login, password })
   try {
     await client.connect()
-  await client.mailboxOpen(mailbox, { readOnly: false })
-  // Add \\Deleted then expunge (use UID)
-  await client.messageFlagsAdd(uid, ['\\Deleted'], { uid: true })
-    await client.mailboxExpunge(mailbox)
+    await client.mailboxOpen(mailbox, { readOnly: false })
+    // Delete using ImapFlow API (handles flag+expunge internally per implementation)
+    if (uid) {
+      await client.messageDelete(uid, { uid: true })
+    } else {
+      await client.messageDelete(seq)
+    }
     await client.logout()
     return res.status(200).json({ ok: true })
   } catch (e) {
     try { await client.logout() } catch (_) {}
-    return res.status(500).json({ error: 'Failed to delete message', details: e?.message })
+    const msg = String(e?.message || '')
+    const code = String(e?.code || '')
+    console.error('[IMAP] deleteMessage error', { mailbox, uid, seq, code, msg })
+    if (/AUTH|Invalid credentials|LOGIN failed/i.test(msg) || /AUTHENTICATIONFAILED/i.test(code)) {
+      return res.status(401).json({ error: 'IMAP auth failed' })
+    }
+    if (/ETIMEDOUT|ECONNREFUSED|ENOTFOUND|certificate/i.test(msg)) {
+      return res.status(502).json({ error: 'IMAP connection failed', details: msg })
+    }
+    if (/No matching messages|not found|does not exist/i.test(msg)) {
+      return res.status(404).json({ error: 'Message not found' })
+    }
+    return res.status(500).json({ error: 'Failed to delete message', details: msg })
   }
 }
 

@@ -5,9 +5,11 @@ import './mail.css'
 import useMailSettingsStore from '../../utils/mailSettingsStore'
 import { rsaEncryptPassword, testMail, listMail, getMessage, deleteMessage, getSogoLink, markSeen } from '../../utils/mailApi'
 import { openLayer, discard, closeTop } from '../../utils/uiHistory'
+import useNotificationStore from '../../utils/notificationStore'
 
 const Mail = () => {
   const { email, login, encPass, tourDone, loadFromServer, saveToServer, setLocal } = useMailSettingsStore()
+  const notify = useNotificationStore(state => state.notify)
   const [ready, setReady] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [form, setForm] = useState({ email: '', login: '', password: '' })
@@ -129,11 +131,16 @@ const Mail = () => {
     try {
       const data = await getMessage({ login, encPass, uid, seq })
       setMessage(data)
+      // If server resolved a real UID (e.g., opened by seq), update selection to UID for actions like delete
+      if (data?.uid && data.uid !== uid) {
+        setSelected(data.uid)
+      }
       // mark as seen locally
-      if (uid)
-        setItems(prev => prev.map(m => m.uid === uid ? { ...m, seen: true } : m))
+      const seenUid = data?.uid || uid
+      if (seenUid)
+        setItems(prev => prev.map(m => m.uid === seenUid ? { ...m, seen: true } : m))
   // fire-and-forget server-side mark seen
-  if (uid) markSeen({ login, encPass, uid }).catch(() => {})
+  if (seenUid) markSeen({ login, encPass, uid: seenUid }).catch(() => {})
     } catch (e) {
       setMessage({ error: 'Impossible d\'ouvrir le message' })
     }
@@ -147,8 +154,12 @@ const Mail = () => {
       setItems(prev => prev.filter(x => x.uid !== selected))
       setSelected(null)
       setMessage(null)
+  // Close mobile viewer layer if open
+  if (isMobile) closeTop()
+  // Success toast
+  notify({ type: 'success', title: 'Mail supprimé', message: 'Le message a été supprimé avec succès.' })
     } catch (e) {
-      // ignore
+  notify({ type: 'error', title: 'Échec de la suppression', message: "Le message n'a pas pu être supprimé." })
     } finally {
       setDeleting(false)
     }
