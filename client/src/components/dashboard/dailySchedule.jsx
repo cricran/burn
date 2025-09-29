@@ -203,14 +203,36 @@ function DailySchedule({ onEventClick }) {
     }
 
     // Initial scroll anchor for react-big-calendar
+    // We want the view to be centered on the current time when showing today.
+    // react-big-calendar's `scrollToTime` scrolls so the provided time is at the top of the viewport.
+    // To center the current time, provide a time offset by half of the visible window duration.
     const scrollToTime = useMemo(() => {
+        // default morning anchor when no events
         if (dayEvents.length === 0) return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 8, 0);
-        if (isToday) return new Date();
+
+        // compute visible window duration in ms from calendarMin/calendarMax
+        const windowDurationMs = calendarMax.getTime() - calendarMin.getTime();
+
+        if (isToday) {
+            // center now by subtracting half the window duration
+            const now = new Date();
+            const halfWindowMs = Math.floor(windowDurationMs / 2);
+            const centered = new Date(now.getTime() - halfWindowMs);
+
+            // clamp to start/end of day bounds to avoid scrolling outside the day
+            const dayStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0);
+            const dayEnd = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+            if (centered < dayStart) return dayStart;
+            if (centered > dayEnd) return dayEnd;
+            return centered;
+        }
+
+        // for other days, scroll to earliest event
         const earliestStart = new Date(
             Math.min.apply(null, dayEvents.map(e => new Date(e.start).getTime()))
         );
         return earliestStart;
-    }, [dayEvents, currentDate, isToday]);
+    }, [dayEvents, currentDate, isToday, calendarMin, calendarMax]);
 
     return (
         <div className="daily-schedule">
