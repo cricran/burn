@@ -296,9 +296,8 @@
   .universitice .ut-courses { max-height: none; }
   /* Hidden by default on mobile */
   .universitice .ut-details { display: none; }
-  /* Fullscreen details when open */
-  /* Ensure mobile course viewer overlays the navbar (navbar z-index up to 1000) */
-  .universitice .ut-details.mobile-open { display: flex; flex-direction: column; position: fixed; inset: 0; z-index: 1100; height: 100svh; min-height: 100vh; width: 100vw; overflow: hidden; background: var(--module-bg); border: none; border-radius: 0; box-shadow: none; transform: none; opacity: 1; pointer-events: auto; }
+  /* Fullscreen details when open, reserving space for bottom navbar */
+  .universitice .ut-details.mobile-open { display: flex; flex-direction: column; position: fixed; top: 0; left: 0; right: 0; bottom: var(--navbar-height); z-index: 900; overflow: hidden; background: var(--module-bg); border: none; border-radius: 0; box-shadow: none; transform: none; opacity: 1; pointer-events: auto; }
   .universitice .ut-mobile-bar { position: sticky; top: 0; flex: 0 0 auto; display: flex; justify-content: flex-end; background: var(--module-bg); padding: 10px 12px; border-bottom: 1px solid var(--border-color); z-index: 1; margin-bottom: 8px; }
   .universitice .ut-course { flex: 1 1 auto; overflow: auto; min-height: 0; padding: 0 2px 2px 2px; }
   .universitice .ut-close { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); padding: 6px 8px; border-radius: 8px; font-size: 18px; line-height: 1; }

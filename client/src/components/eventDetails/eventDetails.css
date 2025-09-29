@@ -424,7 +424,8 @@
 
   .event-details-content {
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
     max-width: none;
     max-height: none;
     border-radius: 0;
@@ -432,6 +433,8 @@
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: var(--navbar-height);
   }
 
   .event-details-content-inline {

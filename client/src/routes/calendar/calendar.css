@@ -111,8 +111,13 @@
         display: none !important;
     }
 
+    /* No outer padding around the timetable on narrow screens */
+    .calendar {
+        gap: 0;
+    }
+
     .calendar > div {
-        padding: 10px;
+        padding: 0;
         background: transparent;
         box-shadow: none;
     }

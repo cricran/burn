@@ -144,7 +144,7 @@ button.danger { background: var(--danger-color); color: #fff; border: none; padd
   .mail-wrapper { grid-template-columns: 1fr; gap: 12px; }
   .mail-list { max-height: none; }
   .mail-details { display: none; }
-  .mail-details.mobile-open { display: flex; flex-direction: column; position: fixed; inset: 0; z-index: 30; height: 100svh; min-height: 100vh; width: 100vw; overflow: hidden; background: var(--module-bg); border: none; border-radius: 0; box-shadow: none; transform: none; opacity: 1; pointer-events: auto; }
+  .mail-details.mobile-open { display: flex; flex-direction: column; position: fixed; top: 0; left: 0; right: 0; bottom: var(--navbar-height); z-index: 900; overflow: hidden; background: var(--module-bg); border: none; border-radius: 0; box-shadow: none; transform: none; opacity: 1; pointer-events: auto; }
   .mobile-details-open .mail-list { display: none; }
   .message { flex: 1 1 auto; overflow: auto; min-height: 0; padding: 0 0px 0px 0px; }
 }

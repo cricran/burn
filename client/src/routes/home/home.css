@@ -1,34 +1,13 @@
 .content {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    padding: min(75px, 1%) 25px min(75px, 1%) 100px;
-    /* Ensure some breathing room at the bottom */
-    padding-bottom: 80px;
+    padding: 24px 24px 24px 24px;
     box-sizing: border-box;
-    /* Desktop: scroll vertical activé pour le contenu dépassant */
-    overflow-y: auto;
-    overflow-x: hidden;
     transition: opacity .3s, transform .75s cubic-bezier(0,0,0,1), filter .5s;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
 }
 
 @media screen and (max-width: 620px) {
-    .content {
-        position: absolute;
-        width: 100vw;
-        height: calc(100vh - 75px);
-        padding: 0px 8px 40px 8px;
-    padding-bottom: 64px; /* extra room on mobile */
-        margin-bottom: 0;
-        box-sizing: border-box;
-        /* Mobile: scroll vertical fluide et optimisé */
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch; /* Scroll fluide sur iOS */
-        scroll-behavior: smooth; /* Animation de scroll fluide */
-    }
+    .content { padding: 10px 8px; }
 }
 
 /* Dashboard styles */

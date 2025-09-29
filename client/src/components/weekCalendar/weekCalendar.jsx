@@ -368,7 +368,7 @@ function WeekCalendar({ onEventClick }) {
             <button className="mobile-nav-btn" onClick={() => handleNavigate('NEXT')}>→</button>
           </div>
         </header>
-        <div className='wcContent' {...swipeHandlers}>
+        <div className='wcContent' {...swipeHandlers} style={{ minHeight: 0 }}>
           <Calendar
             localizer={localizer}
             events={filteredEvents} // Utiliser les événements filtrés
@@ -383,7 +383,7 @@ function WeekCalendar({ onEventClick }) {
             min={new Date(2025, 0, 1, 7, 0)}
             max={new Date(2025, 0, 1, 21, 0)}
             culture='fr'
-            style={{ height: '80vh' }}
+            style={{ height: 'calc(100dvh - var(--navbar-height) - 24px - var(--edt-header-height))' }}
             eventPropGetter={eventStyleGetter}
             components={{
               toolbar: MonToolbar,

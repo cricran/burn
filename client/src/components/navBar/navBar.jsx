@@ -8,7 +8,6 @@ const NavBar = () => {
     const path = location.pathname.toLowerCase();
     
     const [isMobile, setIsMobile] = useState(false);
-    const [keyboardOffset, setKeyboardOffset] = useState(0);
 
     // Detect mobile and handle keyboard appearance
     useEffect(() => {
@@ -22,48 +21,10 @@ const NavBar = () => {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Handle virtual keyboard on mobile
-    useEffect(() => {
-        if (!isMobile) return;
-        
-        let initialHeight = window.innerHeight;
-        
-        const handleResize = () => {
-            const currentHeight = window.innerHeight;
-            const heightDiff = initialHeight - currentHeight;
-            
-            // If height decreased significantly, keyboard likely appeared
-            if (heightDiff > 150) {
-                setKeyboardOffset(heightDiff);
-            } else if (heightDiff < 50) {
-                // Height restored, keyboard likely hidden
-                setKeyboardOffset(0);
-                initialHeight = currentHeight;
-            }
-        };
-        
-        const handleFocus = () => {
-            // Reset initial height when focusing an input
-            initialHeight = window.innerHeight;
-        };
-        
-        window.addEventListener('resize', handleResize);
-        document.addEventListener('focusin', handleFocus);
-        
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            document.removeEventListener('focusin', handleFocus);
-        };
-    }, [isMobile]);
+    // No keyboard offset hacks; content reserves bottom space via CSS
 
     return (
-        <div 
-            className='navBar' 
-            style={isMobile ? { 
-                '--keyboard-offset': `${keyboardOffset}px`,
-                transform: keyboardOffset > 0 ? `translateY(-${keyboardOffset}px)` : 'translateY(0px)'
-            } : {}}
-        >
+        <div className='navBar'>
             <div className='butonList'>
                 <Link
                     className={`buton${path === '/my' ? ' selected' : ''}`}
@@ -72,7 +33,7 @@ const NavBar = () => {
                     <div className='icon'>
                         <Home />
                     </div>
-                    <div className='text'>Aceuile</div>
+                    <div className='text'>Accueil</div>
                 </Link>
                 <Link
                     className={`buton${path === '/universitice' ? ' selected' : ''}`}
@@ -81,7 +42,7 @@ const NavBar = () => {
                     <div className='icon'>
                         <BookMarked />
                     </div>
-                    <div className='text'>UniversiTice</div>
+                    <div className='text'>UniversiTICE</div>
                 </Link>
                 <Link
                     className={`buton${path === '/edt' ? ' selected' : ''}`}

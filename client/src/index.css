@@ -2,6 +2,9 @@
 
 /* CSS Variables for themes */
 :root {
+  /* App shell */
+  --navbar-width: 75px;
+  --navbar-height: 75px;
   --bg-primary: #ffffff;
   --bg-secondary: #f8f9fa;
   --bg-hover: #f4f6f8;
@@ -208,17 +211,25 @@ button {
   }
 }
 
+/* Shared page content layout ensuring space for the nav bar */
+.content {
+  position: relative;
+  margin-left: var(--navbar-width);
+  width: calc(100% - var(--navbar-width));
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 @media screen and (max-width: 620px) {
-  body {
-    overflow: hidden; /* Empêcher le scroll du body */
-  }
-  
+  body { overflow: hidden; }
   .content {
-    height: calc(100vh - 75px); /* Hauteur exacte moins la navbar */
-    overflow-y: auto; /* Scroll seulement si nécessaire */
-    position: fixed; /* Fixer le contenu */
-    top: 0;
-    left: 0;
-    right: 0;
+    margin-left: 0;
+    width: 100%;
+    height: calc(100vh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
+    /* leave room for bottom nav and give small inner padding bottom */
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
 }
