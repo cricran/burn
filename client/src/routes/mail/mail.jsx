@@ -237,8 +237,15 @@ const Mail = () => {
           const href = el.getAttribute('href') || ''
           const ok = /^(https?:|mailto:|tel:)/i.test(href)
           if (!ok) el.removeAttribute('href')
-          el.setAttribute('target', '_blank')
-          el.setAttribute('rel', 'noopener noreferrer nofollow')
+          // On mobile, open in the same window; on desktop, open in a new tab
+          if (isMobile) {
+            el.removeAttribute('target')
+            // Keep nofollow to avoid SEO impact but noopener/noreferrer not needed with _self
+            el.setAttribute('rel', 'nofollow')
+          } else {
+            el.setAttribute('target', '_blank')
+            el.setAttribute('rel', 'noopener noreferrer nofollow')
+          }
         }
       })
       return doc.body.innerHTML || ''
@@ -258,7 +265,7 @@ const Mail = () => {
         </div>
         <div className='ut-actions'>
           <button className='link-btn' onClick={() => loadPage(1)} title="Actualiser"><RefreshCw size={16} /></button>
-          <a className='link-btn' href={sogo} target='_blank' rel='noreferrer noopener'>Ouvrir SOGo</a>
+          <a className='link-btn' href={sogo} target={isMobile ? undefined : '_blank'} rel={isMobile ? undefined : 'noreferrer noopener'}>Ouvrir SOGo</a>
         </div>
       </div>
 
@@ -335,7 +342,7 @@ const Mail = () => {
               <div className='message'>
                 <div className='toolbar'>
                   <button className='danger' disabled={deleting} onClick={deleteSelected}>{deleting ? 'Suppression…' : 'Supprimer'}</button>
-                  <a className='link-btn' href={sogo} target='_blank' rel='noreferrer noopener'>Ouvrir sur SOGo</a>
+                  <a className='link-btn' href={sogo} target={isMobile ? undefined : '_blank'} rel={isMobile ? undefined : 'noreferrer noopener'}>Ouvrir sur SOGo</a>
                 </div>
                 <h2 className='subject'>{message.subject}</h2>
                 <div className='meta'>De: {message.from} · À: {message.to} · {message.date ? new Date(message.date).toLocaleString('fr-FR') : ''}</div>

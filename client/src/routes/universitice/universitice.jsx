@@ -168,7 +168,33 @@ const UniversiTice = () => {
   }, [selectedId])
 
   const openOnUniversiTice = (courseUrl) => {
-    window.open(courseUrl, '_blank', 'noopener,noreferrer')
+    if (isMobile) {
+      window.location.assign(courseUrl)
+    } else {
+      window.open(courseUrl, '_blank', 'noopener,noreferrer')
+    }
+  }
+
+  // Normalize anchor targets inside HTML fragments depending on device
+  const adjustHtmlLinks = (html) => {
+    try {
+      const p = new DOMParser()
+      const doc = p.parseFromString(String(html || ''), 'text/html')
+      doc.querySelectorAll('a').forEach(a => {
+        const href = a.getAttribute('href') || ''
+        if (!/^(https?:|mailto:|tel:)/i.test(href)) return
+        if (isMobile) {
+          a.removeAttribute('target')
+          a.removeAttribute('rel')
+        } else {
+          a.setAttribute('target', '_blank')
+          a.setAttribute('rel', 'noopener noreferrer')
+        }
+      })
+      return doc.body.innerHTML || ''
+    } catch {
+      return String(html || '')
+    }
   }
 
   const handleSectionClick = (section) => {
@@ -489,7 +515,7 @@ const UniversiTice = () => {
                       </button>
                     </div>
                     {section.summary && (
-                      <div className="ut-summary" dangerouslySetInnerHTML={{ __html: section.summary }} />
+                      <div className="ut-summary" dangerouslySetInnerHTML={{ __html: adjustHtmlLinks(section.summary) }} />
                     )}
                     <div className="ut-modules" aria-hidden={!isOpen}>
                       {(section.modules || []).map(m => (
@@ -499,7 +525,7 @@ const UniversiTice = () => {
                               {getModuleIcon(m.modname)}
                             </div>
                             {m.url ? (
-                              <a href={m.url} className="ut-module-title-link" target="_blank" rel="noopener noreferrer">
+                              <a href={m.url} className="ut-module-title-link" target={isMobile ? undefined : '_blank'} rel={isMobile ? undefined : 'noopener noreferrer'}>
                                 {m.name}
                               </a>
                             ) : (
@@ -508,7 +534,7 @@ const UniversiTice = () => {
                           </div>
                           {/* Render description/label HTML fully if provided */}
                           {m.description && (
-                            <div className="ut-module-description" dangerouslySetInnerHTML={{ __html: m.description }} />
+                            <div className="ut-module-description" dangerouslySetInnerHTML={{ __html: adjustHtmlLinks(m.description) }} />
                           )}
                           {/* Assignment action */}
                           {(m.modname === 'assign' || m.modname === 'assignment') && (
@@ -522,7 +548,7 @@ const UniversiTice = () => {
                             <ul className="ut-files">
                               {m.contents.map((f, idx) => (
                                 <li key={idx}>
-                                  <a href={f.fileurl} target="_blank" rel="noopener noreferrer">
+                                  <a href={f.fileurl} target={isMobile ? undefined : '_blank'} rel={isMobile ? undefined : 'noopener noreferrer'}>
                                     <Download size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                                     {f.filename} {f.filesize ? `(${Math.round(f.filesize / 1024)} Ko)` : ''}
                                   </a>
