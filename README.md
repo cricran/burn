@@ -113,25 +113,6 @@ Pour déployer l'application et accéder aux fichiers MongoDB sur votre machine 
 docker-compose up -d
 ```
 
-3. Pour arrêter les conteneurs :
-
-```bash
-docker-compose down
-```
-
-### Déploiement avec Portainer
-
-Portainer permet de gérer vos conteneurs Docker via une interface web.
-
-1. Installez Portainer sur votre serveur :
-   https://docs.portainer.io/start/install/server/docker
-2. Clonez le dépôt GitHub sur votre serveur.
-3. Connectez-vous à Portainer (généralement sur `http://<votre-ip>:9000`).
-4. Créez un nouveau "Stack" et collez le contenu de votre `docker-compose.yml`.
-5. Définissez les variables d'environnement à partir de `.env`.
-6. Déployez le stack. Les données MongoDB seront accessibles dans le dossier `mongo_data`.
-7. Pour mettre à jour, faites un `git pull` puis redeployez le stack dans Portainer.
-
 ## 🔧 Configuration
 
 ### Variables d'environnement
@@ -197,23 +178,6 @@ burn/
 - JWT pour l'authentification
 - APIs REST
 
-## 🤝 Contribution
-
-Les contributions sont les bienvenues !
-
-1. Fork le projet
-2. Créez une branche feature (`git checkout -b feature/AmazingFeature`)
-3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
-4. Push vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une Pull Request
-
-### Guidelines
-
-- Code en français pour les étudiants français
-- Respecter l'architecture existante
-- Tester les fonctionnalités
-- Documenter les nouveautés
-
 ## 🔒 Sécurité
 
 - Vos identifiants restent privés
@@ -233,8 +197,3 @@ référez-vous aux plateformes d'origine (ADE Campus, UniversiTice, SOGo).
 ## 👥 Contributeurs
 
 Développé avec ❤️ par la communauté étudiante pour la communauté étudiante.
-
-## 📞 Support
-
-- 🐛 **Issues :** [GitHub Issues](https://github.com/cricran/burn/issues)
-- 💬 **Discussions :** [GitHub Discussions](https://github.com/cricran/burn/discussions)
