@@ -467,7 +467,7 @@ const UniversiTice = () => {
           )}
         </aside>
 
-        <main className={`ut-details ${selectedId ? 'has-selection' : ''} ${isMobile && selectedId ? 'mobile-open' : ''} ${!isMobile && selectedId ? 'desktop-fullscreen' : ''}`}>
+  <main className={`ut-details ${selectedId ? 'has-selection' : ''} ${isMobile && selectedId ? 'mobile-open' : ''}`}>
           {isMobile && selectedId && (
             <div className="ut-mobile-bar">
               <button className="ut-close" aria-label="Fermer" onClick={() => closeTop()}>✕</button>
