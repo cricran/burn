@@ -1,6 +1,6 @@
 .popup-overlay {
     position: fixed;
-    z-index: 1000;
+    z-index: 999999999;
     top: 0;
     left: 0;
     right: 0;
@@ -17,12 +17,22 @@
     box-shadow: 0 0 40px var(--shadow-color);
     padding: 40px 30px 30px 30px;
     min-width: 320px;
-    max-width: 90vw;
+    max-width: min(600px, 95vw);
+    max-height: 80vh;
+    overflow-y: auto;
     color: var(--text-primary);
     position: relative;
     border: 1px solid var(--border-color);
     font-family: inherit;
     text-align: center;
+}
+
+@media (max-width: 480px) {
+    .popup-content {
+        padding: 30px 20px 20px 20px;
+        max-width: 95vw;
+        max-height: 85vh;
+    }
 }
 
 .popup-content h2 {
@@ -37,6 +47,43 @@
     font-size: 1em;
     margin-bottom: 10px;
     line-height: 1.5;
+}
+
+.popup-text a {
+    display: inline-block;
+    background: var(--nav-accent);
+    color: var(--text-primary);
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+    margin: 4px 0;
+    border: none;
+    cursor: pointer;
+}
+
+.popup-text a:hover {
+    background: var(--nav-accent-bg);
+}
+
+.popup-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: block;
+}
+
+.popup-text ul {
+    text-align: left;
+    margin: 10px 0 0 20px;
+    padding: 0;
+}
+
+.popup-text li {
+    margin-bottom: 8px;
+    line-height: 1.4;
 }
 
 .popup-close {

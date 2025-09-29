@@ -207,19 +207,37 @@ function AddCalendar({ onClose }) {
         <div>
             {showPopUp && (
                 <PopUp
-                    title="Comment ça fonctionne ?"
+                    title="Comment faire ?"
                     text={
                         <>
-                            <b>Principe :</b><br />
-                            Lorsque tu te connectes, le backend simule la navigation sur Moodle et CAS :<br />
-                            <ul style={{ textAlign: "left", margin: "10px 0 0 20px" }}>
-                                <li>1. Il ouvre la page de login Moodle et suit la redirection vers CAS.</li>
-                                <li>2. Il soumet tes identifiants au CAS.</li>
-                                <li>3. Il suit toutes les redirections nécessaires pour valider la session.</li>
-                                <li>4. Il vérifie la connexion en appelant l'API mobile Moodle.</li>
-                            </ul>
+                            <b>Connectez-vous à votre multipass :</b><br />
+                            Sur votre ordinateur, ou dans le navigateur de votre téléphone, connectez-vous sur le site de votre établissement afin d'accéder à votre emploi du temps.<br />
+                            <a href="https://adecampus.univ-rouen.fr" style={{color: "var(--accent-color)"}}>Visiter ADE Campus</a>
                             <br />
-                            Si tout est bon, tu es connecté comme si tu étais passé par le navigateur !
+                            <br />
+                            <b>Sélectionnez vos groupes :</b><br />
+                            Sélectionnez les groupes auxquels vous appartenez, ou les cours que vous suivez. Vous pouvez en sélectionner plusieurs en maintenenant la touche Ctrl.<br />
+                            Votre emploit du temps devrait s'afficher.<br />
+                            Pensez à sélectionner tous vos groupes.<br />
+                            <img src="../public/help/group.png" alt="aide sélection des groupes"/>
+                            <br />
+                            <br />
+                            <b>Exportez votre emploi du temps :</b><br />
+                            Exporter l'emploi du temps en cliquant sur l'icône "Exporter" en bas à gauche de la fenêtre. <br />
+                            <img src="../public/help/export.png" alt="aide export edt" />
+                            <br />
+                            <br />
+                            <b>Configurez l'exportation :</b><br />
+                            Dans la fenêtre qui s'ouvre, choisissez les dates de début et de fin de votre année universitaire. <br />
+                            Cliquez ensuite sur générer l'URL. <br />
+                            <img src="../public/help/generate.png" alt="aide générer l'url" />
+                            <br />
+                            <br />
+                            <b>Copiez l'URL générée :</b><br />
+                                L'URL de votre emploi du temps a été généré. Copiez l'URL qui apparaît. Vous pouvez faire clic droit sur l'URL, puis Copier l'adresse du lien. Ou scaner le QR-Code directement sur avec BURN dans l'onglet "Scanner QR code"  <br />
+                            <img src="../public/help/qrcode.png" alt="aide qrcode" />
+
+                            
                         </>
                     }
                     onClose={() => setShowPopUp(false)}

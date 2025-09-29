@@ -69,15 +69,8 @@ const Auth = () => {
                     text={
                         <>
                             <b>Principe :</b><br />
-                            Lorsque tu te connectes, le backend simule la navigation sur Moodle et CAS :<br />
-                            <ul style={{ textAlign: "left", margin: "10px 0 0 20px" }}>
-                                <li>1. Il ouvre la page de login Moodle et suit la redirection vers CAS.</li>
-                                <li>2. Il soumet tes identifiants au CAS.</li>
-                                <li>3. Il suit toutes les redirections nécessaires pour valider la session.</li>
-                                <li>4. Il vérifie la connexion en appelant l’API mobile Moodle.</li>
-                            </ul>
-                            <br />
-                            Si tout est bon, tu es connecté comme si tu étais passé par le navigateur !
+                            Lorsque vous vous connecter, BURN utilise votre identifiant et votre mot de passe universitaire (multipass) pour créer un compte et vous connecter au different services de l'université supporté par BURN. <br /> <br />
+                            Si tout est bon, vous êtes connecté comme si vous étiez passé par votre navigateur !
                         </>
                     }
                     onClose={() => setShowPopUp(false)}
