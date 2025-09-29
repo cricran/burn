@@ -31,7 +31,7 @@ const MailWidget = () => {
       try {
         setLoading(true)
         setError('')
-        const data = await listMail({ login, encPass, page: 1, pageSize: 5 })
+        const data = await listMail({ login, encPass, page: 1, pageSize: 8 })
         if (!cancelled) setItems(data?.items || [])
       } catch (e) {
         if (!cancelled) setError(e?.response?.data?.error || 'Erreur lors du chargement des mails')
