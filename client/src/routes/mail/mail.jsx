@@ -330,7 +330,7 @@ const Mail = () => {
               </div>
             )}
           </aside>
-          <main className={`mail-details ${selected ? 'has-selection' : ''} ${isMobile && selected ? 'mobile-open' : ''}`}>
+          <main className={`mail-details ${selected ? 'has-selection' : ''} ${isMobile && selected ? 'mobile-open' : ''} ${!isMobile && selected ? 'desktop-fullscreen' : ''}`}>
             {isMobile && selected && (
               <div className='ut-mobile-bar'>
                 <button className='ut-close' onClick={() => closeTop()}>✕</button>
