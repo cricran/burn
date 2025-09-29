@@ -19,10 +19,12 @@
   grid-template-columns: minmax(240px, 320px) 1fr;
   gap: 16px;
   height: calc(100dvh - 120px);
+  /* Allow children with overflow to size correctly inside the grid */
+  min-height: 0;
 }
 
 /* Left list */
-.universitice .ut-courses { background: transparent; border-radius: 12px; padding: 2px; height: 100%; overflow: auto; }
+.universitice .ut-courses { background: transparent; border-radius: 12px; padding: 2px; height: 100%; overflow: auto; min-height: 0; }
 .universitice .ut-course-list {
   list-style: none;
   margin: 0;
@@ -85,7 +87,7 @@
 .universitice .ut-card-placeholder { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; letter-spacing: 0.5px; color: var(--text-primary); opacity: .9; font-size: 20px;}
 
 /* Right detail */
-.universitice .ut-details { background: var(--module-bg); border-radius: 12px; padding: 12px; min-height: 420px; height: 100%; overflow: auto; position: relative; border: 1px solid var(--border-color); box-shadow: 0 2px 8px var(--shadow-color); }
+.universitice .ut-details { background: var(--module-bg); border-radius: 12px; padding: 12px; min-height: 420px; height: 100%; overflow: auto; position: relative; border: 1px solid var(--border-color); box-shadow: 0 2px 8px var(--shadow-color); min-height: 0; }
 .universitice .ut-details.desktop-fullscreen { position: fixed; top: 0; left: var(--navbar-width); width: calc(100vw - var(--navbar-width)); height: 100vh; z-index: 99999; border-radius: 0; box-shadow: none; }
 .universitice .ut-placeholder {
   opacity: 0.7;
@@ -112,6 +114,9 @@
 
 /* Sections & modules */
 .universitice .ut-section { margin: 12px 0; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 5px; background: var(--module-bg); }
+
+/* Ensure the course content area can scroll correctly on desktop as well */
+.universitice .ut-course { min-height: 0; overflow: auto; }
 .universitice .ut-section.closed .ut-modules { 
   max-height: 0; 
   overflow: hidden; 
@@ -306,6 +311,18 @@
   .universitice .ut-close:hover { background: var(--hover-bg); }
   /* Hide the list when details open */
   .universitice .mobile-details-open .ut-courses { display: none; }
+}
+
+/* Ensure the bottom-most course is reachable on mobile by reserving space
+   for the bottom navigation bar and safe-area inset */
+@media (max-width: 820px) {
+  .universitice .ut-courses {
+    /* leave a comfortable gap for bottom nav + safe area */
+    padding-bottom: calc(var(--navbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  }
+  .universitice .ut-course-list {
+    padding-bottom: 6px; /* extra breathing inside the scrollable list */
+  }
 }
 
 /* Modal */
