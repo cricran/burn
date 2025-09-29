@@ -106,8 +106,8 @@
 
 /* Mobile optimizations for full width calendar */
 @media (max-width: 820px) {
-    /* Hide the dashboard header on mobile */
-    .dashboard-header {
+    /* Hide the dashboard header on mobile for the calendar page only */
+    .calendar-dashboard .dashboard-header {
         display: none !important;
     }
 
