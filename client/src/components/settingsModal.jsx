@@ -12,7 +12,7 @@ import ReleaseNotes from './general/ReleaseNotes';
 function SettingsModal({ isOpen, onClose }) {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const { currentUser, clearCurrentUser } = useAuthStore();
+    const { currentUser } = useAuthStore();
     const { colorSettings, toggleTheme, loadColorSettings } = useColorSettingsStore();
     const navigate = useNavigate();
 

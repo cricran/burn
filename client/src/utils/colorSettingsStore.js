@@ -154,6 +154,7 @@ const useColorSettingsStore = create(
         if (currentState.systemThemeListener) {
             window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', currentState.systemThemeListener);
         }
+        
         set({
             colorSettings: {
                 mode: 'type',
@@ -165,6 +166,20 @@ const useColorSettingsStore = create(
             error: null,
             systemThemeListener: null,
         });
+        
+        // Re-initialize theme listener for auto theme
+        const listener = (e) => {
+            const newSystemTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newSystemTheme);
+        };
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', listener);
+        
+        // Apply default theme
+        const systemTheme = getSystemTheme();
+        document.documentElement.setAttribute('data-theme', systemTheme);
+        
+        // Update state with new listener
+        set({ systemThemeListener: listener });
     },
         }),
         {
