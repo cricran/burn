@@ -38,6 +38,14 @@ const useHiddenCoursesStore = create((set, get) => ({
 	},
 
 	setShowHidden: (val) => set({ showHidden: !!val }),
+	
+	// Reset store to initial state
+	reset: () => set({
+		hiddenCourses: [],
+		isLoading: false,
+		error: null,
+		showHidden: false,
+	}),
 }));
 
 export default useHiddenCoursesStore;

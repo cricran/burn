@@ -12,7 +12,11 @@ const useNotificationStore = create(set => ({
     })),
     remove: (id) => set(state => ({
         notifications: state.notifications.filter(n => n.id !== id)
-    }))
+    })),
+    // Reset store to initial state
+    reset: () => set({
+        notifications: [],
+    }),
 }));
 
 export default useNotificationStore;

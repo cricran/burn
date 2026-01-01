@@ -359,7 +359,17 @@ const useCalendarStore = create((set, get) => ({
       console.error('Error deleting note:', err);
       return { success: false, error: err };
     }
-  }
+  },
+  
+  // Reset store to initial state
+  reset: () => set({
+    events: {},
+    currentEvents: [],
+    lastFetch: {},
+    isLoading: false,
+    error: null,
+    currentDate: new Date(),
+  }),
 }));
 
 export default useCalendarStore;

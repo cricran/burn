@@ -21,6 +21,9 @@ const useAuthStore = create(
             },
             clearCurrentUser: () => set({ currentUser: null }),
             updateCurrentUser : (newUser) => set({currentUser: newUser}),
+            
+            // Reset store to initial state
+            reset: () => set({ currentUser: null, hydrated: false }),
         }),
         {
             name: 'auth-storage',

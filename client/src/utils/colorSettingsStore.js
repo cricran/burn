@@ -145,7 +145,27 @@ const useColorSettingsStore = create(
     getActualTheme: () => {
         const { colorSettings } = get();
         return colorSettings.theme === 'auto' ? getSystemTheme() : colorSettings.theme;
-    }
+    },
+    
+    // Reset store to initial state
+    reset: () => {
+        // Clean up system theme listener
+        const currentState = get();
+        if (currentState.systemThemeListener) {
+            window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', currentState.systemThemeListener);
+        }
+        set({
+            colorSettings: {
+                mode: 'type',
+                customColors: {},
+                showCancelledEvents: true,
+                theme: 'auto'
+            },
+            isLoading: false,
+            error: null,
+            systemThemeListener: null,
+        });
+    },
         }),
         {
             name: 'color-settings-storage', // unique name for localStorage

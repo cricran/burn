@@ -1,5 +1,6 @@
 import axios from "axios";
 import useAuthStore from './authStore';
+import { clearAllStores } from './sessionManager';
 
 const apiRequest = axios.create({
     // Use same-origin by default so cookies work via Vite/Nginx proxy; env override allowed
@@ -13,9 +14,9 @@ apiRequest.interceptors.response.use(
     (error) => {
         const status = error?.response?.status;
         if (status === 401 || status === 403) {
-            // Effacer l'utilisateur stocké
+            // Effacer complètement l'état client pour assurer l'isolation des sessions
             try {
-                useAuthStore.getState().clearCurrentUser();
+                clearAllStores();
             } catch (e) {
                 // ignore
             }

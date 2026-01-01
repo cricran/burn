@@ -17,7 +17,16 @@ const useMailSettingsStore = create(persist((set, get) => ({
     const { data } = await apiRequest.patch('/mail-settings', partial)
     const cfg = data?.mailSettings || {}
     set({ email: cfg.email || '', login: cfg.login || '', tourDone: !!cfg.tourDone })
-  }
-})))
+  },
+  // Reset store to initial state
+  reset: () => set({
+    email: '',
+    login: '',
+    encPass: '',
+    tourDone: false,
+  }),
+}), {
+  name: 'mail-settings-storage',
+}))
 
 export default useMailSettingsStore

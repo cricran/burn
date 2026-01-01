@@ -6,6 +6,7 @@ import useAuthStore from '../utils/authStore';
 import useColorSettingsStore from '../utils/colorSettingsStore';
 import { openLayer, discard, closeTop } from '../utils/uiHistory';
 import apiRequest from '../utils/apiRequest';
+import { clearAllStores } from '../utils/sessionManager';
 import ReleaseNotes from './general/ReleaseNotes';
 
 function SettingsModal({ isOpen, onClose }) {
@@ -38,8 +39,8 @@ function SettingsModal({ isOpen, onClose }) {
         try {
             // Demander au serveur d'invalider le cookie JWT
             try { await apiRequest.post('/user/auth/logout'); } catch (_) { /* ignore */ }
-            // Effacer l'état client
-            clearCurrentUser();
+            // Effacer complètement l'état client pour assurer l'isolation des sessions
+            clearAllStores();
             // Rediriger proprement vers la page d'auth (évite les races avec history.back)
             navigate('/auth', { replace: true });
         } catch (error) {

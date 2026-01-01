@@ -135,7 +135,17 @@ const useHiddenEventsStore = create((set, get) => ({
     },
 
     // Clear error
-    clearError: () => set({ error: null })
+    clearError: () => set({ error: null }),
+    
+    // Reset store to initial state
+    reset: () => set({
+        hiddenEvents: {
+            individual: [],
+            byName: []
+        },
+        isLoading: false,
+        error: null,
+    }),
 }));
 
 export default useHiddenEventsStore;
