@@ -1,5 +1,4 @@
 import axios from "axios";
-import useAuthStore from './authStore';
 import { clearAllStores } from './sessionManager';
 
 const apiRequest = axios.create({
@@ -17,7 +16,7 @@ apiRequest.interceptors.response.use(
             // Effacer complètement l'état client pour assurer l'isolation des sessions
             try {
                 clearAllStores();
-            } catch (e) {
+            } catch (_e) {
                 // ignore
             }
 

@@ -28,9 +28,11 @@ const useAuthStore = create(
         {
             name: 'auth-storage',
             partialize: (state) => ({ currentUser: state.currentUser }),
-            onRehydrateStorage: () => (state, error) => {
-                // Mark store as hydrated after we finish rehydration
-                try { set({ hydrated: true }); } catch { /* noop */ }
+            onRehydrateStorage: () => (state) => {
+                // Mark store as hydrated after rehydration
+                if (state) {
+                    state.hydrated = true;
+                }
             },
         }
     )
